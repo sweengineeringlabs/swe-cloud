@@ -1,0 +1,34 @@
+[package]
+name = "cloudkit-gcp"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "GCP provider for CloudKit multi-cloud SDK"
+keywords = ["cloud", "gcp", "gcs", "bigquery", "pubsub"]
+categories = ["api-bindings", "asynchronous"]
+
+[features]
+default = ["gcs", "pubsub"]
+gcs = ["dep:google-cloud-storage"]
+pubsub = ["dep:google-cloud-pubsub"]
+
+[dependencies]
+cloudkit = { workspace = true }
+tokio = { workspace = true }
+async-trait = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+bytes = { workspace = true }
+chrono = { workspace = true }
+
+# GCP SDK
+google-cloud-storage = { workspace = true, optional = true }
+google-cloud-pubsub = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }

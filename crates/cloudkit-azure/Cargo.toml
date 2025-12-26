@@ -1,0 +1,35 @@
+[package]
+name = "cloudkit-azure"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Azure provider for CloudKit multi-cloud SDK"
+keywords = ["cloud", "azure", "blob", "cosmos", "functions"]
+categories = ["api-bindings", "asynchronous"]
+
+[features]
+default = ["blob", "cosmos"]
+blob = ["dep:azure_storage", "dep:azure_storage_blobs"]
+cosmos = []
+
+[dependencies]
+cloudkit = { workspace = true }
+tokio = { workspace = true }
+async-trait = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+bytes = { workspace = true }
+chrono = { workspace = true }
+
+# Azure SDK
+azure_core = { workspace = true }
+azure_storage = { workspace = true, optional = true }
+azure_storage_blobs = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }

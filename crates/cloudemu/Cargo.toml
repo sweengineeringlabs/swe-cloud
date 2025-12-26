@@ -1,0 +1,70 @@
+[package]
+name = "cloudemu"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Production-grade local cloud emulator - AWS S3, DynamoDB, SQS and more"
+keywords = ["cloud", "emulator", "aws", "s3", "terraform"]
+categories = ["development-tools::testing", "simulation"]
+
+[features]
+default = ["s3"]
+s3 = []
+dynamodb = []
+sqs = []
+sns = []
+lambda = []
+full = ["s3", "dynamodb", "sqs", "sns", "lambda"]
+
+[dependencies]
+# Web framework
+axum = { version = "0.7", features = ["macros"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+hyper = { version = "1.6", features = ["full"] }
+
+# Async runtime
+tokio = { version = "1.42", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+quick-xml = { version = "0.37", features = ["serialize"] }
+
+# Database
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# Utilities
+uuid = { version = "1.11", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+md-5 = "0.10"
+sha2 = "0.10"
+hex = "0.4"
+base64 = "0.22"
+percent-encoding = "2.3"
+regex = "1.11"
+hmac = "0.12"
+
+# Tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Error handling
+thiserror = "2.0"
+anyhow = "1.0"
+
+# Concurrency
+parking_lot = "0.12"
+
+[dev-dependencies]
+aws-config = "1.5"
+aws-sdk-s3 = "1.65"
+reqwest = { version = "0.12", features = ["json"] }
+tokio-test = "0.4"
+tempfile = "3.14"
+
+[[bin]]
+name = "cloudemu"
+path = "src/main.rs"

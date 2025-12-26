@@ -1,0 +1,41 @@
+[package]
+name = "cloudkit-aws"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "AWS provider for CloudKit multi-cloud SDK"
+keywords = ["cloud", "aws", "s3", "dynamodb", "lambda"]
+categories = ["api-bindings", "asynchronous"]
+
+[features]
+default = ["s3", "dynamodb", "sqs", "sns", "lambda"]
+s3 = ["dep:aws-sdk-s3"]
+dynamodb = ["dep:aws-sdk-dynamodb"]
+sqs = ["dep:aws-sdk-sqs"]
+sns = ["dep:aws-sdk-sns"]
+lambda = ["dep:aws-sdk-lambda"]
+
+[dependencies]
+cloudkit = { workspace = true }
+tokio = { workspace = true }
+async-trait = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+bytes = { workspace = true }
+chrono = { workspace = true }
+
+# AWS SDK
+aws-config = { workspace = true }
+aws-sdk-s3 = { workspace = true, optional = true }
+aws-sdk-dynamodb = { workspace = true, optional = true }
+aws-sdk-sqs = { workspace = true, optional = true }
+aws-sdk-sns = { workspace = true, optional = true }
+aws-sdk-lambda = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }
