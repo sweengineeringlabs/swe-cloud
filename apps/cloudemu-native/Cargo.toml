@@ -1,0 +1,10 @@
+[package]
+name = "cloudemu-native"
+version.workspace = true
+edition = "2024"
+
+[dependencies]
+iced = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

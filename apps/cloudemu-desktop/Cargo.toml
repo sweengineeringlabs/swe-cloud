@@ -1,0 +1,12 @@
+[package]
+name = "cloudemu-desktop"
+version.workspace = true
+edition = "2024"
+
+[dependencies]
+cloudemu-ui = { path = "../../frontend" }
+dioxus = { workspace = true }
+dioxus-desktop = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

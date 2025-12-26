@@ -1,0 +1,85 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/cloudkit",
+    "crates/cloudkit-aws",
+    "crates/cloudkit-azure",
+    "crates/cloudkit-gcp",
+    "crates/cloudkit-oracle",
+    "crates/cloudemu",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT OR Apache-2.0"
+authors = ["PHD Systems <dev@phdsystems.com>"]
+repository = "https://github.com/phdsystems/cloudkit"
+keywords = ["cloud", "aws", "azure", "gcp", "oracle", "multi-cloud"]
+categories = ["api-bindings", "asynchronous", "network-programming"]
+
+[workspace.dependencies]
+# Core dependencies
+tokio = { version = "1.42", features = ["full"] }
+async-trait = "0.1"
+thiserror = "2.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# HTTP client
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+
+# Date/Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID
+uuid = { version = "1.11", features = ["v4", "serde"] }
+
+# Bytes handling
+bytes = "1.9"
+
+# Futures
+futures = "0.3"
+
+# Testing
+mockall = "0.13"
+wiremock = "0.6"
+tokio-test = "0.4"
+
+# AWS SDK
+aws-config = "1.5"
+aws-sdk-s3 = "1.65"
+aws-sdk-dynamodb = "1.56"
+aws-sdk-sqs = "1.51"
+aws-sdk-sns = "1.53"
+aws-sdk-lambda = "1.60"
+
+# Azure SDK
+azure_core = "0.21"
+azure_storage = "0.21"
+azure_storage_blobs = "0.21"
+
+# GCP
+google-cloud-storage = "0.22"
+google-cloud-pubsub = "0.29"
+
+# Workspace crates
+cloudkit = { path = "crates/cloudkit" }
+cloudkit-aws = { path = "crates/cloudkit-aws" }
+cloudkit-azure = { path = "crates/cloudkit-azure" }
+cloudkit-gcp = { path = "crates/cloudkit-gcp" }
+cloudkit-oracle = { path = "crates/cloudkit-oracle" }
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+debug = true

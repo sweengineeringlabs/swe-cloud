@@ -55,3 +55,28 @@ tarpaulin-report.html
 
 # Test artifacts
 /test-output/
+
+# WASM/Frontend
+/frontend/dist/
+/frontend/pkg/
+*.wasm
+wasm-pack.log
+
+# Dioxus
+/apps/cloudemu-desktop/dist/
+/apps/cloudemu-web/dist/
+.dioxus/
+
+# Tauri
+/apps/cloudemu-desktop/src-tauri/target/
+/apps/cloudemu-desktop/src-tauri/WixTools/
+/apps/cloudemu-desktop/src-tauri/icons/
+
+# Trunk
+.trunk/
+
+# Node (if using for styling)
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
