@@ -11,9 +11,17 @@ keywords = ["cloud", "gcp", "gcs", "bigquery", "pubsub"]
 categories = ["api-bindings", "asynchronous"]
 
 [features]
-default = ["gcs", "pubsub"]
+# Features
+default = ["gcs", "pubsub", "firestore", "secrets", "monitor", "eventarc", "identity", "kms", "workflows"]
 gcs = ["dep:google-cloud-storage"]
 pubsub = ["dep:google-cloud-pubsub"]
+firestore = []
+secrets = []
+monitor = []
+eventarc = []
+identity = []
+kms = []
+workflows = []
 
 [dependencies]
 cloudkit = { workspace = true }
@@ -25,6 +33,7 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 bytes = { workspace = true }
 chrono = { workspace = true }
+uuid = { workspace = true }
 
 # GCP SDK
 google-cloud-storage = { workspace = true, optional = true }

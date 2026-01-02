@@ -4,6 +4,25 @@ use cloudkit::common::{CloudConfig, CloudResult, Region};
 use cloudkit::core::{CloudContext, ProviderType};
 use std::sync::Arc;
 
+#[cfg(feature = "gcs")]
+use crate::gcs::GcsStorage;
+#[cfg(feature = "pubsub")]
+use crate::pubsub::GcpPubSub;
+#[cfg(feature = "firestore")]
+use crate::firestore::GcpFirestore;
+#[cfg(feature = "secrets")]
+use crate::secrets::GcpSecretManager;
+#[cfg(feature = "monitor")]
+use crate::monitor::GcpMonitor;
+#[cfg(feature = "eventarc")]
+use crate::eventarc::GcpEventarc;
+#[cfg(feature = "identity")]
+use crate::identity::GcpIdentity;
+#[cfg(feature = "kms")]
+use crate::kms::GcpKms;
+#[cfg(feature = "workflows")]
+use crate::workflows::GcpWorkflows;
+
 /// GCP client builder.
 pub struct GcpBuilder {
     region: Option<Region>,
@@ -80,5 +99,59 @@ impl GcpClient {
     /// Get the project ID.
     pub fn project_id(&self) -> Option<&str> {
         self.project_id.as_deref()
+    }
+
+    /// Get object storage client.
+    #[cfg(feature = "gcs")]
+    pub fn storage(&self) -> GcsStorage {
+        GcsStorage::new(self.context.clone())
+    }
+
+    /// Get message queue client.
+    #[cfg(feature = "pubsub")]
+    pub fn queue(&self) -> GcpPubSub {
+        GcpPubSub::new(self.context.clone())
+    }
+
+    /// Get key-value store client.
+    #[cfg(feature = "firestore")]
+    pub fn kv_store(&self) -> GcpFirestore {
+        GcpFirestore::new(self.context.clone())
+    }
+
+    /// Get secrets manager client.
+    #[cfg(feature = "secrets")]
+    pub fn secrets(&self) -> GcpSecretManager {
+        GcpSecretManager::new(self.context.clone())
+    }
+
+    /// Get monitor client (metrics & logging).
+    #[cfg(feature = "monitor")]
+    pub fn monitor(&self) -> GcpMonitor {
+        GcpMonitor::new(self.context.clone())
+    }
+
+    /// Get event bus client.
+    #[cfg(feature = "eventarc")]
+    pub fn events(&self) -> GcpEventarc {
+        GcpEventarc::new(self.context.clone())
+    }
+
+    /// Get identity provider client.
+    #[cfg(feature = "identity")]
+    pub fn identity(&self) -> GcpIdentity {
+        GcpIdentity::new(self.context.clone())
+    }
+
+    /// Get KMS client.
+    #[cfg(feature = "kms")]
+    pub fn kms(&self) -> GcpKms {
+        GcpKms::new(self.context.clone())
+    }
+
+    /// Get workflows client.
+    #[cfg(feature = "workflows")]
+    pub fn workflows(&self) -> GcpWorkflows {
+        GcpWorkflows::new(self.context.clone())
     }
 }
