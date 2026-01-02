@@ -286,3 +286,264 @@ impl IdentityProvider for CognitoIdentityProvider {
         Ok(vec![])
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cloudkit::api::{ChallengeType, CreateUserOptions};
+    use cloudkit::core::ProviderType;
+
+    async fn create_test_context() -> Arc<CloudContext> {
+        Arc::new(
+            CloudContext::builder(ProviderType::Aws)
+                .build()
+                .await
+                .unwrap(),
+        )
+    }
+
+    // User Management Tests
+
+    #[tokio::test]
+    async fn test_cognito_new() {
+        let context = create_test_context().await;
+        let _cognito = CognitoIdentityProvider::new(context);
+    }
+
+    #[tokio::test]
+    async fn test_create_user() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito
+            .create_user("testuser", Some("test@example.com"), CreateUserOptions::default())
+            .await;
+
+        assert!(result.is_ok());
+        let user = result.unwrap();
+        assert_eq!(user.username, "testuser");
+        assert_eq!(user.email, Some("test@example.com".to_string()));
+    }
+
+    #[tokio::test]
+    async fn test_create_user_no_email() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito
+            .create_user("testuser", None, CreateUserOptions::default())
+            .await;
+
+        assert!(result.is_ok());
+        assert!(result.unwrap().email.is_none());
+    }
+
+    #[tokio::test]
+    async fn test_get_user_not_found() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.get_user("nonexistent").await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_update_user() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let mut attrs = Metadata::new();
+        attrs.insert("phone_number".to_string(), "+1234567890".to_string());
+
+        let result = cognito.update_user("testuser", attrs).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_delete_user() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.delete_user("testuser").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_enable_user() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.enable_user("testuser").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_disable_user() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.disable_user("testuser").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_list_users() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.list_users(Some(10)).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_search_users() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.search_users("email = \"test@example.com\"").await;
+        assert!(result.is_ok());
+    }
+
+    // Authentication Tests
+
+    #[tokio::test]
+    async fn test_initiate_auth_invalid() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.initiate_auth("testuser", "wrongpassword").await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_respond_to_challenge() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let responses = Metadata::new();
+        let result = cognito
+            .respond_to_challenge(ChallengeType::SmsMfa, "session-token", responses)
+            .await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_refresh_tokens_invalid() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.refresh_tokens("invalid-refresh-token").await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_sign_out() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.sign_out("access-token").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_forgot_password() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.forgot_password("testuser").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_confirm_forgot_password() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito
+            .confirm_forgot_password("testuser", "123456", "newpassword")
+            .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_change_password() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito
+            .change_password("access-token", "oldpassword", "newpassword")
+            .await;
+        assert!(result.is_ok());
+    }
+
+    // Group Tests
+
+    #[tokio::test]
+    async fn test_create_group() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito
+            .create_group("admins", Some("Administrator group"))
+            .await;
+
+        assert!(result.is_ok());
+        let group = result.unwrap();
+        assert_eq!(group.name, "admins");
+        assert_eq!(group.description, Some("Administrator group".to_string()));
+    }
+
+    #[tokio::test]
+    async fn test_delete_group() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.delete_group("admins").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_list_groups() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.list_groups().await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_add_user_to_group() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.add_user_to_group("testuser", "admins").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_remove_user_from_group() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.remove_user_from_group("testuser", "admins").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_list_user_groups() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.list_user_groups("testuser").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_list_users_in_group() {
+        let context = create_test_context().await;
+        let cognito = CognitoIdentityProvider::new(context);
+
+        let result = cognito.list_users_in_group("admins").await;
+        assert!(result.is_ok());
+    }
+}

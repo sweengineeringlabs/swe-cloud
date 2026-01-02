@@ -211,3 +211,229 @@ impl WorkflowService for StepFunctions {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cloudkit::api::{ExecutionFilter, ExecutionStatus, StartExecutionOptions, WorkflowDefinition};
+    use cloudkit::core::ProviderType;
+    use serde_json::json;
+
+    async fn create_test_context() -> Arc<CloudContext> {
+        Arc::new(
+            CloudContext::builder(ProviderType::Aws)
+                .build()
+                .await
+                .unwrap(),
+        )
+    }
+
+    #[tokio::test]
+    async fn test_step_functions_new() {
+        let context = create_test_context().await;
+        let _sf = StepFunctions::new(context);
+    }
+
+    #[tokio::test]
+    async fn test_create_workflow() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let definition = WorkflowDefinition::new(
+            "order-processing",
+            json!({
+                "StartAt": "ProcessOrder",
+                "States": {
+                    "ProcessOrder": {
+                        "Type": "Task",
+                        "End": true
+                    }
+                }
+            }),
+        );
+
+        let result = sf.create_workflow(definition).await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().contains("order-processing"));
+    }
+
+    #[tokio::test]
+    async fn test_update_workflow() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf
+            .update_workflow(
+                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
+                json!({"StartAt": "NewState"}),
+            )
+            .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_delete_workflow() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf
+            .delete_workflow("arn:aws:states:us-east-1:123456789012:stateMachine:test")
+            .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_describe_workflow_not_found() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf
+            .describe_workflow("arn:aws:states:us-east-1:123456789012:stateMachine:nonexistent")
+            .await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_list_workflows() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf.list_workflows().await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().is_empty());
+    }
+
+    #[tokio::test]
+    async fn test_start_execution() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf
+            .start_execution(
+                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
+                json!({"orderId": "12345"}),
+                StartExecutionOptions::default(),
+            )
+            .await;
+
+        assert!(result.is_ok());
+        let execution = result.unwrap();
+        assert_eq!(execution.status, ExecutionStatus::Running);
+        assert!(execution.input.is_some());
+    }
+
+    #[tokio::test]
+    async fn test_start_execution_with_name() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let options = StartExecutionOptions {
+            name: Some("my-execution".to_string()),
+            trace_header: None,
+        };
+
+        let result = sf
+            .start_execution(
+                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
+                json!({}),
+                options,
+            )
+            .await;
+
+        assert!(result.is_ok());
+        assert!(result.unwrap().execution_id.contains("my-execution"));
+    }
+
+    #[tokio::test]
+    async fn test_stop_execution() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf
+            .stop_execution("execution-123", Some("UserAborted"), Some("User cancelled"))
+            .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_describe_execution_not_found() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf.describe_execution("nonexistent-execution").await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_list_executions() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf
+            .list_executions(
+                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
+                ExecutionFilter::default(),
+            )
+            .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_list_executions_with_status_filter() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let filter = ExecutionFilter {
+            status: Some(ExecutionStatus::Running),
+            max_results: Some(10),
+        };
+
+        let result = sf
+            .list_executions(
+                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
+                filter,
+            )
+            .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_get_execution_history() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf.get_execution_history("execution-123").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_send_task_success() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf
+            .send_task_success("task-token-abc", json!({"result": "success"}))
+            .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_send_task_failure() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf
+            .send_task_failure("task-token-abc", "ValidationError", "Invalid input")
+            .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_send_task_heartbeat() {
+        let context = create_test_context().await;
+        let sf = StepFunctions::new(context);
+
+        let result = sf.send_task_heartbeat("task-token-abc").await;
+        assert!(result.is_ok());
+    }
+}

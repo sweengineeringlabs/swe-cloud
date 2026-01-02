@@ -154,3 +154,153 @@ impl SecretsManager for AwsSecretsManager {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cloudkit::api::CreateSecretOptions;
+    use cloudkit::core::ProviderType;
+
+    async fn create_test_context() -> Arc<CloudContext> {
+        Arc::new(
+            CloudContext::builder(ProviderType::Aws)
+                .build()
+                .await
+                .unwrap(),
+        )
+    }
+
+    #[tokio::test]
+    async fn test_secrets_manager_new() {
+        let context = create_test_context().await;
+        let _manager = AwsSecretsManager::new(context);
+    }
+
+    #[tokio::test]
+    async fn test_create_secret() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager
+            .create_secret("test-secret", "secret-value", CreateSecretOptions::default())
+            .await;
+
+        assert!(result.is_ok());
+        let metadata = result.unwrap();
+        assert_eq!(metadata.name, "test-secret");
+    }
+
+    #[tokio::test]
+    async fn test_get_secret_not_found() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.get_secret("nonexistent").await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_get_secret_version_not_found() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.get_secret_version("secret", "v1").await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_update_secret() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.update_secret("test-secret", "new-value").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_delete_secret() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.delete_secret("test-secret", false).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_delete_secret_force() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.delete_secret("test-secret", true).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_restore_secret() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.restore_secret("deleted-secret").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_list_secrets() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.list_secrets().await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().is_empty());
+    }
+
+    #[tokio::test]
+    async fn test_describe_secret() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.describe_secret("my-secret").await;
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().name, "my-secret");
+    }
+
+    #[tokio::test]
+    async fn test_list_secret_versions() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.list_secret_versions("my-secret").await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().is_empty());
+    }
+
+    #[tokio::test]
+    async fn test_rotate_secret() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.rotate_secret("my-secret").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_tag_secret() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let mut tags = Metadata::new();
+        tags.insert("env".to_string(), "prod".to_string());
+
+        let result = manager.tag_secret("my-secret", tags).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_untag_secret() {
+        let context = create_test_context().await;
+        let manager = AwsSecretsManager::new(context);
+
+        let result = manager.untag_secret("my-secret", &["env", "team"]).await;
+        assert!(result.is_ok());
+    }
+}

@@ -174,3 +174,171 @@ impl EventBus for AwsEventBridge {
         Ok(vec![])
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cloudkit::api::{Event, EventRule, EventTarget, RuleState};
+    use cloudkit::core::ProviderType;
+    use serde_json::json;
+
+    async fn create_test_context() -> Arc<CloudContext> {
+        Arc::new(
+            CloudContext::builder(ProviderType::Aws)
+                .build()
+                .await
+                .unwrap(),
+        )
+    }
+
+    #[tokio::test]
+    async fn test_eventbridge_new() {
+        let context = create_test_context().await;
+        let _eb = AwsEventBridge::new(context);
+    }
+
+    #[tokio::test]
+    async fn test_put_events() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let events = vec![
+            Event::new("myapp.orders", "OrderCreated", json!({"orderId": "123"})),
+            Event::new("myapp.orders", "OrderShipped", json!({"orderId": "124"})),
+        ];
+
+        let result = eb.put_events("default", events).await;
+        assert!(result.is_ok());
+        let put_result = result.unwrap();
+        assert_eq!(put_result.successful_count, 2);
+        assert_eq!(put_result.failed_count, 0);
+    }
+
+    #[tokio::test]
+    async fn test_create_event_bus() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let result = eb.create_event_bus("my-custom-bus").await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().contains("my-custom-bus"));
+    }
+
+    #[tokio::test]
+    async fn test_delete_event_bus() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let result = eb.delete_event_bus("my-custom-bus").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_list_event_buses() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let result = eb.list_event_buses().await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().contains(&"default".to_string()));
+    }
+
+    #[tokio::test]
+    async fn test_put_rule_pattern() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let rule = EventRule::pattern(
+            "order-events",
+            json!({
+                "source": ["myapp.orders"],
+                "detail-type": ["OrderCreated"]
+            }),
+        );
+
+        let result = eb.put_rule("default", rule).await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().contains("order-events"));
+    }
+
+    #[tokio::test]
+    async fn test_put_rule_schedule() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let rule = EventRule::schedule("daily-backup", "rate(1 day)");
+
+        let result = eb.put_rule("default", rule).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_delete_rule() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let result = eb.delete_rule("default", "my-rule").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_enable_rule() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let result = eb.enable_rule("default", "my-rule").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_disable_rule() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let result = eb.disable_rule("default", "my-rule").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_list_rules() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let result = eb.list_rules("default").await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_put_targets() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let targets = vec![
+            EventTarget::new("target-1", "arn:aws:lambda:us-east-1:123456789012:function:process"),
+            EventTarget::new("target-2", "arn:aws:sqs:us-east-1:123456789012:queue"),
+        ];
+
+        let result = eb.put_targets("default", "my-rule", targets).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_remove_targets() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let result = eb
+            .remove_targets("default", "my-rule", &["target-1", "target-2"])
+            .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_list_targets() {
+        let context = create_test_context().await;
+        let eb = AwsEventBridge::new(context);
+
+        let result = eb.list_targets("default", "my-rule").await;
+        assert!(result.is_ok());
+    }
+}
