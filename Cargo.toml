@@ -71,6 +71,13 @@ aws-sdk-dynamodb = "1.55"
 aws-sdk-sqs = "1.52"
 aws-sdk-sns = "1.52"
 aws-sdk-lambda = "1.56"
+aws-sdk-secretsmanager = "1.60"
+aws-sdk-cloudwatch = "1.60"
+aws-sdk-cloudwatchlogs = "1.60"
+aws-sdk-eventbridge = "1.60"
+aws-sdk-sfn = "1.60"
+aws-sdk-cognitoidentityprovider = "1.60"
+aws-sdk-kms = "1.60"
 
 # Azure SDK
 azure_core = "0.21"

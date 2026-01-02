@@ -11,12 +11,18 @@ keywords = ["cloud", "aws", "s3", "dynamodb", "lambda"]
 categories = ["api-bindings", "asynchronous"]
 
 [features]
-default = ["s3", "dynamodb", "sqs", "sns", "lambda"]
+default = ["s3", "dynamodb", "sqs", "sns", "lambda", "secrets", "cloudwatch", "eventbridge", "stepfunctions", "cognito", "kms"]
 s3 = ["dep:aws-sdk-s3"]
 dynamodb = ["dep:aws-sdk-dynamodb"]
 sqs = ["dep:aws-sdk-sqs"]
 sns = ["dep:aws-sdk-sns"]
 lambda = ["dep:aws-sdk-lambda"]
+secrets = ["dep:aws-sdk-secretsmanager"]
+cloudwatch = ["dep:aws-sdk-cloudwatch", "dep:aws-sdk-cloudwatchlogs"]
+eventbridge = ["dep:aws-sdk-eventbridge"]
+stepfunctions = ["dep:aws-sdk-sfn"]
+cognito = ["dep:aws-sdk-cognitoidentityprovider"]
+kms = ["dep:aws-sdk-kms"]
 
 [dependencies]
 cloudkit = { workspace = true }
@@ -28,6 +34,7 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 bytes = { workspace = true }
 chrono = { workspace = true }
+uuid = { workspace = true }
 
 # AWS SDK
 aws-config = { workspace = true }
@@ -36,6 +43,13 @@ aws-sdk-dynamodb = { workspace = true, optional = true }
 aws-sdk-sqs = { workspace = true, optional = true }
 aws-sdk-sns = { workspace = true, optional = true }
 aws-sdk-lambda = { workspace = true, optional = true }
+aws-sdk-secretsmanager = { workspace = true, optional = true }
+aws-sdk-cloudwatch = { workspace = true, optional = true }
+aws-sdk-cloudwatchlogs = { workspace = true, optional = true }
+aws-sdk-eventbridge = { workspace = true, optional = true }
+aws-sdk-sfn = { workspace = true, optional = true }
+aws-sdk-cognitoidentityprovider = { workspace = true, optional = true }
+aws-sdk-kms = { workspace = true, optional = true }
 
 [dev-dependencies]
 tokio-test = { workspace = true }

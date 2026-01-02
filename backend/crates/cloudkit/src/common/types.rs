@@ -2,7 +2,11 @@
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use uuid::Uuid;
+
+/// Metadata type for key-value pairs (tags, attributes, etc).
+pub type Metadata = HashMap<String, String>;
 
 /// Unique identifier for cloud resources.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
