@@ -6,6 +6,11 @@
 //!
 //! - **Blob Storage** - Object storage (feature: `blob`)
 //! - **Cosmos DB** - Key-value store (feature: `cosmos`)
+//! - **Key Vault** - Secrets management (feature: `keyvault`)
+//! - **Azure Monitor** - Metrics and logging (feature: `monitor`)
+//! - **Event Grid** - Event routing (feature: `eventgrid`)
+//! - **Azure AD** - Identity provider (feature: `identity`)
+//! - **Service Bus** - Message queue (feature: `servicebus`)
 //!
 //! ## Usage
 //!
@@ -30,10 +35,46 @@
 
 mod builder;
 
+#[cfg(feature = "blob")]
+mod blob;
+
+#[cfg(feature = "cosmos")]
+mod cosmos;
+
+#[cfg(feature = "keyvault")]
+mod keyvault;
+
+#[cfg(feature = "monitor")]
+mod monitor;
+
+#[cfg(feature = "eventgrid")]
+mod eventgrid;
+
+#[cfg(feature = "identity")]
+mod identity;
+
+#[cfg(feature = "servicebus")]
+mod servicebus;
+
 pub use builder::*;
 
-/// Azure Blob Storage implementation.
-pub struct AzureBlobStorage;
+#[cfg(feature = "blob")]
+pub use blob::*;
 
-/// Azure Cosmos DB implementation.
-pub struct AzureCosmosDb;
+#[cfg(feature = "cosmos")]
+pub use cosmos::*;
+
+#[cfg(feature = "keyvault")]
+pub use keyvault::*;
+
+#[cfg(feature = "monitor")]
+pub use monitor::*;
+
+#[cfg(feature = "eventgrid")]
+pub use eventgrid::*;
+
+#[cfg(feature = "identity")]
+pub use identity::*;
+
+#[cfg(feature = "servicebus")]
+pub use servicebus::*;

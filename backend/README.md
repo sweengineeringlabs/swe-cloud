@@ -19,7 +19,7 @@ A unified, type-safe Rust SDK for interacting with multiple cloud providers thro
 | Provider | Status | Services |
 |----------|--------|----------|
 | **AWS** | 🟢 Active | S3, DynamoDB, SQS, SNS, Lambda |
-| **Azure** | 🟡 In Progress | Blob Storage, Cosmos DB, Service Bus |
+| **Azure** | � Active | Blob Storage, Cosmos DB, Key Vault, Monitor, Event Grid, Identity, Service Bus |
 | **GCP** | 🟡 In Progress | Cloud Storage, Pub/Sub, BigQuery |
 | **Oracle** | 🔵 Planned | Object Storage, Autonomous DB, Streaming |
 
