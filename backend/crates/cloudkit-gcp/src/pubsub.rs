@@ -195,8 +195,40 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_pubsub_new() {
+    async fn test_pubsub_operations() {
         let context = create_test_context().await;
-        let _pubsub = GcpPubSub::new(context);
+        let queue = GcpPubSub::new(context);
+
+        // Queue/Topic operations
+        assert!(queue.create_queue("topic").await.is_ok());
+        assert!(queue.delete_queue("topic").await.is_ok());
+        let url = queue.get_queue_url("topic").await.unwrap();
+        assert!(url.contains("projects/my-project/topics/topic"));
+        assert!(queue.list_queues(None).await.unwrap().is_empty());
+
+        // Message operations
+        let msg_id = queue.send("topic", "hello").await;
+        assert!(msg_id.is_ok()); // Returns UUID
+        
+        let batch_ids = queue.send_batch("topic", &["msg1", "msg2"]).await;
+        assert_eq!(batch_ids.unwrap().len(), 2);
+        
+        // Receive (stub returns empty)
+        let messages = queue.receive("subscription", ReceiveOptions::default()).await;
+        assert!(messages.unwrap().is_empty());
+
+        // Dummy message for delete assertions
+        let msg = Message {
+            id: ResourceId::new("msg-id"),
+            body: "body".to_string(),
+            receipt_handle: Some("receipt".to_string()),
+            attributes: Default::default(),
+            receive_count: 1,
+            sent_at: chrono::Utc::now(),
+            first_received_at: Some(chrono::Utc::now()),
+        };
+
+        assert!(queue.delete("subscription", &msg).await.is_ok());
+        assert!(queue.change_visibility("subscription", &msg, Duration::from_secs(30)).await.is_ok());
     }
 }

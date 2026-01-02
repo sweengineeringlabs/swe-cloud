@@ -323,8 +323,42 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_identity_new() {
+    async fn test_identity_operations() {
         let context = create_test_context().await;
-        let _identity = GcpIdentity::new(context);
+        let identity = GcpIdentity::new(context);
+
+        // User management
+        assert!(identity.create_user("user", Some("email"), CreateUserOptions::default()).await.is_ok());
+        assert!(identity.get_user("user").await.is_err()); // Stub returns NotFound
+        assert!(identity.update_user("user", Metadata::new()).await.is_ok());
+        assert!(identity.delete_user("user").await.is_ok());
+        assert!(identity.enable_user("user").await.is_ok());
+        assert!(identity.disable_user("user").await.is_ok());
+
+        assert!(identity.list_users(None).await.unwrap().is_empty());
+        assert!(identity.search_users("test").await.unwrap().is_empty());
+
+        // Authentication
+        let auth = identity.initiate_auth("user", "pass").await;
+        assert!(matches!(auth.unwrap(), InitiateAuthResult::Success(_)));
+
+        let challenge = identity.respond_to_challenge(ChallengeType::MfaSetup, "session", Metadata::new()).await;
+        assert!(matches!(challenge.unwrap(), InitiateAuthResult::Success(_)));
+
+        assert!(identity.refresh_tokens("token").await.is_ok());
+        assert!(identity.sign_out("token").await.is_ok());
+        assert!(identity.forgot_password("user").await.is_ok());
+        assert!(identity.confirm_forgot_password("user", "code", "pass").await.is_ok());
+        assert!(identity.change_password("token", "old", "new").await.is_ok());
+
+        // Groups
+        assert!(identity.create_group("group", None).await.is_ok());
+        assert!(identity.delete_group("group").await.is_ok());
+        assert!(identity.list_groups().await.unwrap().is_empty());
+
+        assert!(identity.add_user_to_group("user", "group").await.is_ok());
+        assert!(identity.remove_user_from_group("user", "group").await.is_ok());
+        assert!(identity.list_user_groups("user").await.unwrap().is_empty());
+        assert!(identity.list_users_in_group("group").await.unwrap().is_empty());
     }
 }

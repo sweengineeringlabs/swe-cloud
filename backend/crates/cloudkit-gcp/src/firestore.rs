@@ -194,6 +194,7 @@ impl KeyValueStore for GcpFirestore {
 mod tests {
     use super::*;
     use cloudkit::core::ProviderType;
+    use serde::Deserialize;
 
     async fn create_test_context() -> Arc<CloudContext> {
         Arc::new(
@@ -205,8 +206,33 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_firestore_new() {
+    async fn test_firestore_operations() {
         let context = create_test_context().await;
-        let _db = GcpFirestore::new(context);
+        let db = GcpFirestore::new(context);
+
+        #[derive(Debug, Serialize, Deserialize, PartialEq)]
+        struct TestItem {
+            id: String,
+            value: String,
+        }
+
+        let item = TestItem {
+            id: "1".to_string(),
+            value: "test".to_string(),
+        };
+
+        // Basic CRUD
+        assert!(db.put("users", "1", &item).await.is_ok());
+        assert!(!db.exists("users", "1").await.unwrap()); // Stub returns false
+        assert!(db.get::<TestItem>("users", "1").await.unwrap().is_none()); // Stub returns None
+        assert!(db.delete("users", "1").await.is_ok());
+        
+        // Batch operations
+        assert!(db.batch_write("users", &[("1", &item)]).await.is_ok());
+        assert!(db.batch_get::<TestItem>("users", &["1"]).await.unwrap().is_empty());
+
+        // Query
+        let query_result = db.query::<TestItem>("users", "p1", KvQueryOptions::default()).await;
+        assert!(query_result.unwrap().items.is_empty());
     }
 }

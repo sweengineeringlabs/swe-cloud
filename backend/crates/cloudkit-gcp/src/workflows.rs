@@ -234,8 +234,41 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_workflows_new() {
+    async fn test_workflow_operations() {
         let context = create_test_context().await;
-        let _wf = GcpWorkflows::new(context);
+        let wf = GcpWorkflows::new(context);
+
+        // Workflow Management
+        let def = WorkflowDefinition::new("my-workflow", serde_json::json!({"Steps": []}));
+        assert!(wf.create_workflow(def).await.is_ok());
+
+        assert!(wf.update_workflow("projects/my-project/locations/us-central1/workflows/my-workflow", serde_json::json!({})).await.is_ok());
+        
+        let desc = wf.describe_workflow("arn").await;
+        assert!(desc.is_ok());
+        assert_eq!(desc.unwrap().name, "mock-workflow");
+        
+        assert!(wf.list_workflows().await.unwrap().is_empty());
+        assert!(wf.delete_workflow("arn").await.is_ok());
+
+        // Execution
+        let exec = wf.start_execution("arn", serde_json::json!({}), StartExecutionOptions::default()).await;
+        assert!(exec.is_ok());
+        let exec = exec.unwrap();
+        assert_eq!(exec.status, ExecutionStatus::Running);
+        
+        assert!(wf.stop_execution(&exec.execution_id, None, None).await.is_ok());
+        
+        let desc_exec = wf.describe_execution(&exec.execution_id).await;
+        assert!(desc_exec.is_ok());
+        assert_eq!(desc_exec.unwrap().status, ExecutionStatus::Succeeded); // Stub returns Succeeded
+
+        assert!(wf.list_executions("arn", ExecutionFilter::default()).await.unwrap().is_empty());
+        assert!(wf.get_execution_history(&exec.execution_id).await.unwrap().is_empty());
+
+        // Task Tokens
+        assert!(wf.send_task_success("token", serde_json::json!({})).await.is_ok());
+        assert!(wf.send_task_failure("token", "err", "cause").await.is_ok());
+        assert!(wf.send_task_heartbeat("token").await.is_ok());
     }
 }

@@ -295,8 +295,41 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_kms_new() {
+    async fn test_kms_operations() {
         let context = create_test_context().await;
-        let _kms = GcpKms::new(context);
+        let kms = GcpKms::new(context);
+
+        // Key Lifecycle
+        assert!(kms.create_key(CreateKeyOptions::default()).await.is_ok());
+        assert!(kms.describe_key("key").await.is_ok());
+        assert!(kms.list_keys().await.unwrap().is_empty());
+        assert!(kms.enable_key("key").await.is_ok());
+        assert!(kms.disable_key("key").await.is_ok());
+        
+        assert!(kms.schedule_key_deletion("key", 7).await.is_ok());
+        assert!(kms.cancel_key_deletion("key").await.is_ok());
+        assert!(kms.update_key_description("key", "desc").await.is_ok());
+
+        // Encryption
+        let enc = kms.encrypt("key", b"data", None).await;
+        assert!(enc.is_ok());
+        
+        let dec = kms.decrypt(b"ciphertext", None).await;
+        assert!(dec.is_ok());
+        
+        assert!(kms.re_encrypt(b"ciphertext", "dest-key", None, None).await.is_ok());
+
+        // Data Keys
+        assert!(kms.generate_data_key("key", None).await.is_ok());
+        assert!(kms.generate_data_key_without_plaintext("key", None).await.is_ok());
+
+        // Signing
+        assert!(kms.sign("key", b"msg", SigningAlgorithm::RsassaPssSha256).await.is_ok());
+        assert!(kms.verify("key", b"msg", b"sig", SigningAlgorithm::RsassaPssSha256).await.unwrap());
+
+        // Tagging
+        assert!(kms.tag_key("key", Metadata::new()).await.is_ok());
+        assert!(kms.untag_key("key", &[]).await.is_ok());
+        assert!(kms.list_key_tags("key").await.unwrap().is_empty());
     }
 }

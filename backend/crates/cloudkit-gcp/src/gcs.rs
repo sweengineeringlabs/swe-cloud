@@ -254,11 +254,27 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_create_bucket() {
+    async fn test_gcs_operations() {
         let context = create_test_context().await;
         let storage = GcsStorage::new(context);
+
+        // Bucket operations
+        assert!(storage.create_bucket("bucket").await.is_ok());
+        assert!(storage.delete_bucket("bucket").await.is_ok());
+        assert!(storage.bucket_exists("bucket").await.unwrap());
+        assert!(storage.list_buckets().await.unwrap().is_empty());
+
+        // Object operations
+        assert!(storage.put_object("bucket", "key", b"data").await.is_ok());
+        assert!(storage.delete_object("bucket", "key").await.is_ok());
+        assert!(!storage.object_exists("bucket", "key").await.unwrap());
         
-        let result = storage.create_bucket("my-bucket").await;
-        assert!(result.is_ok());
+        // Get object (stub returns NotFound)
+        let result = storage.get_object("bucket", "key").await;
+        assert!(result.is_err());
+        
+        // Presigned URLs
+        let url = storage.presigned_get_url("bucket", "key", Duration::from_secs(60)).await;
+        assert!(url.unwrap().contains("storage.googleapis.com"));
     }
 }

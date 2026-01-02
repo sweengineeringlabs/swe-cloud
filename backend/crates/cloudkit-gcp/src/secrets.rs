@@ -172,8 +172,29 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_secret_manager_new() {
+    async fn test_secret_operations() {
         let context = create_test_context().await;
-        let _secrets = GcpSecretManager::new(context);
+        let secrets = GcpSecretManager::new(context);
+
+        // Basic operations
+        let metadata = secrets.create_secret("my-secret", "value", CreateSecretOptions::default()).await;
+        assert!(metadata.is_ok());
+        assert_eq!(metadata.unwrap().name, "my-secret");
+
+        // Get (stub returns NotFound)
+        assert!(secrets.get_secret("my-secret").await.is_err());
+        assert!(secrets.get_secret_version("my-secret", "1").await.is_err());
+
+        // Update/Delete
+        assert!(secrets.update_secret("my-secret", "new-value").await.is_ok());
+        assert!(secrets.delete_secret("my-secret", true).await.is_ok());
+        assert!(secrets.restore_secret("my-secret").await.is_ok());
+
+        // Listing
+        assert!(secrets.list_secrets().await.unwrap().is_empty());
+        assert!(secrets.list_secret_versions("my-secret").await.unwrap().is_empty());
+        
+        // Metadata
+        assert!(secrets.describe_secret("my-secret").await.is_ok());
     }
 }

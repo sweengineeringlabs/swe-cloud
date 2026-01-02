@@ -187,8 +187,49 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_eventarc_new() {
+    async fn test_eventarc_operations() {
         let context = create_test_context().await;
-        let _bus = GcpEventarc::new(context);
+        let bus = GcpEventarc::new(context);
+
+        // Bus operations
+        assert!(bus.create_event_bus("my-bus").await.is_ok());
+        assert!(bus.delete_event_bus("my-bus").await.is_ok());
+        assert!(bus.list_event_buses().await.unwrap().is_empty());
+
+        // Events
+        let event = Event {
+            id: "id".to_string(),
+            source: "source".to_string(),
+            detail_type: "type".to_string(),
+            detail: serde_json::json!({"key": "value"}),
+            resources: vec![],
+            time: chrono::Utc::now(),
+            trace_header: None,
+        };
+        
+        let result = bus.put_events("my-bus", vec![event]).await;
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().successful_count, 1);
+
+        // Rules
+        let rule = EventRule {
+            name: "rule".to_string(),
+            description: None,
+            event_pattern: Some(serde_json::json!({})),
+            schedule_expression: None,
+            state: cloudkit::api::RuleState::Enabled,
+            arn: None,
+        };
+
+        assert!(bus.put_rule("my-bus", rule).await.is_ok());
+        assert!(bus.enable_rule("my-bus", "rule").await.is_ok());
+        assert!(bus.disable_rule("my-bus", "rule").await.is_ok());
+        assert!(bus.list_rules("my-bus").await.unwrap().is_empty());
+        assert!(bus.delete_rule("my-bus", "rule").await.is_ok());
+
+        // Targets
+        assert!(bus.put_targets("my-bus", "rule", vec![]).await.is_ok());
+        assert!(bus.remove_targets("my-bus", "rule", &[]).await.is_ok());
+        assert!(bus.list_targets("my-bus", "rule").await.unwrap().is_empty());
     }
 }
