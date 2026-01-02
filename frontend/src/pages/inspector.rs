@@ -3,8 +3,8 @@ use crate::components::request_table::*;
 
 #[component]
 pub fn InspectorPage() -> Element {
-    let recording = use_signal(|| false);
-    let selected_request = use_signal(|| None::<ApiRequest>);
+    let mut recording = use_signal(|| false);
+    let mut selected_request = use_signal(|| None::<ApiRequest>);
 
     let requests = use_signal(|| vec![
         ApiRequest {
@@ -47,7 +47,7 @@ pub fn InspectorPage() -> Element {
                 h1 { "Request Inspector" }
                 button {
                     class: if *recording.read() { "btn-recording" } else { "btn-record" },
-                    onclick: move |_| recording.set(!*recording.read()),
+                    onclick: move |_| { let current = *recording.read(); recording.set(!current); },
                     if *recording.read() { "Stop Recording" } else { "Start Recording" }
                 }
             }

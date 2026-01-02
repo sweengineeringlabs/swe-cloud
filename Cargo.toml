@@ -11,6 +11,8 @@ members = [
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
+authors = ["SWE Engineering Labs"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/sweengineeringlabs/swe-cloud"
 
@@ -22,10 +24,21 @@ cloudemu = { path = "backend/crates/cloudemu" }
 # Async
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"
+futures = "0.3"
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+
+# HTTP
+reqwest = { version = "0.12", features = ["json"] }
+bytes = "1.9"
+
+# Date/Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID
+uuid = { version = "1", features = ["v4", "serde"] }
 
 # UI
 dioxus = { version = "0.6", features = ["web", "router"] }
@@ -45,3 +58,25 @@ anyhow = "1.0"
 # Logging
 tracing = "0.1"
 tracing-subscriber = "0.3"
+
+# Testing
+tokio-test = "0.4"
+mockall = "0.13"
+wiremock = "0.6"
+
+# AWS SDK
+aws-config = "1.5"
+aws-sdk-s3 = "1.65"
+aws-sdk-dynamodb = "1.55"
+aws-sdk-sqs = "1.52"
+aws-sdk-sns = "1.52"
+aws-sdk-lambda = "1.56"
+
+# Azure SDK
+azure_core = "0.21"
+azure_storage = "0.21"
+azure_storage_blobs = "0.21"
+
+# GCP SDK
+google-cloud-storage = "0.22"
+google-cloud-pubsub = "0.29"

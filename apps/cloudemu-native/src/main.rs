@@ -88,7 +88,7 @@ impl App {
                     .spacing(10)
                     .into()
                 })
-                .collect(),
+                .collect::<Vec<_>>(),
         )
         .spacing(10);
 

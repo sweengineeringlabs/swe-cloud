@@ -4,13 +4,14 @@ use async_trait::async_trait;
 use std::collections::HashMap;
 
 /// Log level.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub enum LogLevel {
     /// Trace level
     Trace,
     /// Debug level
     Debug,
-    /// Info level
+    /// Info level (default)
+    #[default]
     Info,
     /// Warning level
     Warn,

@@ -3,7 +3,7 @@ use crate::components::resource_tree::*;
 
 #[component]
 pub fn ExplorerPage() -> Element {
-    let selected = use_signal(|| None::<ResourceNode>);
+    let mut selected = use_signal(|| None::<ResourceNode>);
 
     let resources = vec![
         ResourceNode {
