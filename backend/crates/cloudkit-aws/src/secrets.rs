@@ -1,6 +1,7 @@
 //! AWS Secrets Manager implementation.
 
 use async_trait::async_trait;
+use aws_sdk_secretsmanager::Client;
 use cloudkit::api::{
     CreateSecretOptions, SecretMetadata, SecretVersion, SecretsManager,
 };
@@ -10,15 +11,23 @@ use std::sync::Arc;
 
 /// AWS Secrets Manager implementation.
 pub struct AwsSecretsManager {
-    context: Arc<CloudContext>,
-    // In a real implementation:
-    // client: aws_sdk_secretsmanager::Client,
+    _context: Arc<CloudContext>,
+    client: Client,
 }
 
 impl AwsSecretsManager {
     /// Create a new Secrets Manager client.
-    pub fn new(context: Arc<CloudContext>) -> Self {
-        Self { context }
+    pub fn new(context: Arc<CloudContext>, client: Client) -> Self {
+        Self { _context: context, client }
+    }
+
+    fn map_err<E>(e: aws_sdk_secretsmanager::error::SdkError<E>) -> CloudError 
+    where E: std::fmt::Debug {
+        CloudError::Provider {
+            provider: "aws".to_string(),
+            code: "SecretsManagerError".to_string(),
+            message: format!("{:?}", e),
+        }
     }
 }
 
@@ -28,129 +37,177 @@ impl SecretsManager for AwsSecretsManager {
         &self,
         name: &str,
         value: &str,
-        options: CreateSecretOptions,
+        _options: CreateSecretOptions,
     ) -> CloudResult<SecretMetadata> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            "create_secret called"
-        );
+        self.client
+            .create_secret()
+            .name(name)
+            .secret_string(value)
+            .send()
+            .await
+            .map_err(Self::map_err)?;
+            
         Ok(SecretMetadata::new(name))
     }
 
     async fn get_secret(&self, name: &str) -> CloudResult<String> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            "get_secret called"
-        );
-        Err(CloudError::NotFound {
-            resource_type: "Secret".to_string(),
-            resource_id: name.to_string(),
-        })
+        let resp = self.client
+            .get_secret_value()
+            .secret_id(name)
+            .send()
+            .await
+            .map_err(Self::map_err)?;
+
+        if let Some(s) = resp.secret_string {
+            Ok(s)
+        } else if let Some(b) = resp.secret_binary {
+            String::from_utf8(b.into_inner()).map_err(|e| CloudError::Serialization(e.to_string()))
+        } else {
+            Err(CloudError::NotFound {
+                resource_type: "SecretValue".to_string(),
+                resource_id: name.to_string(),
+            })
+        }
     }
 
     async fn get_secret_version(&self, name: &str, version_id: &str) -> CloudResult<String> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            version = %version_id,
-            "get_secret_version called"
-        );
-        Err(CloudError::NotFound {
-            resource_type: "SecretVersion".to_string(),
-            resource_id: format!("{}:{}", name, version_id),
-        })
+        let resp = self.client
+            .get_secret_value()
+            .secret_id(name)
+            .version_id(version_id)
+            .send()
+            .await
+            .map_err(Self::map_err)?;
+
+        if let Some(s) = resp.secret_string {
+            Ok(s)
+        } else if let Some(b) = resp.secret_binary {
+            String::from_utf8(b.into_inner()).map_err(|e| CloudError::Serialization(e.to_string()))
+        } else {
+            Err(CloudError::NotFound {
+                resource_type: "SecretValue".to_string(),
+                resource_id: format!("{}:{}", name, version_id),
+            })
+        }
     }
 
     async fn update_secret(&self, name: &str, value: &str) -> CloudResult<SecretMetadata> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            "update_secret called"
-        );
+        self.client
+            .put_secret_value()
+            .secret_id(name)
+            .secret_string(value)
+            .send()
+            .await
+            .map_err(Self::map_err)?;
+            
         Ok(SecretMetadata::new(name))
     }
 
     async fn delete_secret(&self, name: &str, force: bool) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            force = %force,
-            "delete_secret called"
-        );
+        let mut req = self.client.delete_secret().secret_id(name);
+        
+        if force {
+            req = req.force_delete_without_recovery(true);
+        }
+        
+        req.send().await.map_err(Self::map_err)?;
         Ok(())
     }
 
     async fn restore_secret(&self, name: &str) -> CloudResult<SecretMetadata> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            "restore_secret called"
-        );
+        self.client
+            .restore_secret()
+            .secret_id(name)
+            .send()
+            .await
+            .map_err(Self::map_err)?;
+            
         Ok(SecretMetadata::new(name))
     }
 
     async fn list_secrets(&self) -> CloudResult<Vec<SecretMetadata>> {
-        tracing::info!(provider = "aws", service = "secretsmanager", "list_secrets called");
-        Ok(vec![])
+        let resp = self.client
+            .list_secrets()
+            .max_results(100) // Simplification
+            .send()
+            .await
+            .map_err(Self::map_err)?;
+            
+        let secrets = resp.secret_list.unwrap_or_default();
+        let metadata = secrets.into_iter().map(|s| {
+            SecretMetadata::new(s.name.unwrap_or_default().as_str())
+            // Populate meta...
+        }).collect();
+        
+        Ok(metadata)
     }
 
     async fn describe_secret(&self, name: &str) -> CloudResult<SecretMetadata> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            "describe_secret called"
-        );
-        Ok(SecretMetadata::new(name))
+        let resp = self.client
+            .describe_secret()
+            .secret_id(name)
+            .send()
+            .await
+            .map_err(Self::map_err)?;
+            
+        Ok(SecretMetadata::new(resp.name.unwrap_or_default().as_str()))
     }
 
     async fn list_secret_versions(&self, name: &str) -> CloudResult<Vec<SecretVersion>> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            "list_secret_versions called"
-        );
-        Ok(vec![])
+        let resp = self.client
+            .list_secret_version_ids()
+            .secret_id(name)
+            .send()
+            .await
+            .map_err(Self::map_err)?;
+            
+        let versions = resp.versions.unwrap_or_default();
+        let result = versions.into_iter().map(|v| {
+            SecretVersion {
+                version_id: v.version_id.unwrap_or_default(),
+                stages: v.version_stages.unwrap_or_default(),
+                created_at: None, // conversion needed
+            }
+        }).collect();
+        
+        Ok(result)
     }
 
     async fn rotate_secret(&self, name: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            "rotate_secret called"
-        );
+        self.client
+            .rotate_secret()
+            .secret_id(name)
+            .send()
+            .await
+            .map_err(Self::map_err)?;
         Ok(())
     }
 
     async fn tag_secret(&self, name: &str, tags: Metadata) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            tag_count = %tags.len(),
-            "tag_secret called"
-        );
+        let aws_tags: Vec<aws_sdk_secretsmanager::types::Tag> = tags.into_iter()
+            .map(|(k, v)| aws_sdk_secretsmanager::types::Tag::builder().key(k).value(v).build())
+            .collect();
+            
+        self.client
+            .tag_resource()
+            .secret_id(name)
+            .set_tags(Some(aws_tags))
+            .send()
+            .await
+            .map_err(Self::map_err)?;
         Ok(())
     }
 
     async fn untag_secret(&self, name: &str, tag_keys: &[&str]) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "secretsmanager",
-            secret = %name,
-            key_count = %tag_keys.len(),
-            "untag_secret called"
-        );
+        let keys: Vec<String> = tag_keys.iter().map(|s| s.to_string()).collect();
+        
+        self.client
+            .untag_resource()
+            .secret_id(name)
+            .set_tag_keys(Some(keys))
+            .send()
+            .await
+            .map_err(Self::map_err)?;
         Ok(())
     }
 }
@@ -158,149 +215,37 @@ impl SecretsManager for AwsSecretsManager {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cloudkit::api::CreateSecretOptions;
-    use cloudkit::core::ProviderType;
+    use cloudkit::core::{ProviderType, CloudContext};
+    use aws_config::BehaviorVersion;
 
-    async fn create_test_context() -> Arc<CloudContext> {
-        Arc::new(
-            CloudContext::builder(ProviderType::Aws)
-                .build()
-                .await
-                .unwrap(),
-        )
+    async fn create_client() -> Option<AwsSecretsManager> {
+        let config = aws_config::load_defaults(BehaviorVersion::latest()).await;
+        // Check if creds available?
+        // Just try to build client.
+        let client = Client::new(&config);
+        let context = Arc::new(CloudContext::builder(ProviderType::Aws).build().await.ok()?);
+        Some(AwsSecretsManager::new(context, client))
     }
 
     #[tokio::test]
-    async fn test_secrets_manager_new() {
-        let context = create_test_context().await;
-        let _manager = AwsSecretsManager::new(context);
-    }
-
-    #[tokio::test]
-    async fn test_create_secret() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager
-            .create_secret("test-secret", "secret-value", CreateSecretOptions::default())
-            .await;
-
-        assert!(result.is_ok());
-        let metadata = result.unwrap();
-        assert_eq!(metadata.name, "test-secret");
-    }
-
-    #[tokio::test]
-    async fn test_get_secret_not_found() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.get_secret("nonexistent").await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_get_secret_version_not_found() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.get_secret_version("secret", "v1").await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_update_secret() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.update_secret("test-secret", "new-value").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_delete_secret() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.delete_secret("test-secret", false).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_delete_secret_force() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.delete_secret("test-secret", true).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_restore_secret() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.restore_secret("deleted-secret").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_secrets() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.list_secrets().await;
-        assert!(result.is_ok());
-        assert!(result.unwrap().is_empty());
-    }
-
-    #[tokio::test]
-    async fn test_describe_secret() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.describe_secret("my-secret").await;
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap().name, "my-secret");
-    }
-
-    #[tokio::test]
-    async fn test_list_secret_versions() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.list_secret_versions("my-secret").await;
-        assert!(result.is_ok());
-        assert!(result.unwrap().is_empty());
-    }
-
-    #[tokio::test]
-    async fn test_rotate_secret() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.rotate_secret("my-secret").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_tag_secret() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let mut tags = Metadata::new();
-        tags.insert("env".to_string(), "prod".to_string());
-
-        let result = manager.tag_secret("my-secret", tags).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_untag_secret() {
-        let context = create_test_context().await;
-        let manager = AwsSecretsManager::new(context);
-
-        let result = manager.untag_secret("my-secret", &["env", "team"]).await;
-        assert!(result.is_ok());
+    #[ignore]
+    async fn test_secrets_flow() {
+        let manager = create_client().await.expect("Failed to create client");
+        let name = "test-secret-" .to_string() + &uuid::Uuid::new_v4().to_string();
+        
+        // Create
+        let _ = manager.create_secret(&name, "initial-value", CreateSecretOptions::default()).await.unwrap();
+        
+        // Get
+        let val = manager.get_secret(&name).await.unwrap();
+        assert_eq!(val, "initial-value");
+        
+        // Update
+        manager.update_secret(&name, "new-value").await.unwrap();
+        let val = manager.get_secret(&name).await.unwrap();
+        assert_eq!(val, "new-value");
+        
+        // Delete
+        manager.delete_secret(&name, true).await.unwrap();
     }
 }

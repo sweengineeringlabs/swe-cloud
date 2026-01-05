@@ -3,72 +3,133 @@
 use async_trait::async_trait;
 use bytes::Bytes;
 use cloudkit::api::{GetOptions, ListOptions, ObjectStorage, PutOptions};
-use cloudkit::common::{BucketMetadata, CloudError, CloudResult, ListResult, ObjectMetadata, PaginationToken};
+use cloudkit::common::{
+    BucketMetadata, CloudError, CloudResult, ListResult, ObjectMetadata, PaginationToken,
+};
 use cloudkit::core::CloudContext;
+use google_cloud_storage::client::Client;
+use google_cloud_storage::http::buckets::delete::DeleteBucketRequest;
+use google_cloud_storage::http::buckets::insert::{
+    BucketCreationConfig, InsertBucketParam, InsertBucketRequest,
+};
+use google_cloud_storage::http::buckets::list::ListBucketsRequest;
+use google_cloud_storage::http::objects::delete::DeleteObjectRequest;
+use google_cloud_storage::http::objects::download::Range;
+use google_cloud_storage::http::objects::get::GetObjectRequest;
+use google_cloud_storage::http::objects::list::ListObjectsRequest;
+use google_cloud_storage::http::objects::upload::{Media, UploadObjectRequest, UploadType};
+use google_cloud_storage::sign::SignedURLMethod;
+use google_cloud_storage::sign::SignedURLOptions;
 use std::sync::Arc;
 use std::time::Duration;
 
 /// Google Cloud Storage implementation.
 pub struct GcsStorage {
-    _context: Arc<CloudContext>,
-    // In a real implementation:
-    // client: google_cloud_storage::client::Client,
+    context: Arc<CloudContext>,
+    client: Client,
+    project_id: String,
 }
 
 impl GcsStorage {
-    /// Create a new GCS client.
-    pub fn new(context: Arc<CloudContext>) -> Self {
-        Self { _context: context }
+    /// Create a new GCS storage client.
+    pub fn new(context: Arc<CloudContext>, client: Client, project_id: String) -> Self {
+        Self {
+            context,
+            client,
+            project_id,
+        }
+    }
+
+    fn map_err(e: google_cloud_storage::http::Error) -> CloudError {
+        CloudError::Provider {
+            provider: "gcp".to_string(),
+            code: "GcsError".to_string(),
+            message: e.to_string(),
+        }
+    }
+
+    fn to_utc(ts: time::OffsetDateTime) -> chrono::DateTime<chrono::Utc> {
+        chrono::DateTime::from_timestamp(ts.unix_timestamp(), ts.nanosecond()).unwrap_or_default()
     }
 }
 
 #[async_trait]
 impl ObjectStorage for GcsStorage {
     async fn list_buckets(&self) -> CloudResult<Vec<BucketMetadata>> {
-        tracing::info!(provider = "gcp", service = "gcs", "list_buckets called");
-        Ok(vec![])
+        tracing::debug!(provider = "gcp", service = "gcs", "list_buckets called");
+        let result = self
+            .client
+            .list_buckets(&ListBucketsRequest {
+                project: self.project_id.clone(),
+                ..Default::default()
+            })
+            .await
+            .map_err(Self::map_err)?;
+
+        let buckets = result
+            .items
+            .into_iter()
+            .map(|b| BucketMetadata {
+                name: b.name,
+                created_at: Self::to_utc(b.time_created.unwrap_or(time::OffsetDateTime::now_utc())),
+                region: b.location,
+                versioning_enabled: b.versioning.map(|v| v.enabled).unwrap_or(false),
+            })
+            .collect();
+
+        Ok(buckets)
     }
 
     async fn create_bucket(&self, bucket: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            "create_bucket called"
-        );
+        let config = BucketCreationConfig {
+            location: self.context.region().to_string(),
+            ..Default::default()
+        };
+
+        self.client
+            .insert_bucket(&InsertBucketRequest {
+                name: bucket.to_string(),
+                param: InsertBucketParam {
+                    project: self.project_id.clone(),
+                    ..Default::default()
+                },
+                bucket: config,
+            })
+            .await
+            .map_err(Self::map_err)?;
+
         Ok(())
     }
 
     async fn delete_bucket(&self, bucket: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            "delete_bucket called"
-        );
-        Ok(())
+        self.client
+            .delete_bucket(&DeleteBucketRequest {
+                bucket: bucket.to_string(),
+                ..Default::default()
+            })
+            .await
+            .map_err(Self::map_err)
     }
 
     async fn bucket_exists(&self, bucket: &str) -> CloudResult<bool> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            "bucket_exists called"
-        );
-        Ok(true)
+        match self
+            .client
+            .get_bucket(
+                &google_cloud_storage::http::buckets::get::GetBucketRequest {
+                    bucket: bucket.to_string(),
+                    ..Default::default()
+                },
+            )
+            .await
+        {
+            Ok(_) => Ok(true),
+            Err(_) => Ok(false),
+        }
     }
 
     async fn put_object(&self, bucket: &str, key: &str, data: &[u8]) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            object = %key,
-            size = %data.len(),
-            "put_object called"
-        );
-        Ok(())
+        self.put_object_with_options(bucket, key, data, PutOptions::default())
+            .await
     }
 
     async fn put_object_with_options(
@@ -78,29 +139,29 @@ impl ObjectStorage for GcsStorage {
         data: &[u8],
         _options: PutOptions,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            object = %key,
-            size = %data.len(),
-            "put_object_with_options called"
-        );
-        Ok(())
+        let upload_type = UploadType::Simple(Media {
+            name: key.to_string().into(),
+            content_type: "application/octet-stream".into(),
+            content_length: Some(data.len() as u64),
+        });
+
+        self.client
+            .upload_object(
+                &UploadObjectRequest {
+                    bucket: bucket.to_string(),
+                    ..Default::default()
+                },
+                data.to_vec(),
+                &upload_type,
+            )
+            .await
+            .map(|_| ())
+            .map_err(Self::map_err)
     }
 
     async fn get_object(&self, bucket: &str, key: &str) -> CloudResult<Bytes> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            object = %key,
-            "get_object called"
-        );
-        Err(CloudError::NotFound {
-            resource_type: "Object".to_string(),
-            resource_id: format!("{}/{}", bucket, key),
-        })
+        self.get_object_with_options(bucket, key, GetOptions::default())
+            .await
     }
 
     async fn get_object_with_options(
@@ -109,52 +170,63 @@ impl ObjectStorage for GcsStorage {
         key: &str,
         _options: GetOptions,
     ) -> CloudResult<Bytes> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            object = %key,
-            "get_object_with_options called"
-        );
-        Err(CloudError::NotFound {
-            resource_type: "Object".to_string(),
-            resource_id: format!("{}/{}", bucket, key),
-        })
+        let result = self
+            .client
+            .download_object(
+                &GetObjectRequest {
+                    bucket: bucket.to_string(),
+                    object: key.to_string(),
+                    ..Default::default()
+                },
+                &Range::default(),
+            )
+            .await
+            .map_err(Self::map_err)?;
+
+        Ok(Bytes::from(result))
     }
 
     async fn head_object(&self, bucket: &str, key: &str) -> CloudResult<ObjectMetadata> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            object = %key,
-            "head_object called"
-        );
-        Err(CloudError::NotFound {
-            resource_type: "Object".to_string(),
-            resource_id: format!("{}/{}", bucket, key),
+        let obj = self
+            .client
+            .get_object(&GetObjectRequest {
+                bucket: bucket.to_string(),
+                object: key.to_string(),
+                ..Default::default()
+            })
+            .await
+            .map_err(Self::map_err)?;
+
+        Ok(ObjectMetadata {
+            key: obj.name,
+            size: obj.size as u64,
+            last_modified: {
+                let ts = obj.updated.unwrap_or(time::OffsetDateTime::now_utc());
+                chrono::DateTime::from_timestamp(ts.unix_timestamp(), ts.nanosecond())
+                    .unwrap_or_default()
+            },
+            etag: Some(obj.etag),
+            content_type: obj.content_type,
+            storage_class: obj.storage_class,
+            metadata: std::collections::HashMap::new(),
         })
     }
 
     async fn delete_object(&self, bucket: &str, key: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            object = %key,
-            "delete_object called"
-        );
-        Ok(())
+        self.client
+            .delete_object(&DeleteObjectRequest {
+                bucket: bucket.to_string(),
+                object: key.to_string(),
+                ..Default::default()
+            })
+            .await
+            .map_err(Self::map_err)
     }
 
     async fn delete_objects(&self, bucket: &str, keys: &[&str]) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            count = %keys.len(),
-            "delete_objects called"
-        );
+        for key in keys {
+            self.delete_object(bucket, key).await?;
+        }
         Ok(())
     }
 
@@ -165,71 +237,113 @@ impl ObjectStorage for GcsStorage {
         dest_bucket: &str,
         dest_key: &str,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            source = %format!("{}/{}", source_bucket, source_key),
-            dest = %format!("{}/{}", dest_bucket, dest_key),
-            "copy_object called"
-        );
-        Ok(())
+        self.client
+            .rewrite_object(
+                &google_cloud_storage::http::objects::rewrite::RewriteObjectRequest {
+                    destination_bucket: dest_bucket.to_string(),
+                    destination_object: dest_key.to_string(),
+                    source_bucket: source_bucket.to_string(),
+                    source_object: source_key.to_string(),
+                    ..Default::default()
+                },
+            )
+            .await
+            .map(|_| ())
+            .map_err(Self::map_err)
     }
 
     async fn object_exists(&self, bucket: &str, key: &str) -> CloudResult<bool> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            object = %key,
-            "object_exists called"
-        );
-        Ok(false)
+        match self.head_object(bucket, key).await {
+            Ok(_) => Ok(true),
+            Err(_) => Ok(false),
+        }
     }
 
     async fn list_objects(
         &self,
         bucket: &str,
-        _options: ListOptions,
+        options: ListOptions,
     ) -> CloudResult<ListResult<ObjectMetadata>> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            "list_objects called"
-        );
-        Ok(ListResult::new(vec![], PaginationToken::none()))
+        let result = self
+            .client
+            .list_objects(&ListObjectsRequest {
+                bucket: bucket.to_string(),
+                prefix: options.prefix,
+                page_token: options.continuation_token,
+                max_results: options.max_results.map(|l| l as i32),
+                ..Default::default()
+            })
+            .await
+            .map_err(Self::map_err)?;
+
+        let items = result
+            .items
+            .unwrap_or_default()
+            .into_iter()
+            .map(|o| ObjectMetadata {
+                key: o.name,
+                size: o.size as u64,
+                last_modified: {
+                    let ts = o.updated.unwrap_or(time::OffsetDateTime::now_utc());
+                    chrono::DateTime::from_timestamp(ts.unix_timestamp(), ts.nanosecond())
+                        .unwrap_or_default()
+                },
+                etag: Some(o.etag),
+                content_type: o.content_type,
+                storage_class: o.storage_class,
+                metadata: std::collections::HashMap::new(),
+            })
+            .collect();
+
+        Ok(ListResult::new(
+            items,
+            result
+                .next_page_token
+                .map(PaginationToken::some)
+                .unwrap_or_else(PaginationToken::none),
+        ))
     }
 
     async fn presigned_get_url(
         &self,
         bucket: &str,
         key: &str,
-        _expires_in: Duration,
+        expires_in: Duration,
     ) -> CloudResult<String> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            object = %key,
-            "presigned_get_url called"
-        );
-        Ok(format!("https://storage.googleapis.com/{}/{}", bucket, key))
+        let opts = SignedURLOptions {
+            method: SignedURLMethod::GET,
+            expires: expires_in,
+            ..Default::default()
+        };
+        self.client
+            .signed_url(bucket, key, None, None, opts)
+            .await
+            .map_err(|e| CloudError::Provider {
+                provider: "gcp".to_string(),
+                code: "SignedUrlError".to_string(),
+                message: e.to_string(),
+            })
     }
 
     async fn presigned_put_url(
         &self,
         bucket: &str,
         key: &str,
-        _expires_in: Duration,
+        expires_in: Duration,
     ) -> CloudResult<String> {
-        tracing::info!(
-            provider = "gcp",
-            service = "gcs",
-            bucket = %bucket,
-            object = %key,
-            "presigned_put_url called"
-        );
-        Ok(format!("https://storage.googleapis.com/{}/{}", bucket, key))
+        let opts = SignedURLOptions {
+            method: SignedURLMethod::PUT,
+            expires: expires_in,
+            ..Default::default()
+        };
+        self.client
+            .signed_url(bucket, key, None, None, opts)
+            .await
+            .map_err(|e| CloudError::Provider {
+                provider: "gcp".to_string(),
+                code: "SignedUrlError".to_string(),
+                message: e.to_string(),
+            })
     }
 }
 
@@ -238,43 +352,29 @@ mod tests {
     use super::*;
     use cloudkit::core::ProviderType;
 
-    async fn create_test_context() -> Arc<CloudContext> {
-        Arc::new(
+    // Helper to generic test client if credentials exist
+    async fn create_client(context: Arc<CloudContext>) -> Option<Client> {
+        use google_cloud_storage::client::ClientConfig;
+        match ClientConfig::default().with_auth().await {
+            Ok(config) => Some(Client::new(config)),
+            Err(_) => None,
+        }
+    }
+
+    #[tokio::test]
+    #[ignore] // Integration test - requires creds
+    async fn test_gcs_operations() {
+        let context = Arc::new(
             CloudContext::builder(ProviderType::Gcp)
+                .project_id("test-project")
                 .build()
                 .await
                 .unwrap(),
-        )
-    }
+        );
 
-    #[tokio::test]
-    async fn test_gcs_new() {
-        let context = create_test_context().await;
-        let _storage = GcsStorage::new(context);
-    }
-
-    #[tokio::test]
-    async fn test_gcs_operations() {
-        let context = create_test_context().await;
-        let storage = GcsStorage::new(context);
-
-        // Bucket operations
-        assert!(storage.create_bucket("bucket").await.is_ok());
-        assert!(storage.delete_bucket("bucket").await.is_ok());
-        assert!(storage.bucket_exists("bucket").await.unwrap());
-        assert!(storage.list_buckets().await.unwrap().is_empty());
-
-        // Object operations
-        assert!(storage.put_object("bucket", "key", b"data").await.is_ok());
-        assert!(storage.delete_object("bucket", "key").await.is_ok());
-        assert!(!storage.object_exists("bucket", "key").await.unwrap());
-        
-        // Get object (stub returns NotFound)
-        let result = storage.get_object("bucket", "key").await;
-        assert!(result.is_err());
-        
-        // Presigned URLs
-        let url = storage.presigned_get_url("bucket", "key", Duration::from_secs(60)).await;
-        assert!(url.unwrap().contains("storage.googleapis.com"));
+        if let Some(client) = create_client(context.clone()).await {
+            let storage = GcsStorage::new(context, client, "test-project".to_string());
+            let _ = storage.list_buckets().await;
+        }
     }
 }

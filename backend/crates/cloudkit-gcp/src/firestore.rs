@@ -2,23 +2,31 @@
 
 use async_trait::async_trait;
 use cloudkit::api::{Condition, KeyValueStore, KvGetOptions, KvPutOptions, KvQueryOptions};
-use cloudkit::common::{CloudResult, ListResult, PaginationToken};
+use cloudkit::common::{CloudError, CloudResult, ListResult, PaginationToken};
 use cloudkit::core::CloudContext;
-use serde::{de::DeserializeOwned, Serialize};
+use firestore::{FirestoreDb, FirestoreResult};
+use serde::{Serialize, de::DeserializeOwned};
 use std::collections::HashMap;
 use std::sync::Arc;
 
 /// Google Cloud Firestore implementation.
 pub struct GcpFirestore {
-    _context: Arc<CloudContext>,
-    // In a real implementation:
-    // client: google_cloud_firestore::Client,
+    context: Arc<CloudContext>,
+    client: FirestoreDb,
 }
 
 impl GcpFirestore {
     /// Create a new Firestore client.
-    pub fn new(context: Arc<CloudContext>) -> Self {
-        Self { _context: context }
+    pub fn new(context: Arc<CloudContext>, client: FirestoreDb) -> Self {
+        Self { context, client }
+    }
+
+    fn map_err(e: firestore::errors::FirestoreError) -> CloudError {
+        CloudError::Provider {
+            provider: "gcp".to_string(),
+            code: "FirestoreError".to_string(),
+            message: e.to_string(),
+        }
     }
 }
 
@@ -29,14 +37,14 @@ impl KeyValueStore for GcpFirestore {
         table: &str,
         key: &str,
     ) -> CloudResult<Option<T>> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            document = %key,
-            "get called"
-        );
-        Ok(None)
+        self.client
+            .fluent()
+            .select()
+            .by_id_in(table)
+            .obj()
+            .one(key)
+            .await
+            .map_err(Self::map_err)
     }
 
     async fn get_with_options<T: DeserializeOwned + Send>(
@@ -45,58 +53,49 @@ impl KeyValueStore for GcpFirestore {
         key: &str,
         _options: KvGetOptions,
     ) -> CloudResult<Option<T>> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            document = %key,
-            "get_with_options called"
-        );
-        Ok(None)
+        // Options ignored for now
+        self.get(table, key).await
     }
 
     async fn put<T: Serialize + Send + Sync>(
         &self,
         table: &str,
         key: &str,
-        _item: &T,
+        item: &T,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            document = %key,
-            "put called"
-        );
-        Ok(())
+        let item_value =
+            serde_json::to_value(item).map_err(|e| CloudError::Serialization(e.to_string()))?;
+        self.client
+            .fluent()
+            .insert()
+            .into(table)
+            .document_id(key)
+            .object(&item_value)
+            .execute()
+            .await
+            .map_err(Self::map_err)
     }
 
     async fn put_with_options<T: Serialize + Send + Sync>(
         &self,
         table: &str,
         key: &str,
-        _item: &T,
+        item: &T,
         _options: KvPutOptions,
     ) -> CloudResult<Option<serde_json::Value>> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            document = %key,
-            "put_with_options called"
-        );
+        self.put(table, key, item).await?;
         Ok(None)
     }
 
     async fn delete(&self, table: &str, key: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            document = %key,
-            "delete called"
-        );
-        Ok(())
+        self.client
+            .fluent()
+            .delete()
+            .from(table)
+            .document_id(key)
+            .execute()
+            .await
+            .map_err(Self::map_err)
     }
 
     async fn delete_with_condition(
@@ -105,25 +104,22 @@ impl KeyValueStore for GcpFirestore {
         key: &str,
         _condition: Condition,
     ) -> CloudResult<bool> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            document = %key,
-            "delete_with_condition called"
-        );
+        // Conditions not fully supported yet in this binding
+        self.delete(table, key).await?;
         Ok(true)
     }
 
     async fn exists(&self, table: &str, key: &str) -> CloudResult<bool> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            document = %key,
-            "exists called"
-        );
-        Ok(false)
+        let result: Option<HashMap<String, serde_json::Value>> = self
+            .client
+            .fluent()
+            .select()
+            .by_id_in(table)
+            .obj()
+            .one(key)
+            .await
+            .map_err(Self::map_err)?;
+        Ok(result.is_some())
     }
 
     async fn update(
@@ -132,31 +128,37 @@ impl KeyValueStore for GcpFirestore {
         key: &str,
         updates: HashMap<String, serde_json::Value>,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            document = %key,
-            update_count = %updates.len(),
-            "update called"
-        );
-        Ok(())
+        // Update specific fields
+        // Firestore supports update with merge
+        self.client
+            .fluent()
+            .update()
+            .in_col(table)
+            .document_id(key)
+            .object(&updates)
+            .execute()
+            .await
+            .map_err(Self::map_err)
     }
 
     async fn query<T: DeserializeOwned + Send>(
         &self,
         table: &str,
-        partition_key: &str,
+        _partition_key: &str,
         _options: KvQueryOptions,
     ) -> CloudResult<ListResult<T>> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            partition = %partition_key,
-            "query called"
-        );
-        Ok(ListResult::new(vec![], PaginationToken::none()))
+        // Basic scan for now
+        let items: Vec<T> = self
+            .client
+            .fluent()
+            .select()
+            .from(table)
+            .obj()
+            .query()
+            .await
+            .map_err(Self::map_err)?;
+
+        Ok(ListResult::new(items, PaginationToken::none()))
     }
 
     async fn batch_get<T: DeserializeOwned + Send>(
@@ -164,14 +166,16 @@ impl KeyValueStore for GcpFirestore {
         table: &str,
         keys: &[&str],
     ) -> CloudResult<Vec<T>> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            key_count = %keys.len(),
-            "batch_get called"
-        );
-        Ok(vec![])
+        // Firestore doesn't have direct batch get in fluent API?
+        // It mostly likely does, or we execute in parallel.
+        // For now, serial fetch (suboptimal but correct).
+        let mut results = Vec::new();
+        for key in keys {
+            if let Some(item) = self.get(table, key).await? {
+                results.push(item);
+            }
+        }
+        Ok(results)
     }
 
     async fn batch_write<T: Serialize + Send + Sync>(
@@ -179,13 +183,11 @@ impl KeyValueStore for GcpFirestore {
         table: &str,
         items: &[(&str, &T)],
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "gcp",
-            service = "firestore",
-            collection = %table,
-            item_count = %items.len(),
-            "batch_write called"
-        );
+        // Support batch write via loop for v1
+        // Firestore has batch API but fluent needs to be checked.
+        for (key, item) in items {
+            self.put(table, key, *item).await?;
+        }
         Ok(())
     }
 }
@@ -194,7 +196,7 @@ impl KeyValueStore for GcpFirestore {
 mod tests {
     use super::*;
     use cloudkit::core::ProviderType;
-    use serde::Deserialize;
+    use serde::{Deserialize, Serialize};
 
     async fn create_test_context() -> Arc<CloudContext> {
         Arc::new(
@@ -206,9 +208,11 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_firestore_operations() {
         let context = create_test_context().await;
-        let db = GcpFirestore::new(context);
+        let db_client = FirestoreDb::new("test-project").await.unwrap();
+        let db = GcpFirestore::new(context, db_client);
 
         #[derive(Debug, Serialize, Deserialize, PartialEq)]
         struct TestItem {
@@ -223,16 +227,9 @@ mod tests {
 
         // Basic CRUD
         assert!(db.put("users", "1", &item).await.is_ok());
-        assert!(!db.exists("users", "1").await.unwrap()); // Stub returns false
-        assert!(db.get::<TestItem>("users", "1").await.unwrap().is_none()); // Stub returns None
+        assert!(db.exists("users", "1").await.unwrap());
+        let fetched = db.get::<TestItem>("users", "1").await.unwrap();
+        assert_eq!(fetched.unwrap(), item);
         assert!(db.delete("users", "1").await.is_ok());
-        
-        // Batch operations
-        assert!(db.batch_write("users", &[("1", &item)]).await.is_ok());
-        assert!(db.batch_get::<TestItem>("users", &["1"]).await.unwrap().is_empty());
-
-        // Query
-        let query_result = db.query::<TestItem>("users", "p1", KvQueryOptions::default()).await;
-        assert!(query_result.unwrap().items.is_empty());
     }
 }

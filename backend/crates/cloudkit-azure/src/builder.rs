@@ -9,6 +9,7 @@ pub struct AzureBuilder {
     region: Option<Region>,
     config: Option<CloudConfig>,
     storage_account: Option<String>,
+    keyvault_name: Option<String>,
 }
 
 impl AzureBuilder {
@@ -18,6 +19,7 @@ impl AzureBuilder {
             region: None,
             config: None,
             storage_account: None,
+            keyvault_name: None,
         }
     }
 
@@ -30,6 +32,12 @@ impl AzureBuilder {
     /// Set the storage account name.
     pub fn storage_account(mut self, account: impl Into<String>) -> Self {
         self.storage_account = Some(account.into());
+        self
+    }
+
+    /// Set the Key Vault name.
+    pub fn keyvault_name(mut self, name: impl Into<String>) -> Self {
+        self.keyvault_name = Some(name.into());
         self
     }
 
@@ -52,9 +60,23 @@ impl AzureBuilder {
             .build()
             .await?;
 
+        #[cfg(feature = "keyvault")]
+        let secret_client = if let Some(ref kv_name) = self.keyvault_name {
+            let url = format!("https://{}.vault.azure.net", kv_name);
+            let creds = std::sync::Arc::new(
+                azure_identity::DefaultAzureCredential::create(Default::default())
+                    .map_err(|e| cloudkit::common::CloudError::Config(e.to_string()))?
+            );
+            Some(azure_security_keyvault::SecretClient::new(&url, creds).map_err(|e| cloudkit::common::CloudError::Config(e.to_string()))?)
+        } else {
+            None
+        };
+
         Ok(AzureClient {
             context: Arc::new(context),
             storage_account: self.storage_account,
+            #[cfg(feature = "keyvault")]
+            secret_client,
         })
     }
 }
@@ -69,6 +91,8 @@ impl Default for AzureBuilder {
 pub struct AzureClient {
     context: Arc<CloudContext>,
     storage_account: Option<String>,
+    #[cfg(feature = "keyvault")]
+    secret_client: Option<azure_security_keyvault::SecretClient>,
 }
 
 impl AzureClient {
@@ -80,5 +104,13 @@ impl AzureClient {
     /// Get the storage account name.
     pub fn storage_account(&self) -> Option<&str> {
         self.storage_account.as_deref()
+    }
+
+    /// Get the Key Vault Secrets client.
+    #[cfg(feature = "keyvault")]
+    pub fn secrets(&self) -> Option<super::keyvault::AzureKeyVaultSecrets> {
+        self.secret_client.as_ref().map(|client| {
+            super::keyvault::AzureKeyVaultSecrets::new(self.context.clone(), client.clone())
+        })
     }
 }

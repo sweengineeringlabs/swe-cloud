@@ -12,16 +12,17 @@ categories = ["api-bindings", "asynchronous"]
 
 [features]
 # Features
-default = ["gcs", "pubsub", "firestore", "secrets", "monitor", "eventarc", "identity", "kms", "workflows"]
+default = ["gcs", "pubsub", "secrets", "monitor", "eventarc", "identity", "kms", "workflows"]
 gcs = ["dep:google-cloud-storage"]
 pubsub = ["dep:google-cloud-pubsub"]
-firestore = []
-secrets = []
-monitor = []
-eventarc = []
-identity = []
-kms = []
-workflows = []
+firestore = ["dep:firestore"]
+secrets = ["dep:reqwest", "dep:google-cloud-auth", "dep:base64"]
+monitor = ["dep:reqwest", "dep:google-cloud-auth"]
+eventarc = ["dep:reqwest", "dep:google-cloud-auth"]
+identity = ["dep:reqwest", "dep:google-cloud-auth"]
+kms = ["dep:reqwest", "dep:google-cloud-auth", "dep:base64", "dep:rand"]
+workflows = ["dep:reqwest", "dep:google-cloud-auth"]
+
 
 [dependencies]
 cloudkit = { workspace = true }
@@ -38,6 +39,16 @@ uuid = { workspace = true }
 # GCP SDK
 google-cloud-storage = { workspace = true, optional = true }
 google-cloud-pubsub = { workspace = true, optional = true }
+time = "0.3.44"
+firestore = { version = "0.47.0", optional = true }
+reqwest = { workspace = true, optional = true }
+google-cloud-auth = { version = "0.13", optional = true }
+
+base64 = { version = "0.21", optional = true }
+rand = { version = "0.8", optional = true }
+
+
+
 
 [dev-dependencies]
 tokio-test = { workspace = true }

@@ -44,8 +44,8 @@ impl AwsBuilder {
     pub async fn build(self) -> CloudResult<AwsClient> {
         let mut config = self.config.unwrap_or_default();
         
-        if let Some(region) = self.region {
-            config.region = region;
+        if let Some(ref region) = self.region {
+            config.region = region.clone();
         }
 
         let context = CloudContext::builder(ProviderType::Aws)
@@ -53,9 +53,21 @@ impl AwsBuilder {
             .build()
             .await?;
 
+        // Initialize SDK config
+        let mut loader = aws_config::from_env();
+        if let Some(ref profile) = self.profile {
+            loader = loader.profile_name(profile);
+        }
+        let sdk_config = loader.load().await;
+
+        #[cfg(feature = "secrets")]
+        let secrets_client = aws_sdk_secretsmanager::Client::new(&sdk_config);
+
         Ok(AwsClient {
             context: Arc::new(context),
             profile: self.profile,
+            #[cfg(feature = "secrets")]
+            secrets_client,
         })
     }
 }
@@ -70,6 +82,8 @@ impl Default for AwsBuilder {
 pub struct AwsClient {
     context: Arc<CloudContext>,
     profile: Option<String>,
+    #[cfg(feature = "secrets")]
+    secrets_client: aws_sdk_secretsmanager::Client,
 }
 
 impl AwsClient {
@@ -111,6 +125,12 @@ impl AwsClient {
     #[cfg(feature = "lambda")]
     pub fn functions(&self) -> super::lambda::LambdaFunctions {
         super::lambda::LambdaFunctions::new(self.context.clone())
+    }
+
+    /// Get the Secrets Manager client.
+    #[cfg(feature = "secrets")]
+    pub fn secrets(&self) -> super::secrets::AwsSecretsManager {
+        super::secrets::AwsSecretsManager::new(self.context.clone(), self.secrets_client.clone())
     }
 }
 

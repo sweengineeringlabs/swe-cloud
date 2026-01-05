@@ -37,42 +37,42 @@
 
 mod builder;
 
-#[cfg(feature = "gcs")]
-mod gcs;
-#[cfg(feature = "pubsub")]
-mod pubsub;
-#[cfg(feature = "firestore")]
-mod firestore;
-#[cfg(feature = "secrets")]
-mod secrets;
-#[cfg(feature = "monitor")]
-mod monitor;
 #[cfg(feature = "eventarc")]
 mod eventarc;
+#[cfg(feature = "firestore")]
+mod firestore;
+#[cfg(feature = "gcs")]
+mod gcs;
 #[cfg(feature = "identity")]
 mod identity;
 #[cfg(feature = "kms")]
 mod kms;
+#[cfg(feature = "monitor")]
+mod monitor;
+#[cfg(feature = "pubsub")]
+mod pubsub;
+#[cfg(feature = "secrets")]
+mod secrets;
 #[cfg(feature = "workflows")]
 mod workflows;
 
 pub use builder::*;
 
-#[cfg(feature = "gcs")]
-pub use gcs::*;
-#[cfg(feature = "pubsub")]
-pub use pubsub::*;
-#[cfg(feature = "firestore")]
-pub use firestore::*;
-#[cfg(feature = "secrets")]
-pub use secrets::*;
-#[cfg(feature = "monitor")]
-pub use monitor::*;
 #[cfg(feature = "eventarc")]
 pub use eventarc::*;
+#[cfg(feature = "firestore")]
+pub use firestore::*;
+#[cfg(feature = "gcs")]
+pub use gcs::*;
 #[cfg(feature = "identity")]
 pub use identity::*;
 #[cfg(feature = "kms")]
 pub use kms::*;
+#[cfg(feature = "monitor")]
+pub use monitor::*;
+#[cfg(feature = "pubsub")]
+pub use pubsub::*;
+#[cfg(feature = "secrets")]
+pub use secrets::*;
 #[cfg(feature = "workflows")]
 pub use workflows::*;
