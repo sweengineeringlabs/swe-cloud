@@ -64,7 +64,7 @@ pub async fn dispatch(
             ).await
         }
         #[cfg(feature = "cloudwatch")]
-        "Monitoring" => {
+        "Monitoring" | "Logs_20140530" => {
              crate::services::monitoring::handlers::handle_request(
                 State(emulator),
                 headers,

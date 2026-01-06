@@ -191,4 +191,48 @@ CREATE TABLE IF NOT EXISTS event_history (
     resources TEXT,
     matched_rules TEXT
 );
+
+-- CloudWatch Metrics
+CREATE TABLE IF NOT EXISTS cw_metrics (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    namespace TEXT NOT NULL,
+    metric_name TEXT NOT NULL,
+    dimensions TEXT,
+    value REAL NOT NULL,
+    unit TEXT,
+    timestamp TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_cw_metrics_name ON cw_metrics(namespace, metric_name);
+CREATE INDEX IF NOT EXISTS idx_cw_metrics_time ON cw_metrics(timestamp);
+
+-- CloudWatch Log Groups
+CREATE TABLE IF NOT EXISTS cw_log_groups (
+    name TEXT PRIMARY KEY,
+    arn TEXT NOT NULL,
+    retention_days INTEGER,
+    created_at TEXT NOT NULL
+);
+
+-- CloudWatch Log Streams
+CREATE TABLE IF NOT EXISTS cw_log_streams (
+    name TEXT NOT NULL,
+    log_group_name TEXT NOT NULL,
+    arn TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    
+    PRIMARY KEY (log_group_name, name),
+    FOREIGN KEY (log_group_name) REFERENCES cw_log_groups(name) ON DELETE CASCADE
+);
+
+-- CloudWatch Log Events
+CREATE TABLE IF NOT EXISTS cw_log_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    log_group_name TEXT NOT NULL,
+    log_stream_name TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    message TEXT NOT NULL,
+    
+    FOREIGN KEY (log_group_name, log_stream_name) REFERENCES cw_log_streams(log_group_name, name) ON DELETE CASCADE
+);
 "#;

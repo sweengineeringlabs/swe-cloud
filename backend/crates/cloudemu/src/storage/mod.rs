@@ -6,5 +6,6 @@ mod schema;
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
     SecretMetadata, SecretValue, KmsKeyMetadata,
-    EventBusMetadata, EventRuleMetadata, EventTargetMetadata
+    EventBusMetadata, EventRuleMetadata, EventTargetMetadata,
+    MetricMetadata, LogGroupMetadata, LogStreamMetadata, LogEventMetadata
 };
