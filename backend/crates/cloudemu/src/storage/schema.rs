@@ -129,4 +129,19 @@ CREATE TABLE IF NOT EXISTS secret_versions (
     PRIMARY KEY (secret_arn, version_id),
     FOREIGN KEY (secret_arn) REFERENCES secrets(arn) ON DELETE CASCADE
 );
+
+-- KMS Keys table
+CREATE TABLE IF NOT EXISTS kms_keys (
+    id TEXT PRIMARY KEY,
+    arn TEXT NOT NULL,
+    description TEXT,
+    key_usage TEXT DEFAULT 'ENCRYPT_DECRYPT',
+    key_spec TEXT DEFAULT 'SYMMETRIC_DEFAULT',
+    key_state TEXT DEFAULT 'Enabled',
+    created_at TEXT NOT NULL,
+    deletion_date TEXT,
+    tags TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_kms_keys_arn ON kms_keys(arn);
 "#;
