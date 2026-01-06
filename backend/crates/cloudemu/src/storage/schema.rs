@@ -101,4 +101,32 @@ CREATE TABLE IF NOT EXISTS request_log (
 
 CREATE INDEX IF NOT EXISTS idx_request_log_timestamp ON request_log(timestamp);
 CREATE INDEX IF NOT EXISTS idx_request_log_bucket ON request_log(bucket);
+
+-- Secrets table
+CREATE TABLE IF NOT EXISTS secrets (
+    arn TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    kms_key_id TEXT,
+    created_at TEXT NOT NULL,
+    last_changed_date TEXT,
+    last_accessed_date TEXT,
+    tags TEXT,
+    deleted_date TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_secrets_name ON secrets(name);
+
+-- Secret Versions table
+CREATE TABLE IF NOT EXISTS secret_versions (
+    secret_arn TEXT NOT NULL,
+    version_id TEXT NOT NULL,
+    version_stages TEXT,
+    secret_string TEXT,
+    secret_binary BLOB,
+    created_date TEXT NOT NULL,
+    
+    PRIMARY KEY (secret_arn, version_id),
+    FOREIGN KEY (secret_arn) REFERENCES secrets(arn) ON DELETE CASCADE
+);
 "#;

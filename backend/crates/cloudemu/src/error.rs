@@ -54,6 +54,12 @@ pub enum EmulatorError {
     
     #[error("JSON error: {0}")]
     Json(#[from] serde_json::Error),
+
+    #[error("{0} not found: {1}")]
+    NotFound(String, String),
+
+    #[error("{0} already exists")]
+    AlreadyExists(String),
 }
 
 impl EmulatorError {
@@ -74,16 +80,18 @@ impl EmulatorError {
             Self::Database(_) => "InternalError",
             Self::Io(_) => "InternalError",
             Self::Json(_) => "InternalError",
+            Self::NotFound(..) => "ResourceNotFound",
+            Self::AlreadyExists(_) => "ResourceAlreadyExists",
         }
     }
 
     /// Get HTTP status code
     pub fn status_code(&self) -> StatusCode {
         match self {
-            Self::NoSuchBucket(_) | Self::NoSuchKey(_) | Self::NoSuchBucketPolicy(_) => {
+            Self::NoSuchBucket(_) | Self::NoSuchKey(_) | Self::NoSuchBucketPolicy(_) | Self::NotFound(..) => {
                 StatusCode::NOT_FOUND
             }
-            Self::BucketAlreadyExists(_) => StatusCode::CONFLICT,
+            Self::BucketAlreadyExists(_) | Self::AlreadyExists(_) => StatusCode::CONFLICT,
             Self::BucketNotEmpty(_) | Self::InvalidRequest(_) | Self::InvalidArgument(_) | 
             Self::MalformedXml(_) | Self::MalformedPolicy(_) | Self::InvalidObjectState(_) => {
                 StatusCode::BAD_REQUEST
@@ -111,6 +119,8 @@ impl EmulatorError {
             Self::Database(msg) => msg.clone(),
             Self::Io(e) => e.to_string(),
             Self::Json(e) => e.to_string(),
+            Self::NotFound(type_, id) => format!("{} not found: {}", type_, id),
+            Self::AlreadyExists(msg) => msg.clone(),
         }
     }
 }
