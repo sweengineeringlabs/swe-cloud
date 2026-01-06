@@ -7,7 +7,7 @@ use axum::{
     body::Body,
     extract::{Path, Query, State},
     http::{HeaderMap, Method, StatusCode, header},
-    response::{IntoResponse, Response},
+    response::Response,
 };
 use std::{collections::HashMap, sync::Arc};
 use tracing::{info, debug};

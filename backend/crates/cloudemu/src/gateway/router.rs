@@ -13,7 +13,8 @@ pub fn create_router(emulator: Arc<Emulator>) -> Router {
     let mut router = Router::new()
         // Health check endpoints
         .route("/health", get(health_check))
-        .route("/_localstack/health", get(health_check)); // LocalStack compat
+        .route("/_localstack/health", get(health_check)) // LocalStack compat
+        .route("/", axum::routing::post(super::dispatch::dispatch));
 
     // S3 routes
     #[cfg(feature = "s3")]

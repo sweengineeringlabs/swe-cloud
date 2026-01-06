@@ -1,6 +1,6 @@
 //! XML generation for S3 responses
 
-use crate::storage::{BucketMetadata, ObjectMetadata, ListObjectsResult};
+use crate::storage::{BucketMetadata, ListObjectsResult};
 
 /// Generate ListAllMyBucketsResult XML
 pub fn list_buckets_xml(buckets: &[BucketMetadata], owner_id: &str) -> String {

@@ -44,6 +44,22 @@ pub struct Emulator {
     pub storage: storage::StorageEngine,
     #[cfg(feature = "s3")]
     pub s3: services::s3::S3Service,
+    #[cfg(feature = "dynamodb")]
+    pub dynamodb: services::dynamodb::DynamoDbService,
+    #[cfg(feature = "sqs")]
+    pub sqs: services::sqs::SqsService,
+    #[cfg(feature = "secretsmanager")]
+    pub secrets: services::secrets::SecretsService,
+    #[cfg(feature = "eventbridge")]
+    pub events: services::events::EventsService,
+    #[cfg(feature = "kms")]
+    pub kms: services::kms::KmsService,
+    #[cfg(feature = "cloudwatch")]
+    pub monitoring: services::monitoring::MonitoringService,
+    #[cfg(feature = "cognito")]
+    pub identity: services::identity::IdentityService,
+    #[cfg(feature = "stepfunctions")]
+    pub workflows: services::workflows::WorkflowsService,
 }
 
 impl Emulator {
@@ -60,6 +76,22 @@ impl Emulator {
         Ok(Self {
             #[cfg(feature = "s3")]
             s3: services::s3::S3Service::new(storage.clone()),
+            #[cfg(feature = "dynamodb")]
+            dynamodb: services::dynamodb::DynamoDbService::new(storage.clone()),
+            #[cfg(feature = "sqs")]
+            sqs: services::sqs::SqsService::new(storage.clone()),
+            #[cfg(feature = "secretsmanager")]
+            secrets: services::secrets::SecretsService::new(storage.clone()),
+            #[cfg(feature = "eventbridge")]
+            events: services::events::EventsService::new(storage.clone()),
+            #[cfg(feature = "kms")]
+            kms: services::kms::KmsService::new(storage.clone()),
+            #[cfg(feature = "cloudwatch")]
+            monitoring: services::monitoring::MonitoringService::new(storage.clone()),
+            #[cfg(feature = "cognito")]
+            identity: services::identity::IdentityService::new(storage.clone()),
+            #[cfg(feature = "stepfunctions")]
+            workflows: services::workflows::WorkflowsService::new(storage.clone()),
             storage,
             config,
         })
@@ -93,6 +125,18 @@ pub async fn start_server(config: Config) -> Result<()> {
     info!("  ✓ DynamoDB (NoSQL)");
     #[cfg(feature = "sqs")]
     info!("  ✓ SQS (Queues)");
+    #[cfg(feature = "secretsmanager")]
+    info!("  ✓ Secrets Manager");
+    #[cfg(feature = "eventbridge")]
+    info!("  ✓ EventBridge");
+    #[cfg(feature = "kms")]
+    info!("  ✓ KMS");
+    #[cfg(feature = "cloudwatch")]
+    info!("  ✓ CloudWatch");
+    #[cfg(feature = "cognito")]
+    info!("  ✓ Cognito");
+    #[cfg(feature = "stepfunctions")]
+    info!("  ✓ Step Functions");
     info!("─────────────────────────────────────────");
     info!("Data directory: {}", emulator.config.data_dir.display());
     info!("Region: {}", emulator.config.region);
