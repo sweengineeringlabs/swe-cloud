@@ -144,4 +144,51 @@ CREATE TABLE IF NOT EXISTS kms_keys (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_kms_keys_arn ON kms_keys(arn);
+
+-- Event Buses
+CREATE TABLE IF NOT EXISTS event_buses (
+    name TEXT PRIMARY KEY,
+    arn TEXT NOT NULL,
+    policy TEXT
+);
+
+-- Event Rules
+CREATE TABLE IF NOT EXISTS event_rules (
+    name TEXT NOT NULL,
+    event_bus_name TEXT NOT NULL,
+    arn TEXT NOT NULL,
+    event_pattern TEXT,
+    state TEXT DEFAULT 'ENABLED',
+    description TEXT,
+    schedule_expression TEXT,
+    created_at TEXT NOT NULL,
+    
+    PRIMARY KEY (event_bus_name, name),
+    FOREIGN KEY (event_bus_name) REFERENCES event_buses(name) ON DELETE CASCADE
+);
+
+-- Event Targets
+CREATE TABLE IF NOT EXISTS event_targets (
+    id TEXT NOT NULL,
+    rule_name TEXT NOT NULL,
+    event_bus_name TEXT NOT NULL,
+    arn TEXT NOT NULL,
+    input TEXT,
+    input_path TEXT,
+    
+    PRIMARY KEY (event_bus_name, rule_name, id),
+    FOREIGN KEY (event_bus_name, rule_name) REFERENCES event_rules(event_bus_name, name) ON DELETE CASCADE
+);
+
+-- Event History
+CREATE TABLE IF NOT EXISTS event_history (
+    id TEXT PRIMARY KEY,
+    event_bus_name TEXT NOT NULL,
+    source TEXT,
+    detail_type TEXT,
+    detail TEXT,
+    time TEXT,
+    resources TEXT,
+    matched_rules TEXT
+);
 "#;
