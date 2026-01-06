@@ -7,5 +7,6 @@ pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
     SecretMetadata, SecretValue, KmsKeyMetadata,
     EventBusMetadata, EventRuleMetadata, EventTargetMetadata,
-    MetricMetadata, LogGroupMetadata, LogStreamMetadata, LogEventMetadata
+    MetricMetadata, LogGroupMetadata, LogStreamMetadata, LogEventMetadata,
+    UserPoolMetadata, UserGroupMetadata, UserMetadata
 };

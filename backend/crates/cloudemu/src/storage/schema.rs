@@ -235,4 +235,48 @@ CREATE TABLE IF NOT EXISTS cw_log_events (
     
     FOREIGN KEY (log_group_name, log_stream_name) REFERENCES cw_log_streams(log_group_name, name) ON DELETE CASCADE
 );
+
+-- Cognito User Pools
+CREATE TABLE IF NOT EXISTS cognito_user_pools (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    arn TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
+-- Cognito Groups
+CREATE TABLE IF NOT EXISTS cognito_groups (
+    user_pool_id TEXT NOT NULL,
+    group_name TEXT NOT NULL,
+    description TEXT,
+    precedence INTEGER,
+    created_at TEXT NOT NULL,
+    
+    PRIMARY KEY (user_pool_id, group_name),
+    FOREIGN KEY (user_pool_id) REFERENCES cognito_user_pools(id) ON DELETE CASCADE
+);
+
+-- Cognito Users
+CREATE TABLE IF NOT EXISTS cognito_users (
+    user_pool_id TEXT NOT NULL,
+    username TEXT NOT NULL,
+    email TEXT,
+    status TEXT DEFAULT 'CONFIRMED',
+    enabled BOOLEAN DEFAULT 1,
+    created_at TEXT NOT NULL,
+    
+    PRIMARY KEY (user_pool_id, username),
+    FOREIGN KEY (user_pool_id) REFERENCES cognito_user_pools(id) ON DELETE CASCADE
+);
+
+-- Cognito User Attributes
+CREATE TABLE IF NOT EXISTS cognito_user_attributes (
+    user_pool_id TEXT NOT NULL,
+    username TEXT NOT NULL,
+    name TEXT NOT NULL,
+    value TEXT,
+    
+    PRIMARY KEY (user_pool_id, username, name),
+    FOREIGN KEY (user_pool_id, username) REFERENCES cognito_users(user_pool_id, username) ON DELETE CASCADE
+);
 "#;
