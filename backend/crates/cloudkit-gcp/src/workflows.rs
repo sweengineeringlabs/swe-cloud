@@ -458,14 +458,42 @@ impl WorkflowService for GcpWorkflows {
 
     async fn send_task_success(
         &self,
-        _task_token: &str,
-        _output: Value,
+        task_token: &str,
+        output: Value,
     ) -> CloudResult<()> {
-        Err(CloudError::Provider {
-            provider: "gcp".to_string(),
-            code: "NotImplemented".to_string(),
-            message: "Task callbacks not implemented".to_string(),
-        })
+        // GCP Workflows Callbacks use a unique URL (passed as the task token).
+        // We act as the external system calling back.
+        // task_token is expected to be the full callback URL.
+        
+        // Simple validation that it looks like a URL
+        if !task_token.starts_with("https://") {
+             return Err(CloudError::Provider {
+                provider: "gcp".to_string(),
+                code: "InvalidToken".to_string(),
+                message: "Task token must be a valid https callback URL for GCP Workflows".to_string(),
+            });
+        }
+        
+        let client = &self.client; 
+        // Note: Callbacks might not require auth if "open", but usually require IAM.
+        // We'll attach the same token we use for management.
+        let token = self.token().await?;
+
+        let resp = client.post(task_token)
+            .bearer_auth(&token)
+            .json(&output)
+            .send()
+            .await
+            .map_err(|e| CloudError::Provider { provider: "gcp".into(), code: "ReqwestError".into(), message: e.to_string() })?;
+
+        if !resp.status().is_success() {
+             return Err(CloudError::Provider {
+                provider: "gcp".to_string(),
+                code: resp.status().as_u16().to_string(),
+                message: resp.text().await.unwrap_or_default(),
+            });
+        }
+        Ok(())
     }
 
     async fn send_task_failure(
@@ -474,18 +502,20 @@ impl WorkflowService for GcpWorkflows {
         _error: &str,
         _cause: &str,
     ) -> CloudResult<()> {
+        // GCP Workflows callbacks are generic HTTP endpoints. 
+        // There isn't a standard 'failure' endpoint. The workflow logic determines success/failure based on payload.
         Err(CloudError::Provider {
             provider: "gcp".to_string(),
-            code: "NotImplemented".to_string(),
-            message: "Task callbacks not implemented".to_string(),
+            code: "NotSupported".to_string(),
+            message: "GCP Workflows does not support explicit failure signals via callbacks. Send a success payload with error details instead.".to_string(),
         })
     }
 
     async fn send_task_heartbeat(&self, _task_token: &str) -> CloudResult<()> {
          Err(CloudError::Provider {
             provider: "gcp".to_string(),
-            code: "NotImplemented".to_string(),
-            message: "Task callbacks not implemented".to_string(),
+            code: "NotSupported".to_string(),
+            message: "GCP Workflows does not support heartbeats for callbacks.".to_string(),
         })
     }
 }

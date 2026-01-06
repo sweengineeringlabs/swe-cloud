@@ -326,8 +326,11 @@ impl SecretsManager for GcpSecretManager {
     }
 
     async fn rotate_secret(&self, _name: &str) -> CloudResult<()> {
-        // GCP requires configured rotation, no direct API to force rotate without setup
-        Ok(())
+        Err(CloudError::Provider {
+            provider: "gcp".to_string(),
+            code: "NotSupported".to_string(),
+            message: "GCP Secrets rotation must be configured via rotation schedules or Cloud Functions. Manual rotation via API is not directly supported.".to_string(),
+        })
     }
 
     async fn tag_secret(&self, name: &str, tags: Metadata) -> CloudResult<()> {

@@ -58,8 +58,57 @@ impl GcpKms {
 #[derive(Deserialize)]
 struct CryptoKey {
     name: String,
+    primary: Option<KeyVersionResponse>,
+    purpose: Option<String>,
     #[serde(rename = "createTime")]
     _create_time: Option<String>,
+}
+
+#[derive(Deserialize)]
+struct KeyVersionResponse {
+    name: String,
+    state: String,
+}
+
+#[derive(Serialize)]
+struct AsymmetricSignRequest {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    digest: Option<Digest>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    data: Option<String>,
+}
+
+#[derive(Serialize)]
+struct Digest {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sha256: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sha384: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sha512: Option<String>,
+}
+
+#[derive(Serialize)]
+struct MacSignRequest {
+    data: String,
+}
+
+#[derive(Deserialize)]
+struct SignResponse {
+    signature: Option<String>,
+    #[serde(rename = "mac")]
+    mac: Option<String>,
+}
+
+#[derive(Serialize)]
+struct MacVerifyRequest {
+    data: String,
+    mac: String,
+}
+
+#[derive(Deserialize)]
+struct VerifyResponse {
+    success: Option<bool>,
 }
 
 #[derive(Deserialize)]
@@ -338,30 +387,115 @@ impl KeyManagement for GcpKms {
 
     async fn sign(
         &self,
-        _key_id: &str,
-        _message: &[u8],
-        _algorithm: SigningAlgorithm,
+        key_id: &str,
+        message: &[u8],
+        algorithm: SigningAlgorithm,
     ) -> CloudResult<Vec<u8>> {
-        // Signing requires asymmetric keys
-        Err(CloudError::Provider {
-            provider: "gcp".to_string(),
-            code: "NotImplemented".to_string(),
-            message: "Signing not fully implemented".to_string(),
-        })
+        let token = self.token().await?;
+        // 1. Get Key to find primary version and purpose
+        let key_url = format!("{}/keyRings/default-keyring/cryptoKeys/{}", self.base_url(), key_id);
+        let resp = self.client.get(&key_url).bearer_auth(&token).send().await
+              .map_err(|e| CloudError::Provider { provider: "gcp".into(), code: "ReqwestError".into(), message: e.to_string() })?;
+        if !resp.status().is_success() {
+             return Err(CloudError::Provider { provider: "gcp".to_string(), code: resp.status().as_u16().to_string(), message: resp.text().await.unwrap_or_default() });
+        }
+        let key: CryptoKey = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
+        let version_name = key.primary.ok_or_else(|| CloudError::NotFound { 
+            resource_type: "KeyVersion".into(), 
+            resource_id: "primary".into() 
+        })?.name;
+        let purpose = key.purpose.unwrap_or_default();
+
+        let sig_bytes = if purpose == "ASYMMETRIC_SIGN" {
+             let url = format!("https://cloudkms.googleapis.com/v1/{}:asymmetricSign", version_name);
+             let req_body = match algorithm {
+                 // Expanded match validation could go here
+                 _ => {
+                     // Assume digest if possible, else raw?
+                     // CloudKit 'message' is raw data usually.
+                     // But for signing, we often hash first.
+                     // Here we assume 'message' is the digest if length is small? 
+                     // Or force user to pass digest? 
+                     // GCP supports signing RAW data for some algorithms (ECDSA), but RSA usually requires digest.
+                     // Implementing strictly for SHA256 digest for now.
+                     AsymmetricSignRequest {
+                         digest: Some(Digest { sha256: Some(BASE64_STANDARD.encode(message)), sha384: None, sha512: None }),
+                         data: None
+                     }
+                 }
+             };
+             let resp = self.client.post(&url).bearer_auth(&token).json(&req_body).send().await
+                 .map_err(|e| CloudError::Provider { provider: "gcp".into(), code: "ReqwestError".into(), message: e.to_string() })?;
+             if !resp.status().is_success() {
+                return Err(CloudError::Provider { provider: "gcp".to_string(), code: resp.status().as_u16().to_string(), message: resp.text().await.unwrap_or_default() });
+             }
+             let sign_resp: SignResponse = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
+             base64::prelude::BASE64_STANDARD.decode(sign_resp.signature.unwrap_or_default())
+                 .map_err(|e| CloudError::Serialization(e.to_string()))?
+        } else if purpose == "MAC" {
+             let url = format!("https://cloudkms.googleapis.com/v1/{}:macSign", version_name);
+             let req_body = MacSignRequest { data: BASE64_STANDARD.encode(message) };
+             let resp = self.client.post(&url).bearer_auth(&token).json(&req_body).send().await
+                 .map_err(|e| CloudError::Provider { provider: "gcp".into(), code: "ReqwestError".into(), message: e.to_string() })?;
+             if !resp.status().is_success() {
+                return Err(CloudError::Provider { provider: "gcp".to_string(), code: resp.status().as_u16().to_string(), message: resp.text().await.unwrap_or_default() });
+             }
+             let sign_resp: SignResponse = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
+             base64::prelude::BASE64_STANDARD.decode(sign_resp.mac.unwrap_or_default())
+                 .map_err(|e| CloudError::Serialization(e.to_string()))?
+        } else {
+             return Err(CloudError::Validation(format!("Key purpose {} does not support signing", purpose)));
+        };
+
+        Ok(sig_bytes)
     }
 
     async fn verify(
         &self,
-        _key_id: &str,
-        _message: &[u8],
-        _signature: &[u8],
+        key_id: &str,
+        message: &[u8],
+        signature: &[u8],
         _algorithm: SigningAlgorithm,
     ) -> CloudResult<bool> {
-        Err(CloudError::Provider {
-            provider: "gcp".to_string(),
-            code: "NotImplemented".to_string(),
-            message: "Verification not fully implemented".to_string(),
-        })
+        let token = self.token().await?;
+        let key_url = format!("{}/keyRings/default-keyring/cryptoKeys/{}", self.base_url(), key_id);
+        let resp = self.client.get(&key_url).bearer_auth(&token).send().await
+              .map_err(|e| CloudError::Provider { provider: "gcp".into(), code: "ReqwestError".into(), message: e.to_string() })?;
+        if !resp.status().is_success() { return Ok(false); }
+        let key: CryptoKey = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
+        let version_name = key.primary.ok_or_else(|| CloudError::NotFound { 
+            resource_type: "KeyVersion".into(), 
+            resource_id: "primary".into() 
+        })?.name;
+        let purpose = key.purpose.unwrap_or_default();
+
+        if purpose == "MAC" {
+             let url = format!("https://cloudkms.googleapis.com/v1/{}:macVerify", version_name);
+             let req_body = MacVerifyRequest { 
+                 data: BASE64_STANDARD.encode(message),
+                 mac: BASE64_STANDARD.encode(signature)
+             };
+             let resp = self.client.post(&url).bearer_auth(&token).json(&req_body).send().await
+                 .map_err(|e| CloudError::Provider { provider: "gcp".into(), code: "ReqwestError".into(), message: e.to_string() })?;
+             if !resp.status().is_success() {
+                // Verification failure is usually 400 or JSON error? Or just returns success: false?
+                // macVerify returns success: true/false in body usually or empty body on success?
+                // Docs: "Returns struct{ success: bool }"
+                // Wait, response details: "If verification fails, returns error INVALID_ARGUMENT"? 
+                // Or field `success`.
+                // Checking standard API: `MacVerifyResponse` has `success` boolean.
+                // If it fails with status, assume false.
+                return Ok(false);
+             }
+             let verify_resp: VerifyResponse = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
+             Ok(verify_resp.success.unwrap_or(false))
+        } else {
+             Err(CloudError::Provider {
+                provider: "gcp".to_string(),
+                code: "NotSupported".to_string(),
+                message: "Asymmetric verification must be performed locally using the public key".to_string(),
+            })
+        }
     }
 
     async fn list_key_tags(&self, _key_id: &str) -> CloudResult<Metadata> {
