@@ -561,6 +561,100 @@ impl StorageEngine {
         Ok(keys)
     }
 
+    // ==================== Step Functions Operations ====================
+    
+    pub fn create_state_machine(&self, name: &str, definition: &str, role_arn: &str, machine_type: &str, account_id: &str, region: &str) -> Result<StateMachineMetadata> {
+        let db = self.db.lock();
+        let arn = format!("arn:aws:states:{}:{}:stateMachine:{}", region, account_id, name);
+        let now = chrono::Utc::now().to_rfc3339();
+        
+        db.execute(
+            "INSERT INTO sf_state_machines (arn, name, definition, role_arn, type, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+            params![arn, name, definition, role_arn, machine_type, now],
+        ).map_err(|e| {
+            if e.to_string().contains("UNIQUE constraint") {
+                EmulatorError::AlreadyExists(format!("State machine {} already exists", name))
+            } else {
+                EmulatorError::Database(e.to_string())
+            }
+        })?;
+        
+        Ok(StateMachineMetadata {
+            arn,
+            name: name.to_string(),
+            definition: definition.to_string(),
+            role_arn: role_arn.to_string(),
+            machine_type: machine_type.to_string(),
+            created_at: now,
+        })
+    }
+
+    pub fn list_state_machines(&self) -> Result<Vec<StateMachineMetadata>> {
+        let db = self.db.lock();
+        let mut stmt = db.prepare("SELECT arn, name, definition, role_arn, type, created_at FROM sf_state_machines")?;
+        let machines = stmt.query_map([], |row| Ok(StateMachineMetadata {
+            arn: row.get(0)?,
+            name: row.get(1)?,
+            definition: row.get(2)?,
+            role_arn: row.get(3)?,
+            machine_type: row.get(4)?,
+            created_at: row.get(5)?,
+        }))?
+        .filter_map(|r| r.ok())
+        .collect();
+        Ok(machines)
+    }
+
+    pub fn delete_state_machine(&self, arn: &str) -> Result<()> {
+        let db = self.db.lock();
+        let rows = db.execute("DELETE FROM sf_state_machines WHERE arn = ?1", params![arn])?;
+        if rows == 0 {
+            return Err(EmulatorError::NotFound("StateMachine".into(), arn.into()));
+        }
+        Ok(())
+    }
+
+    pub fn start_execution(&self, state_machine_arn: &str, name: Option<&str>, input: Option<&str>, account_id: &str, region: &str) -> Result<ExecutionMetadata> {
+        let db = self.db.lock();
+        let exec_name = name.map(|s| s.to_string()).unwrap_or_else(|| uuid::Uuid::new_v4().to_string());
+        let arn = format!("arn:aws:states:{}:{}:execution:{}:{}", region, account_id, state_machine_arn.split(':').last().unwrap_or("unknown"), exec_name);
+        let now = chrono::Utc::now().to_rfc3339();
+        
+        db.execute(
+            "INSERT INTO sf_executions (arn, state_machine_arn, name, input, start_date) VALUES (?1, ?2, ?3, ?4, ?5)",
+            params![arn, state_machine_arn, exec_name, input, now],
+        )?;
+        
+        Ok(ExecutionMetadata {
+            arn,
+            state_machine_arn: state_machine_arn.to_string(),
+            name: exec_name,
+            status: "RUNNING".to_string(),
+            input: input.map(|s| s.to_string()),
+            output: None,
+            start_date: now,
+            stop_date: None,
+        })
+    }
+
+    pub fn describe_execution(&self, arn: &str) -> Result<ExecutionMetadata> {
+        let db = self.db.lock();
+        db.query_row(
+            "SELECT arn, state_machine_arn, name, status, input, output, start_date, stop_date FROM sf_executions WHERE arn = ?1",
+            params![arn],
+            |row| Ok(ExecutionMetadata {
+                arn: row.get(0)?,
+                state_machine_arn: row.get(1)?,
+                name: row.get(2)?,
+                status: row.get(3)?,
+                input: row.get(4)?,
+                output: row.get(5)?,
+                start_date: row.get(6)?,
+                stop_date: row.get(7)?,
+            })
+        ).map_err(|_| EmulatorError::NotFound("Execution".into(), arn.into()))
+    }
+
     // ==================== Cognito Operations ====================
     
     pub fn create_user_pool(&self, name: &str, account_id: &str, region: &str) -> Result<UserPoolMetadata> {
@@ -1094,6 +1188,161 @@ impl StorageEngine {
         let file_path = self.objects_dir.join(&content_hash[..2]).join(content_hash);
         fs::read(&file_path).map_err(|e| EmulatorError::Internal(e.to_string()))
     }
+
+    // ==================== SQS Operations ====================
+
+    pub fn create_queue(&self, name: &str, account_id: &str, region: &str) -> Result<QueueMetadata> {
+        let db = self.db.lock();
+        let arn = format!("arn:aws:sqs:{}:{}:{}", region, account_id, name);
+        let url = format!("http://localhost:4566/{}/{}", account_id, name);
+        let now = chrono::Utc::now().to_rfc3339();
+
+        db.execute(
+            "INSERT INTO sqs_queues (name, url, arn, created_at) VALUES (?1, ?2, ?3, ?4)",
+            params![name, url, arn, now],
+        ).map_err(|e| {
+            if e.to_string().contains("UNIQUE constraint") {
+                EmulatorError::AlreadyExists(format!("Queue {} already exists", name))
+            } else {
+                EmulatorError::Database(e.to_string())
+            }
+        })?;
+
+        Ok(QueueMetadata {
+            name: name.to_string(),
+            url,
+            arn,
+            created_at: now,
+            visibility_timeout: 30,
+            message_retention_period: 345600,
+            delay_seconds: 0,
+            receive_message_wait_time_seconds: 0,
+        })
+    }
+
+    pub fn send_message(&self, queue_name: &str, body: &str) -> Result<String> {
+        let db = self.db.lock();
+        let id = uuid::Uuid::new_v4().to_string();
+        let now = chrono::Utc::now().to_rfc3339();
+
+        // Check if queue exists
+        let exists: bool = db.query_row(
+            "SELECT 1 FROM sqs_queues WHERE name = ?1",
+            params![queue_name],
+            |_| Ok(true),
+        ).unwrap_or(false);
+
+        if !exists {
+            return Err(EmulatorError::NotFound("Queue".into(), queue_name.into()));
+        }
+
+        db.execute(
+            "INSERT INTO sqs_messages (id, queue_name, body, sent_at, visible_at) VALUES (?1, ?2, ?3, ?4, ?4)",
+            params![id, queue_name, body, now],
+        )?;
+
+        Ok(id)
+    }
+
+    pub fn receive_message(&self, queue_name: &str, max_count: i32) -> Result<Vec<MessageMetadata>> {
+        let db = self.db.lock();
+        let now = chrono::Utc::now().to_rfc3339();
+
+        let mut stmt = db.prepare(
+            "SELECT id, body, md5_body, sent_at, visible_at, receive_count FROM sqs_messages 
+             WHERE queue_name = ?1 AND visible_at <= ?2 
+             LIMIT ?3"
+        )?;
+
+        let mut messages: Vec<MessageMetadata> = stmt.query_map(params![queue_name, now, max_count], |row| {
+            Ok(MessageMetadata {
+                id: row.get(0)?,
+                queue_name: queue_name.to_string(),
+                body: row.get(1)?,
+                md5_body: row.get(2)?,
+                sent_at: row.get(3)?,
+                visible_at: row.get(4)?,
+                receipt_handle: None,
+                receive_count: row.get(5)?,
+            })
+        })?.filter_map(|r| r.ok()).collect();
+
+        // Update visibility and receipt handles for received messages
+        for msg in &mut messages {
+            let handle = uuid::Uuid::new_v4().to_string();
+            let new_visible_at = (chrono::Utc::now() + chrono::Duration::seconds(30)).to_rfc3339();
+            
+            db.execute(
+                "UPDATE sqs_messages SET receipt_handle = ?1, visible_at = ?2, receive_count = receive_count + 1 WHERE id = ?3",
+                params![handle, new_visible_at, msg.id],
+            )?;
+            
+            msg.receipt_handle = Some(handle);
+            msg.visible_at = new_visible_at;
+        }
+
+        Ok(messages)
+    }
+
+    pub fn delete_message(&self, queue_name: &str, receipt_handle: &str) -> Result<()> {
+        let db = self.db.lock();
+        let rows = db.execute(
+            "DELETE FROM sqs_messages WHERE queue_name = ?1 AND receipt_handle = ?2",
+            params![queue_name, receipt_handle],
+        )?;
+
+        if rows == 0 {
+            return Err(EmulatorError::NotFound("Message".into(), receipt_handle.into()));
+        }
+
+        Ok(())
+    }
+
+    // ==================== DynamoDB Operations ====================
+
+    pub fn create_table(&self, name: &str, attr_defs: &str, key_schema: &str, account_id: &str, region: &str) -> Result<TableMetadata> {
+        let db = self.db.lock();
+        let arn = format!("arn:aws:dynamodb:{}:{}:table/{}", region, account_id, name);
+        let now = chrono::Utc::now().to_rfc3339();
+
+        db.execute(
+            "INSERT INTO ddb_tables (name, arn, attribute_definitions, key_schema, created_at) VALUES (?1, ?2, ?3, ?4, ?5)",
+            params![name, arn, attr_defs, key_schema, now],
+        ).map_err(|e| {
+            if e.to_string().contains("UNIQUE constraint") {
+                EmulatorError::AlreadyExists(format!("Table {} already exists", name))
+            } else {
+                EmulatorError::Database(e.to_string())
+            }
+        })?;
+
+        Ok(TableMetadata {
+            name: name.to_string(),
+            arn,
+            status: "ACTIVE".to_string(),
+            attribute_definitions: attr_defs.to_string(),
+            key_schema: key_schema.to_string(),
+            created_at: now,
+        })
+    }
+
+    pub fn put_item(&self, table_name: &str, pk: &str, sk: Option<&str>, item_json: &str) -> Result<()> {
+        let db = self.db.lock();
+        db.execute(
+            "INSERT OR REPLACE INTO ddb_items (table_name, partition_key, sort_key, item_json) VALUES (?1, ?2, ?3, ?4)",
+            params![table_name, pk, sk, item_json],
+        )?;
+        Ok(())
+    }
+
+    pub fn get_item(&self, table_name: &str, pk: &str, sk: Option<&str>) -> Result<Option<String>> {
+        let db = self.db.lock();
+        let mut stmt = db.prepare(
+            "SELECT item_json FROM ddb_items WHERE table_name = ?1 AND partition_key = ?2 AND (sort_key = ?3 OR sort_key IS NULL)"
+        )?;
+        let result = stmt.query_row(params![table_name, pk, sk], |row| row.get(0)).ok();
+        Ok(result)
+    }
 }
 
 /// Bucket metadata
@@ -1265,4 +1514,74 @@ pub struct UserMetadata {
     pub status: String,
     pub enabled: bool,
     pub created_at: String,
+}
+
+/// Step Functions State Machine metadata
+#[derive(Debug, Clone)]
+pub struct StateMachineMetadata {
+    pub arn: String,
+    pub name: String,
+    pub definition: String,
+    pub role_arn: String,
+    pub machine_type: String,
+    pub created_at: String,
+}
+
+/// Step Functions Execution metadata
+#[derive(Debug, Clone)]
+pub struct ExecutionMetadata {
+    pub arn: String,
+    pub state_machine_arn: String,
+    pub name: String,
+    pub status: String,
+    pub input: Option<String>,
+    pub output: Option<String>,
+    pub start_date: String,
+    pub stop_date: Option<String>,
+}
+
+/// SQS Queue metadata
+#[derive(Debug, Clone)]
+pub struct QueueMetadata {
+    pub name: String,
+    pub url: String,
+    pub arn: String,
+    pub created_at: String,
+    pub visibility_timeout: i32,
+    pub message_retention_period: i32,
+    pub delay_seconds: i32,
+    pub receive_message_wait_time_seconds: i32,
+}
+
+/// SQS Message metadata
+#[derive(Debug, Clone)]
+pub struct MessageMetadata {
+    pub id: String,
+    pub queue_name: String,
+    pub body: String,
+    pub md5_body: Option<String>,
+    pub sent_at: String,
+    pub visible_at: String,
+    pub receipt_handle: Option<String>,
+    pub receive_count: i32,
+}
+
+/// DynamoDB Table metadata
+#[derive(Debug, Clone)]
+pub struct TableMetadata {
+    pub name: String,
+    pub arn: String,
+    pub status: String,
+    pub attribute_definitions: String,
+    pub key_schema: String,
+    pub created_at: String,
+}
+
+/// DynamoDB Item metadata
+#[derive(Debug, Clone)]
+pub struct ItemMetadata {
+    pub table_name: String,
+    pub partition_key: String,
+    pub sort_key: Option<String>,
+    pub item_json: String,
 }

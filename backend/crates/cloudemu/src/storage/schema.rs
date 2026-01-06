@@ -279,4 +279,83 @@ CREATE TABLE IF NOT EXISTS cognito_user_attributes (
     PRIMARY KEY (user_pool_id, username, name),
     FOREIGN KEY (user_pool_id, username) REFERENCES cognito_users(user_pool_id, username) ON DELETE CASCADE
 );
+
+-- Step Functions State Machines
+CREATE TABLE IF NOT EXISTS sf_state_machines (
+    arn TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    definition TEXT NOT NULL,
+    role_arn TEXT NOT NULL,
+    type TEXT DEFAULT 'STANDARD',
+    created_at TEXT NOT NULL
+);
+
+-- Step Functions Executions
+CREATE TABLE IF NOT EXISTS sf_executions (
+    arn TEXT PRIMARY KEY,
+    state_machine_arn TEXT NOT NULL,
+    name TEXT NOT NULL,
+    status TEXT DEFAULT 'RUNNING',
+    input TEXT,
+    output TEXT,
+    start_date TEXT NOT NULL,
+    stop_date TEXT,
+    
+    FOREIGN KEY (state_machine_arn) REFERENCES sf_state_machines(arn) ON DELETE CASCADE
+);
+
+-- SQS Queues
+CREATE TABLE IF NOT EXISTS sqs_queues (
+    name TEXT PRIMARY KEY,
+    url TEXT NOT NULL,
+    arn TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    visibility_timeout INTEGER DEFAULT 30,
+    message_retention_period INTEGER DEFAULT 345600,
+    delay_seconds INTEGER DEFAULT 0,
+    receive_message_wait_time_seconds INTEGER DEFAULT 0,
+    policy TEXT,
+    tags TEXT
+);
+
+-- SQS Messages
+CREATE TABLE IF NOT EXISTS sqs_messages (
+    id TEXT PRIMARY KEY,
+    queue_name TEXT NOT NULL,
+    body TEXT NOT NULL,
+    attributes TEXT,
+    message_attributes TEXT,
+    md5_body TEXT,
+    sent_at TEXT NOT NULL,
+    visible_at TEXT NOT NULL,
+    receipt_handle TEXT,
+    receive_count INTEGER DEFAULT 0,
+    
+    FOREIGN KEY (queue_name) REFERENCES sqs_queues(name) ON DELETE CASCADE
+);
+
+-- DynamoDB Tables
+CREATE TABLE IF NOT EXISTS ddb_tables (
+    name TEXT PRIMARY KEY,
+    arn TEXT NOT NULL,
+    status TEXT DEFAULT 'ACTIVE',
+    attribute_definitions TEXT NOT NULL,
+    key_schema TEXT NOT NULL,
+    provisioned_throughput TEXT,
+    billing_mode TEXT DEFAULT 'PAY_PER_REQUEST',
+    created_at TEXT NOT NULL,
+    item_count INTEGER DEFAULT 0,
+    table_size_bytes INTEGER DEFAULT 0
+);
+
+-- DynamoDB Items
+CREATE TABLE IF NOT EXISTS ddb_items (
+    table_name TEXT NOT NULL,
+    partition_key TEXT NOT NULL,
+    sort_key TEXT,
+    item_json TEXT NOT NULL,
+    
+    PRIMARY KEY (table_name, partition_key, sort_key),
+    FOREIGN KEY (table_name) REFERENCES ddb_tables(name) ON DELETE CASCADE
+);
 "#;

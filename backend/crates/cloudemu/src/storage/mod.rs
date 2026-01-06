@@ -8,5 +8,8 @@ pub use engine::{
     SecretMetadata, SecretValue, KmsKeyMetadata,
     EventBusMetadata, EventRuleMetadata, EventTargetMetadata,
     MetricMetadata, LogGroupMetadata, LogStreamMetadata, LogEventMetadata,
-    UserPoolMetadata, UserGroupMetadata, UserMetadata
+    UserPoolMetadata, UserGroupMetadata, UserMetadata,
+    StateMachineMetadata, ExecutionMetadata,
+    QueueMetadata, MessageMetadata,
+    TableMetadata, ItemMetadata
 };
