@@ -35,7 +35,7 @@ pub async fn bucket_handler(
     method: Method,
     Path(bucket): Path<String>,
     Query(params): Query<HashMap<String, String>>,
-    headers: HeaderMap,
+    _headers: HeaderMap,
     body: axum::body::Bytes,
 ) -> Result<Response<Body>, EmulatorError> {
     let request_id = uuid::Uuid::new_v4().to_string();

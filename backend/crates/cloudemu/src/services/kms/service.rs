@@ -1,11 +1,11 @@
 use crate::storage::StorageEngine;
 
 pub struct KmsService {
-    storage: StorageEngine,
+    _storage: StorageEngine,
 }
 
 impl KmsService {
     pub fn new(storage: StorageEngine) -> Self {
-        Self { storage }
+        Self { _storage: storage }
     }
 }

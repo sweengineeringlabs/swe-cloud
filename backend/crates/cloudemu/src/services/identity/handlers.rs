@@ -9,6 +9,8 @@ use axum::{
 use serde_json::{json, Value};
 use std::sync::Arc;
 use tracing::info;
+use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
+use chrono;
 
 pub async fn handle_request(
     State(emulator): State<Arc<Emulator>>,
@@ -21,7 +23,7 @@ pub async fn handle_request(
         .unwrap_or("");
     
     info!("Cognito: {}", target);
-    let action = target.split('.').last().unwrap_or(target);
+    let action = target.split('.').next_back().unwrap_or(target);
 
     let result = match action {
         "CreateUserPool" => create_user_pool(&emulator, body).await,
@@ -168,16 +170,39 @@ async fn list_groups(emulator: &Emulator, body: Value) -> Result<Value, Emulator
     }))
 }
 
-async fn initiate_auth(_emulator: &Emulator, _body: Value) -> Result<Value, EmulatorError> {
-    // Stub for successful authentication
+async fn initiate_auth(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
+    let client_id = body["ClientId"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing ClientId".into()))?;
+    let auth_params = body["AuthParameters"].as_object().ok_or_else(|| EmulatorError::InvalidArgument("Missing AuthParameters".into()))?;
+    
+    let username = auth_params.get("USERNAME").and_then(|v| v.as_str()).ok_or_else(|| EmulatorError::InvalidArgument("Missing USERNAME".into()))?;
+    
+    // Check if user exists (Assuming ClientId == PoolId)
+    let _user_data = emulator.storage.admin_get_user(client_id, username)?;
+    
+    // Generate Tokens
+    let access_token = generate_mock_jwt(username, "access");
+    let id_token = generate_mock_jwt(username, "id");
+    let refresh_token = "mock-refresh-token";
+    
     Ok(json!({
         "AuthenticationResult": {
-            "AccessToken": "stub-access-token",
+            "AccessToken": access_token,
             "ExpiresIn": 3600,
-            "IdToken": "stub-id-token",
-            "RefreshToken": "stub-refresh-token",
+            "IdToken": id_token,
+            "RefreshToken": refresh_token,
             "TokenType": "Bearer"
         },
         "ChallengeParameters": {}
     }))
+}
+
+fn generate_mock_jwt(username: &str, token_type: &str) -> String {
+    let header = URL_SAFE_NO_PAD.encode(json!({"alg":"HS256","typ":"JWT"}).to_string());
+    let payload = URL_SAFE_NO_PAD.encode(json!({
+        "sub": username,
+        "token_use": token_type,
+        "exp": chrono::Utc::now().timestamp() + 3600,
+        "iss": "cloudemu"
+    }).to_string());
+    format!("{}.{}.mock-signature", header, payload)
 }

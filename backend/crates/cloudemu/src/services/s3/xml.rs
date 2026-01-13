@@ -27,16 +27,7 @@ pub fn list_buckets_xml(buckets: &[BucketMetadata], owner_id: &str) -> String {
     xml
 }
 
-/// Generate CreateBucketConfiguration response (empty 200 OK for most cases)
-pub fn create_bucket_xml(location: &str) -> String {
-    format!(
-        r#"<?xml version="1.0" encoding="UTF-8"?>
-<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-  <LocationConstraint>{}</LocationConstraint>
-</CreateBucketConfiguration>"#,
-        location
-    )
-}
+// Note: create_bucket_xml removed - CreateBucket returns 200 OK with empty body in most regions
 
 /// Generate ListBucketResult XML (ListObjectsV2)
 pub fn list_objects_v2_xml(result: &ListObjectsResult) -> String {
@@ -161,36 +152,8 @@ pub fn copy_object_xml(etag: &str, last_modified: &str) -> String {
     )
 }
 
-/// Generate DeleteResult XML (for batch delete)
-pub fn delete_objects_xml(deleted: &[String], errors: &[(String, String, String)]) -> String {
-    let mut xml = String::from(r#"<?xml version="1.0" encoding="UTF-8"?>
-<DeleteResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">"#);
-    
-    for key in deleted {
-        xml.push_str("\n  <Deleted>");
-        xml.push_str("\n    <Key>");
-        xml.push_str(&escape_xml(key));
-        xml.push_str("</Key>");
-        xml.push_str("\n  </Deleted>");
-    }
-    
-    for (key, code, message) in errors {
-        xml.push_str("\n  <Error>");
-        xml.push_str("\n    <Key>");
-        xml.push_str(&escape_xml(key));
-        xml.push_str("</Key>");
-        xml.push_str("\n    <Code>");
-        xml.push_str(code);
-        xml.push_str("</Code>");
-        xml.push_str("\n    <Message>");
-        xml.push_str(&escape_xml(message));
-        xml.push_str("</Message>");
-        xml.push_str("\n  </Error>");
-    }
-    
-    xml.push_str("\n</DeleteResult>");
-    xml
-}
+// TODO: Implement batch delete operations (DeleteObjects)
+// pub fn delete_objects_xml(deleted: &[String], errors: &[(String, String, String)]) -> String
 
 /// Escape XML special characters
 fn escape_xml(s: &str) -> String {

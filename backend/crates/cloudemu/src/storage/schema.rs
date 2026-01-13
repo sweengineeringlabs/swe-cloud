@@ -358,4 +358,41 @@ CREATE TABLE IF NOT EXISTS ddb_items (
     PRIMARY KEY (table_name, partition_key, sort_key),
     FOREIGN KEY (table_name) REFERENCES ddb_tables(name) ON DELETE CASCADE
 );
+
+-- SNS Topics
+CREATE TABLE IF NOT EXISTS sns_topics (
+    name TEXT PRIMARY KEY,
+    arn TEXT NOT NULL UNIQUE,
+    display_name TEXT,
+    policy TEXT,
+    tags TEXT,
+    created_at TEXT NOT NULL
+);
+
+-- SNS Subscriptions
+CREATE TABLE IF NOT EXISTS sns_subscriptions (
+    arn TEXT PRIMARY KEY,
+    topic_arn TEXT NOT NULL,
+    protocol TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    owner TEXT,
+    subscription_attributes TEXT,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (topic_arn) REFERENCES sns_topics(arn) ON DELETE CASCADE
+);
+
+-- Lambda Functions
+CREATE TABLE IF NOT EXISTS lambda_functions (
+    name TEXT PRIMARY KEY,
+    arn TEXT NOT NULL,
+    runtime TEXT NOT NULL,
+    role TEXT NOT NULL,
+    handler TEXT NOT NULL,
+    code_hash TEXT NOT NULL,
+    description TEXT,
+    timeout INTEGER DEFAULT 3,
+    memory_size INTEGER DEFAULT 128,
+    environment_variables TEXT,
+    last_modified TEXT NOT NULL
+);
 "#;

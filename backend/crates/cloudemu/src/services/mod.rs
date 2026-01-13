@@ -9,6 +9,12 @@ pub mod dynamodb;
 #[cfg(feature = "sqs")]
 pub mod sqs;
 
+#[cfg(feature = "sns")]
+pub mod sns;
+
+#[cfg(feature = "lambda")]
+pub mod lambda;
+
 #[cfg(feature = "secretsmanager")]
 pub mod secrets;
 

@@ -14,6 +14,9 @@ pub async fn dispatch(
     headers: HeaderMap,
     Json(body): Json<Value>,
 ) -> Response {
+    let _ = &emulator;
+    let _ = &body;
+
     let target = headers
         .get("x-amz-target")
         .and_then(|h| h.to_str().ok())
@@ -82,6 +85,14 @@ pub async fn dispatch(
         #[cfg(feature = "stepfunctions")]
         "AWSStepFunctions" => {
              crate::services::workflows::handlers::handle_request(
+                State(emulator),
+                headers,
+                Json(body),
+            ).await
+        }
+        #[cfg(feature = "sns")]
+        "AmazonSNS" | "" if body["Action"].as_str().is_some() => {
+             crate::services::sns::handlers::handle_request(
                 State(emulator),
                 headers,
                 Json(body),

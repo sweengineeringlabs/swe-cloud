@@ -19,7 +19,7 @@ pub async fn handle_request(
         .and_then(|h| h.to_str().ok())
         .unwrap_or("");
     
-    let action = target.split('.').last().unwrap_or("");
+    let action = target.split('.').next_back().unwrap_or("");
     
     // If no target header, it might be a query-based request or the action is in the body
     let action = if action.is_empty() {
@@ -61,7 +61,7 @@ async fn create_queue(emulator: &Emulator, body: Value) -> Result<Value, Emulato
 
 async fn send_message(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
     let queue_url = body["QueueUrl"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing QueueUrl".into()))?;
-    let queue_name = queue_url.split('/').last().unwrap_or("");
+    let queue_name = queue_url.split('/').next_back().unwrap_or("");
     let message_body = body["MessageBody"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing MessageBody".into()))?;
     
     let message_id = emulator.storage.send_message(queue_name, message_body)?;
@@ -74,7 +74,7 @@ async fn send_message(emulator: &Emulator, body: Value) -> Result<Value, Emulato
 
 async fn receive_message(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
     let queue_url = body["QueueUrl"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing QueueUrl".into()))?;
-    let queue_name = queue_url.split('/').last().unwrap_or("");
+    let queue_name = queue_url.split('/').next_back().unwrap_or("");
     let max_messages = body["MaxNumberOfMessages"].as_i64().unwrap_or(1) as i32;
     
     let messages = emulator.storage.receive_message(queue_name, max_messages)?;
@@ -95,7 +95,7 @@ async fn receive_message(emulator: &Emulator, body: Value) -> Result<Value, Emul
 
 async fn delete_message(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
     let queue_url = body["QueueUrl"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing QueueUrl".into()))?;
-    let queue_name = queue_url.split('/').last().unwrap_or("");
+    let queue_name = queue_url.split('/').next_back().unwrap_or("");
     let receipt_handle = body["ReceiptHandle"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing ReceiptHandle".into()))?;
     
     emulator.storage.delete_message(queue_name, receipt_handle)?;

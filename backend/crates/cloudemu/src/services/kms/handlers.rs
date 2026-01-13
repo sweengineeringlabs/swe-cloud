@@ -2,7 +2,7 @@ use crate::Emulator;
 use crate::error::EmulatorError;
 use axum::{
     extract::State,
-    http::{HeaderMap, StatusCode},
+    http::HeaderMap,
     response::{IntoResponse, Response},
     Json,
 };
@@ -27,7 +27,7 @@ pub async fn handle_request(
         .unwrap_or("");
     
     info!("KMS: {}", target);
-    let action = target.split('.').last().unwrap_or(target);
+    let action = target.split('.').next_back().unwrap_or(target);
 
     let result = match action {
         "CreateKey" => create_key(&emulator, body).await,

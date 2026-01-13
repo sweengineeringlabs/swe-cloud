@@ -2,7 +2,7 @@ use crate::Emulator;
 use crate::error::EmulatorError;
 use axum::{
     extract::State,
-    http::{HeaderMap, StatusCode},
+    http::HeaderMap,
     response::{IntoResponse, Response},
     Json,
 };

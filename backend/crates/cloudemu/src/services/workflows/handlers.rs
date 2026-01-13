@@ -21,7 +21,7 @@ pub async fn handle_request(
         .unwrap_or("");
     
     info!("StepFunctions: {}", target);
-    let action = target.split('.').last().unwrap_or(target);
+    let action = target.split('.').next_back().unwrap_or(target);
 
     let result = match action {
         "CreateStateMachine" => create_state_machine(&emulator, body).await,

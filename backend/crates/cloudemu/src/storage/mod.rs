@@ -2,6 +2,17 @@
 
 mod engine;
 mod schema;
+mod s3;
+mod dynamodb;
+mod kms;
+mod events;
+mod secrets;
+mod sqs;
+mod sns;
+mod lambda;
+mod monitoring;
+mod identity;
+mod workflows;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -11,5 +22,6 @@ pub use engine::{
     UserPoolMetadata, UserGroupMetadata, UserMetadata,
     StateMachineMetadata, ExecutionMetadata,
     QueueMetadata, MessageMetadata,
-    TableMetadata, ItemMetadata
+    TableMetadata, ItemMetadata,
+    TopicMetadata, SubscriptionMetadata, LambdaMetadata
 };

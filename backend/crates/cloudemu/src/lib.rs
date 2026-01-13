@@ -6,8 +6,11 @@
 //! ## Supported Services
 //!
 //! - **S3**: Object storage with versioning, policies, lifecycle
-//! - **DynamoDB**: NoSQL database (planned)
-//! - **SQS**: Message queues (planned)
+//! - **DynamoDB**: NoSQL database
+//! - **SQS/SNS**: Messaging and Pub/Sub
+//! - **Lambda**: Serverless functions
+//! - **KMS/Secrets**: Security and encryption
+//! - **And more**: EventBridge, CloudWatch, Cognito, etc.
 //!
 //! ## Quick Start
 //!
@@ -60,12 +63,49 @@ pub struct Emulator {
     pub identity: services::identity::IdentityService,
     #[cfg(feature = "stepfunctions")]
     pub workflows: services::workflows::WorkflowsService,
+    #[cfg(feature = "sns")]
+    pub sns: services::sns::SnsService,
+    #[cfg(feature = "lambda")]
+    pub lambda: services::lambda::LambdaService,
 }
 
 impl Emulator {
     /// Create a new emulator with default configuration
     pub fn new() -> Result<Self> {
         Self::with_config(Config::default())
+    }
+
+    /// Create a new in-memory emulator
+    pub fn in_memory() -> Result<Self> {
+        let config = Config::default();
+        let storage = storage::StorageEngine::in_memory()?;
+        
+        Ok(Self {
+            #[cfg(feature = "s3")]
+            s3: services::s3::S3Service::new(storage.clone()),
+            #[cfg(feature = "dynamodb")]
+            dynamodb: services::dynamodb::DynamoDbService::new(storage.clone()),
+            #[cfg(feature = "sqs")]
+            sqs: services::sqs::SqsService::new(storage.clone()),
+            #[cfg(feature = "secretsmanager")]
+            secrets: services::secrets::SecretsService::new(storage.clone()),
+            #[cfg(feature = "eventbridge")]
+            events: services::events::EventsService::new(storage.clone()),
+            #[cfg(feature = "kms")]
+            kms: services::kms::KmsService::new(storage.clone()),
+            #[cfg(feature = "cloudwatch")]
+            monitoring: services::monitoring::MonitoringService::new(storage.clone()),
+            #[cfg(feature = "cognito")]
+            identity: services::identity::IdentityService::new(storage.clone()),
+            #[cfg(feature = "stepfunctions")]
+            workflows: services::workflows::WorkflowsService::new(storage.clone()),
+            #[cfg(feature = "sns")]
+            sns: services::sns::SnsService::new(storage.clone()),
+            #[cfg(feature = "lambda")]
+            lambda: services::lambda::LambdaService::new(storage.clone()),
+            storage,
+            config,
+        })
     }
 
     /// Create a new emulator with custom configuration
@@ -92,6 +132,10 @@ impl Emulator {
             identity: services::identity::IdentityService::new(storage.clone()),
             #[cfg(feature = "stepfunctions")]
             workflows: services::workflows::WorkflowsService::new(storage.clone()),
+            #[cfg(feature = "sns")]
+            sns: services::sns::SnsService::new(storage.clone()),
+            #[cfg(feature = "lambda")]
+            lambda: services::lambda::LambdaService::new(storage.clone()),
             storage,
             config,
         })
@@ -137,6 +181,10 @@ pub async fn start_server(config: Config) -> Result<()> {
     info!("  ✓ Cognito");
     #[cfg(feature = "stepfunctions")]
     info!("  ✓ Step Functions");
+    #[cfg(feature = "sns")]
+    info!("  ✓ SNS");
+    #[cfg(feature = "lambda")]
+    info!("  ✓ Lambda");
     info!("─────────────────────────────────────────");
     info!("Data directory: {}", emulator.config.data_dir.display());
     info!("Region: {}", emulator.config.region);

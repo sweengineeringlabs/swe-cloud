@@ -1,4 +1,4 @@
-use cloudemu::{Config, Emulator};
+use cloudemu::Emulator;
 use std::sync::Arc;
 use serde_json::json;
 use axum::extract::State;
@@ -7,8 +7,7 @@ use axum::Json;
 
 #[tokio::test]
 async fn test_sqs_workflow() {
-    let config = Config::default();
-    let emulator = Arc::new(Emulator::with_config(config).unwrap());
+    let emulator = Arc::new(Emulator::in_memory().unwrap());
     
     // 1. Create Queue
     let body = json!({
@@ -17,7 +16,7 @@ async fn test_sqs_workflow() {
     let mut headers = HeaderMap::new();
     headers.insert("x-amz-target", "AmazonSQS.CreateQueue".parse().unwrap());
     
-    let response = cloudemu::services::sqs::handlers::handle_request(
+    let _response = cloudemu::services::sqs::handlers::handle_request(
         State(emulator.clone()),
         headers.clone(),
         Json(body)
@@ -45,8 +44,7 @@ async fn test_sqs_workflow() {
 
 #[tokio::test]
 async fn test_dynamodb_workflow() {
-    let config = Config::default();
-    let emulator = Arc::new(Emulator::with_config(config).unwrap());
+    let emulator = Arc::new(Emulator::in_memory().unwrap());
     
     let table = emulator.storage.create_table("test-table", "{}", "{}", "000000000000", "us-east-1").unwrap();
     assert_eq!(table.name, "test-table");
@@ -57,4 +55,38 @@ async fn test_dynamodb_workflow() {
     let retrieved = emulator.storage.get_item("test-table", "1", None).unwrap();
     assert!(retrieved.is_some());
     assert_eq!(retrieved.unwrap(), item_json);
+}
+
+#[tokio::test]
+async fn test_sns_workflow() {
+    let emulator = Arc::new(Emulator::in_memory().unwrap());
+    
+    let topic = emulator.storage.create_topic("test-topic", "000000000000", "us-east-1").unwrap();
+    assert_eq!(topic.name, "test-topic");
+    
+    let sub_arn = emulator.storage.subscribe(&topic.arn, "email", "test@example.com").unwrap();
+    assert!(sub_arn.contains(&topic.arn));
+    
+    let topics = emulator.storage.list_topics().unwrap();
+    assert!(topics.iter().any(|t| t.name == "test-topic"));
+}
+
+#[tokio::test]
+async fn test_lambda_workflow() {
+    let emulator = Arc::new(Emulator::in_memory().unwrap());
+    
+    let func = emulator.storage.create_function(
+        "test-func",
+        "nodejs20.x",
+        "role-arn",
+        "index.handler",
+        "hash",
+        "000000000000",
+        "us-east-1"
+    ).unwrap();
+    
+    assert_eq!(func.name, "test-func");
+    
+    let fetched = emulator.storage.get_function("test-func").unwrap();
+    assert_eq!(fetched.arn, func.arn);
 }

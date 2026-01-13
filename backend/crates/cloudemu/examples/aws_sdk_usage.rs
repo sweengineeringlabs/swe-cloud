@@ -81,7 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     s3.put_object()
         .bucket("my-rust-bucket")
         .key("hello.txt")
-        .body("Hello, World!".into())
+        .body(aws_sdk_s3::primitives::ByteStream::from("Hello, World!".as_bytes().to_vec()))
         .content_type("text/plain")
         .send()
         .await?;
@@ -90,7 +90,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     s3.put_object()
         .bucket("my-rust-bucket")
         .key("data/config.json")
-        .body(r#"{"name": "my-app", "version": "1.0.0"}"#.into())
+        .body(aws_sdk_s3::primitives::ByteStream::from(r#"{"name": "my-app", "version": "1.0.0"}"#.as_bytes().to_vec()))
         .content_type("application/json")
         .send()
         .await?;
@@ -120,7 +120,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
     
     let data = response.body.collect().await?;
-    let content = String::from_utf8_lossy(&data.into_bytes());
+    let content_bytes = data.into_bytes();
+    let content = String::from_utf8_lossy(&content_bytes);
     println!("   Content: {}\n", content);
 
     // 7. Get bucket policy

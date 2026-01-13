@@ -1,10 +1,10 @@
 use crate::storage::StorageEngine;
 
-pub struct IdentityService {
+pub struct SnsService {
     _storage: StorageEngine,
 }
 
-impl IdentityService {
+impl SnsService {
     pub fn new(storage: StorageEngine) -> Self {
         Self { _storage: storage }
     }

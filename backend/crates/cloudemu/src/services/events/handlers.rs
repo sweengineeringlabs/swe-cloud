@@ -22,7 +22,7 @@ pub async fn handle_request(
         .unwrap_or("");
     
     info!("EventBridge: {}", target);
-    let action = target.split('.').last().unwrap_or(target);
+    let action = target.split('.').next_back().unwrap_or(target);
 
     let result = match action {
         "CreateEventBus" => create_event_bus(&emulator, body).await,

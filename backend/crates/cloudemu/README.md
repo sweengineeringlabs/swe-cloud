@@ -162,31 +162,27 @@ async fn main() {
 | `CLOUDEMU_REGION` | `us-east-1` | AWS region |
 | `CLOUDEMU_ACCOUNT_ID` | `000000000000` | AWS account ID |
 
-## Supported S3 Operations
+## Supported Services ✅
 
-### Bucket Operations ✅
-- CreateBucket
-- DeleteBucket
-- HeadBucket
-- ListBuckets
-- GetBucketLocation
-- PutBucketVersioning / GetBucketVersioning
-- PutBucketPolicy / GetBucketPolicy / DeleteBucketPolicy
+CloudEmu supports the following AWS services:
 
-### Object Operations ✅
-- PutObject
-- GetObject
-- HeadObject
-- DeleteObject
-- ListObjectsV2
-- CopyObject
+- **S3** (Object Storage) - Full versioning, policies, and metadata support
+- **DynamoDB** (NoSQL Database) - Key-Value storage with basic CRUD
+- **SQS** (Message Queues) - Message production, consumption, and visibility timeouts
+- **SNS** (Pub/Sub) - Topic management and subscriptions
+- **Lambda** (Serverless) - Function management and mock invocations
+- **Secrets Manager** - Secure secret storage and versioning
+- **KMS** (Key Management) - Key creation, encryption/decryption, and signing
+- **EventBridge** (Events) - Event buses, rules, and targets
+- **CloudWatch** (Monitoring & Logs) - Metrics and log group/stream management
+- **Cognito** (Identity) - User pools, groups, and basic auth
+- **Step Functions** (Workflows) - State machine creation and execution tracking
 
 ### Coming Soon 🚧
-- Multipart upload
-- Lifecycle configuration
-- CORS configuration
-- Presigned URLs
-- Bucket ACLs
+- Multipart upload (S3)
+- Secondary Indexes (DynamoDB)
+- Dead Letter Queues (SQS)
+- Real Lambda Execution (Docker/WASR)
 
 ## Data Storage
 
