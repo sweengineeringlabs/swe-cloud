@@ -70,15 +70,16 @@ pub async fn create_function(emulator: &Emulator, body: Value) -> Result<Value, 
     let role = body["Role"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing Role".into()))?;
     let handler = body["Handler"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing Handler".into()))?;
     
-    let func = emulator.storage.create_function(
+    
+    let func = emulator.storage.create_function(crate::storage::CreateFunctionParams {
         name,
         runtime,
         role,
         handler,
-        "mock-hash",
-        &emulator.config.account_id,
-        &emulator.config.region
-    )?;
+        code_hash: "mock-hash",
+        account_id: &emulator.config.account_id,
+        region: &emulator.config.region
+    })?;
     
     Ok(json!(func))
 }

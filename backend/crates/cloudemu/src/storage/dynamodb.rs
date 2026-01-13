@@ -65,4 +65,18 @@ impl StorageEngine {
         }
         Ok(items)
     }
+    pub fn scan_items(&self, table_name: &str) -> Result<Vec<String>> {
+        let db = self.db.lock();
+        let mut stmt = db.prepare(
+            "SELECT item_json FROM ddb_items WHERE table_name = ?1"
+        )?;
+        let rows = stmt.query_map(params![table_name], |row| row.get(0))
+            .map_err(|e| EmulatorError::Database(e.to_string()))?;
+        
+        let mut items = Vec::new();
+        for item in rows {
+            items.push(item.map_err(|e| EmulatorError::Database(e.to_string()))?);
+        }
+        Ok(items)
+    }
 }

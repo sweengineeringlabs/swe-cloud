@@ -26,6 +26,7 @@ pub async fn handle_request(
         "PutItem" => put_item(&emulator, body).await,
         "GetItem" => get_item(&emulator, body).await,
         "Query" => query(&emulator, body).await,
+        "Scan" => scan(&emulator, body).await,
         "DescribeTable" => describe_table(&emulator, body).await,
         "ListTables" => list_tables(&emulator, body).await,
         _ => Err(EmulatorError::InvalidRequest(format!("Unsupported DynamoDB action: {}", action))),
@@ -149,6 +150,19 @@ async fn query(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError>
 
     let items_json = emulator.storage.query_items(table_name, &pk_val)?;
     
+    let items: Vec<Value> = items_json.into_iter().map(|s| serde_json::from_str(&s).unwrap_or(Value::Null)).collect();
+
+    Ok(json!({
+        "Items": items,
+        "Count": items.len(),
+        "ScannedCount": items.len()
+    }))
+}
+
+async fn scan(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
+    let table_name = body["TableName"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing TableName".into()))?;
+    
+    let items_json = emulator.storage.scan_items(table_name)?;
     let items: Vec<Value> = items_json.into_iter().map(|s| serde_json::from_str(&s).unwrap_or(Value::Null)).collect();
 
     Ok(json!({

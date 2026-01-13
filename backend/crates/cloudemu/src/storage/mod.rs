@@ -25,3 +25,5 @@ pub use engine::{
     TableMetadata, ItemMetadata,
     TopicMetadata, SubscriptionMetadata, LambdaMetadata
 };
+
+pub use lambda::CreateFunctionParams;
