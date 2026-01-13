@@ -33,6 +33,22 @@ impl StorageEngine {
         })
     }
 
+    pub fn get_table(&self, name: &str) -> Result<TableMetadata> {
+        let db = self.db.lock();
+        db.query_row(
+            "SELECT name, arn, status, attribute_definitions, key_schema, created_at FROM ddb_tables WHERE name = ?1",
+            params![name],
+            |row| Ok(TableMetadata {
+                name: row.get(0)?,
+                arn: row.get(1)?,
+                status: row.get(2)?,
+                attribute_definitions: row.get(3)?,
+                key_schema: row.get(4)?,
+                created_at: row.get(5)?,
+            })
+        ).map_err(|_| EmulatorError::NotFound("Table".into(), name.into()))
+    }
+
     pub fn put_item(&self, table_name: &str, pk: &str, sk: Option<&str>, item_json: &str) -> Result<()> {
         let db = self.db.lock();
         

@@ -74,11 +74,35 @@ async fn put_item(emulator: &Emulator, body: Value) -> Result<Value, EmulatorErr
     let table_name = body["TableName"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing TableName".into()))?;
     let item = &body["Item"];
     
-    // For a simple emulator, we'll try to guess the PK/SK or just store it.
-    let pk = item.as_object().and_then(|o| o.keys().next()).cloned().unwrap_or_default();
-    let pk_val = item[&pk].to_string(); 
+    // Retrieve table metadata to find PK name
+    let table = emulator.storage.get_table(table_name)?;
+    let key_schema: Vec<Value> = serde_json::from_str(&table.key_schema).unwrap_or_default();
     
-    emulator.storage.put_item(table_name, &pk_val, None, &item.to_string())?;
+    let pk_name = key_schema.iter()
+        .find(|k| k["KeyType"] == "HASH")
+        .and_then(|k| k["AttributeName"].as_str())
+        .ok_or_else(|| EmulatorError::Internal("Table has no HASH key".into()))?;
+
+    let pk_val_obj = item.get(pk_name).ok_or_else(|| EmulatorError::InvalidArgument(format!("Item missing partition key {}", pk_name)))?;
+    
+    // Extract actual value (S, N, etc)
+    let pk_val = pk_val_obj.as_object()
+        .and_then(|o| o.values().next())
+        .and_then(|v| v.as_str())
+        .ok_or_else(|| EmulatorError::InvalidArgument("Invalid partition key format".into()))?;
+
+    // Handle Sort Key
+    let sk_name = key_schema.iter()
+        .find(|k| k["KeyType"] == "RANGE")
+        .and_then(|k| k["AttributeName"].as_str());
+        
+    let sk_val = if let Some(sk) = sk_name {
+         item.get(sk).and_then(|v| v.as_object().and_then(|o| o.values().next()).and_then(|v| v.as_str()))
+    } else {
+        None
+    };
+    
+    emulator.storage.put_item(table_name, pk_val, sk_val, &item.to_string())?;
     
     Ok(json!({}))
 }
@@ -86,10 +110,36 @@ async fn put_item(emulator: &Emulator, body: Value) -> Result<Value, EmulatorErr
 async fn get_item(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
     let table_name = body["TableName"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing TableName".into()))?;
     let key = &body["Key"];
-    let pk = key.as_object().and_then(|o| o.keys().next()).cloned().unwrap_or_default();
-    let pk_val = key[&pk].to_string();
 
-    let item_json = emulator.storage.get_item(table_name, &pk_val, None)?;
+    // Retrieve table metadata to find PK name
+    let table = emulator.storage.get_table(table_name)?;
+    let key_schema: Vec<Value> = serde_json::from_str(&table.key_schema).unwrap_or_default();
+    
+    let pk_name = key_schema.iter()
+        .find(|k| k["KeyType"] == "HASH")
+        .and_then(|k| k["AttributeName"].as_str())
+        .ok_or_else(|| EmulatorError::Internal("Table has no HASH key".into()))?;
+
+    let pk_val_obj = key.get(pk_name).ok_or_else(|| EmulatorError::InvalidArgument(format!("Key missing partition key {}", pk_name)))?;
+    
+    // Extract actual value (S, N, etc)
+    let pk_val = pk_val_obj.as_object()
+        .and_then(|o| o.values().next())
+        .and_then(|v| v.as_str())
+        .ok_or_else(|| EmulatorError::InvalidArgument("Invalid partition key format".into()))?;
+
+    // Handle Sort Key
+    let sk_name = key_schema.iter()
+        .find(|k| k["KeyType"] == "RANGE")
+        .and_then(|k| k["AttributeName"].as_str());
+        
+    let sk_val = if let Some(sk) = sk_name {
+         key.get(sk).and_then(|v| v.as_object().and_then(|o| o.values().next()).and_then(|v| v.as_str()))
+    } else {
+        None
+    };
+
+    let item_json = emulator.storage.get_item(table_name, pk_val, sk_val)?;
     
     match item_json {
         Some(json_str) => {
