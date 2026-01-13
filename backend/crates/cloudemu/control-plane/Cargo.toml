@@ -29,7 +29,7 @@ thiserror = { workspace = true }
 uuid = { workspace = true }
 chrono = { workspace = true }
 anyhow = { workspace = true }
-
+tracing-subscriber = { workspace = true }
 axum = { version = "0.7", features = ["macros"] }
 tower = "0.5"
 tower-http = { version = "0.6", features = ["cors", "trace"] }
@@ -40,3 +40,7 @@ percent-encoding = "2.3"
 [dev-dependencies]
 reqwest = { version = "0.12", features = ["json"] }
 tokio-test = "0.4"
+
+[[bin]]
+name = "cloudemu"
+path = "src/main.rs"

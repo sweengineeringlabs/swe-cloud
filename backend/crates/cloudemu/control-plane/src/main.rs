@@ -2,7 +2,8 @@
 //!
 //! A production-grade local cloud emulator for development and testing.
 
-use cloudemu::{start_server, Config};
+use control_plane::start_server;
+use data_plane::Config;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]

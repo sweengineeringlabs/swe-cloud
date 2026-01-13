@@ -6,7 +6,6 @@ members = [
     "crates/cloudkit-azure",
     "crates/cloudkit-gcp",
     "crates/cloudkit-oracle",
-    "crates/cloudemu",
     "crates/cloudemu/data-plane",
     "crates/cloudemu/control-plane",
 ]
