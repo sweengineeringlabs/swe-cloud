@@ -70,11 +70,20 @@ impl StorageEngine {
 
     pub fn get_item(&self, table_name: &str, pk: &str, sk: Option<&str>) -> Result<Option<String>> {
         let db = self.db.lock();
-        let mut stmt = db.prepare(
-            "SELECT item_json FROM ddb_items WHERE table_name = ?1 AND partition_key = ?2 AND (sort_key = ?3 OR sort_key IS NULL)"
-        )?;
-        let result = stmt.query_row(params![table_name, pk, sk], |row| row.get(0)).ok();
-        Ok(result)
+        
+        if let Some(s) = sk {
+            let mut stmt = db.prepare(
+                "SELECT item_json FROM ddb_items WHERE table_name = ?1 AND partition_key = ?2 AND sort_key = ?3"
+            )?;
+            let result = stmt.query_row(params![table_name, pk, s], |row| row.get(0)).ok();
+            Ok(result)
+        } else {
+            let mut stmt = db.prepare(
+                "SELECT item_json FROM ddb_items WHERE table_name = ?1 AND partition_key = ?2 AND sort_key IS NULL"
+            )?;
+            let result = stmt.query_row(params![table_name, pk], |row| row.get(0)).ok();
+            Ok(result)
+        }
     }
 
     pub fn query_items(&self, table_name: &str, pk: &str) -> Result<Vec<String>> {
