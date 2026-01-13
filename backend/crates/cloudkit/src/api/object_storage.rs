@@ -1,6 +1,6 @@
 //! Object storage trait for blob/object storage operations.
 
-use crate::common::{BucketMetadata, CloudResult, ListResult, ObjectMetadata, PaginationToken};
+use crate::common::{BucketMetadata, CloudResult, ListResult, ObjectMetadata};
 use async_trait::async_trait;
 use bytes::Bytes;
 

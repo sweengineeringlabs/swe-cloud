@@ -2,10 +2,10 @@
 resolver = "2"
 members = [
     "crates/cloudkit",
-    "crates/cloudkit-aws",
-    "crates/cloudkit-azure",
-    "crates/cloudkit-gcp",
-    "crates/cloudkit-oracle",
+    "crates/cloudkit/cloudkit-aws",
+    "crates/cloudkit/cloudkit-azure",
+    "crates/cloudkit/cloudkit-gcp",
+    "crates/cloudkit/cloudkit-oracle",
     "crates/cloudemu/data-plane",
     "crates/cloudemu/control-plane",
 ]
@@ -81,10 +81,10 @@ google-cloud-pubsub = "0.29"
 
 # Workspace crates
 cloudkit = { path = "crates/cloudkit" }
-cloudkit-aws = { path = "crates/cloudkit-aws" }
-cloudkit-azure = { path = "crates/cloudkit-azure" }
-cloudkit-gcp = { path = "crates/cloudkit-gcp" }
-cloudkit-oracle = { path = "crates/cloudkit-oracle" }
+cloudkit-aws = { path = "crates/cloudkit/cloudkit-aws" }
+cloudkit-azure = { path = "crates/cloudkit/cloudkit-azure" }
+cloudkit-gcp = { path = "crates/cloudkit/cloudkit-gcp" }
+cloudkit-oracle = { path = "crates/cloudkit/cloudkit-oracle" }
 
 [profile.release]
 lto = true

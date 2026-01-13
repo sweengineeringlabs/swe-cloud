@@ -1,7 +1,7 @@
 //! Operation executor with retry and metrics.
 
 use crate::common::{CloudError, CloudResult};
-use crate::spi::{MetricsCollector, OperationMetrics, OperationOutcome, RetryDecision, RetryPolicy};
+use crate::spi::{MetricsCollector, OperationMetrics, RetryDecision, RetryPolicy};
 use std::future::Future;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
