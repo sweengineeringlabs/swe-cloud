@@ -1,0 +1,947 @@
+    Checking cloudkit v0.1.0 (C:\phd-systems\swe-lab\cloud\backend\crates\cloudkit)
+warning: unused import: `PaginationToken`
+ --> crates\cloudkit\src\api\object_storage.rs:3:78
+  |
+3 | use crate::common::{BucketMetadata, CloudResult, ListResult, ObjectMetadata, PaginationToken};
+  |                                                                              ^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `OperationOutcome`
+ --> crates\cloudkit\src\core\executor.rs:4:54
+  |
+4 | use crate::spi::{MetricsCollector, OperationMetrics, OperationOutcome, RetryDecision, RetryPolicy};
+  |                                                      ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `CloudResult` and `Region`
+ --> crates\cloudkit\src\facade\cloudkit.rs:3:34
+  |
+3 | use crate::common::{CloudConfig, CloudResult, Region};
+  |                                  ^^^^^^^^^^^  ^^^^^^
+
+warning: unused import: `CloudContext`
+ --> crates\cloudkit\src\facade\cloudkit.rs:4:19
+  |
+4 | use crate::core::{CloudContext, CloudContextBuilder, ProviderType};
+  |                   ^^^^^^^^^^^^
+
+warning: variable `last_error` is assigned to, but never used
+  --> crates\cloudkit\src\core\executor.rs:45:17
+   |
+45 |         let mut last_error: Option<CloudError> = None;
+   |                 ^^^^^^^^^^
+   |
+   = note: consider using `_last_error` instead
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: value assigned to `last_error` is never read
+  --> crates\cloudkit\src\core\executor.rs:69:29
+   |
+69 | ...                   last_error = Some(err);
+   |                       ^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:65:5
+   |
+65 |     Creating,
+   |     ^^^^^^^^
+   |
+note: the lint level is defined here
+  --> crates\cloudkit\src\lib.rs:44:9
+   |
+44 | #![warn(missing_docs)]
+   |         ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:67:5
+   |
+67 |     Enabled,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:68:5
+   |
+68 |     Disabled,
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:69:5
+   |
+69 |     PendingDeletion,
+   |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:70:5
+   |
+70 |     PendingImport,
+   |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:71:5
+   |
+71 |     Unavailable,
+   |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:167:5
+    |
+167 |     RsassaPssSha256,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:168:5
+    |
+168 |     RsassaPssSha384,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:169:5
+    |
+169 |     RsassaPssSha512,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:170:5
+    |
+170 |     RsassaPkcs1V15Sha256,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:171:5
+    |
+171 |     RsassaPkcs1V15Sha384,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:172:5
+    |
+172 |     RsassaPkcs1V15Sha512,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:173:5
+    |
+173 |     EcdsaSha256,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:174:5
+    |
+174 |     EcdsaSha384,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:175:5
+    |
+175 |     EcdsaSha512,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\events.rs:133:5
+    |
+133 |     Enabled,
+    |     ^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\events.rs:134:5
+    |
+134 |     Disabled,
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:66:5
+   |
+66 |     Unconfirmed,
+   |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:67:5
+   |
+67 |     Confirmed,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:68:5
+   |
+68 |     Archived,
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:69:5
+   |
+69 |     Compromised,
+   |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:70:5
+   |
+70 |     Unknown,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:71:5
+   |
+71 |     ResetRequired,
+   |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:72:5
+   |
+72 |     ForceChangePassword,
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:119:5
+    |
+119 |     SmsMfa,
+    |     ^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:120:5
+    |
+120 |     SoftwareTokenMfa,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:121:5
+    |
+121 |     NewPasswordRequired,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:122:5
+    |
+122 |     MfaSetup,
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:123:5
+    |
+123 |     SelectMfaType,
+    |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:124:5
+    |
+124 |     Custom(String),
+    |     ^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:61:5
+   |
+61 |     None,
+   |     ^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:62:5
+   |
+62 |     Seconds,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:63:5
+   |
+63 |     Milliseconds,
+   |     ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:64:5
+   |
+64 |     Microseconds,
+   |     ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:65:5
+   |
+65 |     Bytes,
+   |     ^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:66:5
+   |
+66 |     Kilobytes,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:67:5
+   |
+67 |     Megabytes,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:68:5
+   |
+68 |     Gigabytes,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:69:5
+   |
+69 |     Count,
+   |     ^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:70:5
+   |
+70 |     Percent,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:71:5
+   |
+71 |     BytesPerSecond,
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:72:5
+   |
+72 |     CountPerSecond,
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:115:5
+    |
+115 |     Trace,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:116:5
+    |
+116 |     Debug,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:118:5
+    |
+118 |     Info,
+    |     ^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:119:5
+    |
+119 |     Warn,
+    |     ^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:120:5
+    |
+120 |     Error,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:121:5
+    |
+121 |     Fatal,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:145:5
+    |
+145 |     Average,
+    |     ^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:146:5
+    |
+146 |     Sum,
+    |     ^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:147:5
+    |
+147 |     Minimum,
+    |     ^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:148:5
+    |
+148 |     Maximum,
+    |     ^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:149:5
+    |
+149 |     SampleCount,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:175:5
+    |
+175 |     Ok,
+    |     ^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:176:5
+    |
+176 |     Alarm,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:177:5
+    |
+177 |     InsufficientData,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:206:5
+    |
+206 |     GreaterThan,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:207:5
+    |
+207 |     GreaterThanOrEqual,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:208:5
+    |
+208 |     LessThan,
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:209:5
+    |
+209 |     LessThanOrEqual,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:67:5
+   |
+67 |     Running,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:68:5
+   |
+68 |     Succeeded,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:69:5
+   |
+69 |     Failed,
+   |     ^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:70:5
+   |
+70 |     TimedOut,
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:71:5
+   |
+71 |     Aborted,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:72:5
+   |
+72 |     PendingRedrive,
+   |     ^^^^^^^^^^^^^^
+
+warning: `cloudkit` (lib) generated 72 warnings (run `cargo fix --lib -p cloudkit` to apply 4 suggestions)
+    Checking cloudkit-aws v0.1.0 (C:\phd-systems\swe-lab\cloud\backend\crates\cloudkit-aws)
+warning: unused imports: `AuthProvider`, `MetricsCollector`, and `RetryPolicy`
+ --> crates\cloudkit-aws\src\builder.rs:5:21
+  |
+5 | use cloudkit::spi::{AuthProvider, MetricsCollector, RetryPolicy};
+  |                     ^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: use of deprecated function `aws_config::from_env`: Use the `aws_config::defaults` function. If you don't care about future default behavior changes, you can continue to use this function by enabling the `behavior-version-latest` feature. Doing so will make this deprecation notice go away.
+  --> crates\cloudkit-aws\src\builder.rs:57:38
+   |
+57 |         let mut loader = aws_config::from_env();
+   |                                      ^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:187:83
+    |
+187 |             let result = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                                   ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+187 -             let result = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+187 +             let result = serde_json::from_value(json_val).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:211:76
+    |
+211 |         let json_item = serde_json::to_value(item).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                            ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+211 -         let json_item = serde_json::to_value(item).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+211 +         let json_item = serde_json::to_value(item).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:327:87
+    |
+327 |                 let result = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                                       ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+327 -                 let result = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+327 +                 let result = serde_json::from_value(json_val).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:370:88
+    |
+370 |                     let val = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                                        ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+370 -                     let val = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+370 +                     let val = serde_json::from_value(json_val).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:386:80
+    |
+386 |             let json_item = serde_json::to_value(item).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                                ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+386 -             let json_item = serde_json::to_value(item).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+386 +             let json_item = serde_json::to_value(item).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:127:76
+    |
+127 |         Ok(resp.successful().iter().map(|s| ResourceId::new(s.message_id().unwrap_or_default())).collect())
+    |                                                                            ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no variant or associated item named `InvalidArgument` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:194:80
+    |
+194 |         let handle = message.receipt_handle.as_ref().ok_or_else(|| CloudError::InvalidArgument("Message missing receipt handle".into()))?;
+    |                                                                                ^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `InvalidArgument` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:232:80
+    |
+232 |         let handle = message.receipt_handle.as_ref().ok_or_else(|| CloudError::InvalidArgument("Message missing receipt handle".into()))?;
+    |                                                                                ^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+   --> crates\cloudkit-aws\src\eventbridge.rs:244:28
+    |
+244 |                 id: t.id().unwrap_or_default().to_string(),
+    |                            ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+   --> crates\cloudkit-aws\src\eventbridge.rs:245:30
+    |
+245 |                 arn: t.arn().unwrap_or_default().to_string(),
+    |                              ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:43:37
+   |
+43 |         Ok(resp.state_machine_arn().unwrap_or_default().to_string())
+   |                                     ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:77:31
+   |
+77 |             name: resp.name().unwrap_or_default().to_string(),
+   |                               ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:78:48
+   |
+78 |             arn: Some(resp.state_machine_arn().unwrap_or_default().to_string()),
+   |                                                ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or` found for reference `&StateMachineType` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:80:48
+   |
+80 |             workflow_type: match resp.r#type().unwrap_or(&aws_sdk_sfn::types::StateMachineType::Standard) {
+   |                                                ^^^^^^^^^ method not found in `&StateMachineType`
+
+error[E0599]: no method named `unwrap_or` found for reference `&str` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:84:64
+   |
+84 |             definition: serde_json::from_str(resp.definition().unwrap_or("{}")).unwrap_or(Value::Null),
+   |                                                                ^^^^^^^^^ method not found in `&str`
+
+error[E0599]: `&str` is not an iterator
+  --> crates\cloudkit-aws\src\stepfunctions.rs:85:39
+   |
+85 |             role_arn: resp.role_arn().map(|s| s.to_string()),
+   |                                       ^^^ `&str` is not an iterator
+   |
+   = note: the following trait bounds were not satisfied:
+           `&str: Iterator`
+           which is required by `&mut &str: Iterator`
+           `str: Iterator`
+           which is required by `&mut str: Iterator`
+
+error[E0599]: `&aws_sdk_secretsmanager::primitives::DateTime` is not an iterator
+  --> crates\cloudkit-aws\src\stepfunctions.rs:86:46
+   |
+86 |             created_at: resp.creation_date().map(|d| chrono::DateTime::<chrono::Utc>::from_timestamp(d.secs(), 0).unwrap_or_default()),
+   |                                              ^^^ `&aws_sdk_secretsmanager::primitives::DateTime` is not an iterator
+   |
+  ::: C:\Users\elvis\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aws-smithy-types-1.3.5\src\date_time\mod.rs:57:1
+   |
+57 | pub struct DateTime {
+   | ------------------- doesn't satisfy `_: Iterator`
+   |
+   = note: the following trait bounds were not satisfied:
+           `&aws_sdk_secretsmanager::primitives::DateTime: Iterator`
+           which is required by `&mut &aws_sdk_secretsmanager::primitives::DateTime: Iterator`
+           `aws_sdk_secretsmanager::primitives::DateTime: Iterator`
+           which is required by `&mut aws_sdk_secretsmanager::primitives::DateTime: Iterator`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:99:32
+   |
+99 |                 name: s.name().unwrap_or_default().to_string(),
+   |                                ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:100:49
+    |
+100 |                 arn: Some(s.state_machine_arn().unwrap_or_default().to_string()),
+    |                                                 ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or` found for reference `&StateMachineType` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:102:49
+    |
+102 |                 workflow_type: match s.r#type().unwrap_or(&aws_sdk_sfn::types::StateMachineType::Standard) {
+    |                                                 ^^^^^^^^^ method not found in `&StateMachineType`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:135:48
+    |
+135 |             execution_id: resp.execution_arn().unwrap_or_default().to_string(),
+    |                                                ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:175:48
+    |
+175 |             execution_id: resp.execution_arn().unwrap_or_default().to_string(),
+    |                                                ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:176:52
+    |
+176 |             workflow_arn: resp.state_machine_arn().unwrap_or_default().to_string(),
+    |                                                    ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap` found for reference `&aws_sdk_sfn::types::ExecutionStatus` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:178:41
+    |
+178 |             status: match resp.status().unwrap() {
+    |                                         ^^^^^^ method not found in `&aws_sdk_sfn::types::ExecutionStatus`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:221:49
+    |
+221 |                 execution_id: e.execution_arn().unwrap_or_default().to_string(),
+    |                                                 ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: `&str` is not an iterator
+   --> crates\cloudkit-aws\src\stepfunctions.rs:223:32
+    |
+223 |                 name: e.name().map(|s| s.to_string()),
+    |                                ^^^ `&str` is not an iterator
+    |
+    = note: the following trait bounds were not satisfied:
+            `&str: Iterator`
+            which is required by `&mut &str: Iterator`
+            `str: Iterator`
+            which is required by `&mut str: Iterator`
+
+error[E0599]: no method named `unwrap` found for reference `&aws_sdk_sfn::types::ExecutionStatus` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:224:42
+    |
+224 |                 status: match e.status().unwrap() {
+    |                                          ^^^^^^ method not found in `&aws_sdk_sfn::types::ExecutionStatus`
+
+error[E0599]: no method named `unwrap` found for reference `&HistoryEventType` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:255:56
+    |
+255 |                 event_type: format!("{:?}", e.r#type().unwrap()),
+    |                                                        ^^^^^^ method not found in `&HistoryEventType`
+
+error[E0599]: no method named `secs` found for enum `std::option::Option<T>` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:35:102
+    |
+ 35 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_create_date().secs(), 0).unwrap_or_default()),
+    |                                                                                                      ^^^^ method not found in `std::option::Option<&aws_sdk_secretsmanager::primitives::DateTime>`
+    |
+note: the method `secs` exists on the type `&aws_sdk_secretsmanager::primitives::DateTime`
+   --> C:\Users\elvis\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aws-smithy-types-1.3.5\src\date_time\mod.rs:186:5
+    |
+186 |     pub fn secs(&self) -> i64 {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+help: consider using `Option::expect` to unwrap the `&aws_sdk_secretsmanager::primitives::DateTime` value, panicking if the value is an `Option::None`
+    |
+ 35 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_create_date().expect("REASON").secs(), 0).unwrap_or_default()),
+    |                                                                                                     +++++++++++++++++
+
+error[E0599]: no method named `secs` found for enum `std::option::Option<T>` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:36:109
+    |
+ 36 |             updated_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_last_modified_date().secs(), 0).unwrap_or_default()),
+    |                                                                                                             ^^^^ method not found in `std::option::Option<&aws_sdk_secretsmanager::primitives::DateTime>`
+    |
+note: the method `secs` exists on the type `&aws_sdk_secretsmanager::primitives::DateTime`
+   --> C:\Users\elvis\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aws-smithy-types-1.3.5\src\date_time\mod.rs:186:5
+    |
+186 |     pub fn secs(&self) -> i64 {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+help: consider using `Option::expect` to unwrap the `&aws_sdk_secretsmanager::primitives::DateTime` value, panicking if the value is an `Option::None`
+    |
+ 36 |             updated_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_last_modified_date().expect("REASON").secs(), 0).unwrap_or_default()),
+    |                                                                                                            +++++++++++++++++
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+  --> crates\cloudkit-aws\src\cognito.rs:43:33
+   |
+43 |             id: user.username().unwrap_or_default().to_string(),
+   |                                 ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `unwrap_or_default` found for reference `&str` in the current scope
+  --> crates\cloudkit-aws\src\cognito.rs:44:39
+   |
+44 |             username: user.username().unwrap_or_default().to_string(),
+   |                                       ^^^^^^^^^^^^^^^^^ method not found in `&str`
+
+error[E0599]: no method named `secs` found for enum `std::option::Option<T>` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:51:102
+    |
+ 51 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_create_date().secs(), 0).unwrap_or_default()),
+    |                                                                                                      ^^^^ method not found in `std::option::Option<&aws_sdk_secretsmanager::primitives::DateTime>`
+    |
+note: the method `secs` exists on the type `&aws_sdk_secretsmanager::primitives::DateTime`
+   --> C:\Users\elvis\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aws-smithy-types-1.3.5\src\date_time\mod.rs:186:5
+    |
+186 |     pub fn secs(&self) -> i64 {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+help: consider using `Option::expect` to unwrap the `&aws_sdk_secretsmanager::primitives::DateTime` value, panicking if the value is an `Option::None`
+    |
+ 51 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_create_date().expect("REASON").secs(), 0).unwrap_or_default()),
+    |                                                                                                     +++++++++++++++++
+
+error[E0599]: no method named `secs` found for enum `std::option::Option<T>` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:52:109
+    |
+ 52 |             updated_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_last_modified_date().secs(), 0).unwrap_or_default()),
+    |                                                                                                             ^^^^ method not found in `std::option::Option<&aws_sdk_secretsmanager::primitives::DateTime>`
+    |
+note: the method `secs` exists on the type `&aws_sdk_secretsmanager::primitives::DateTime`
+   --> C:\Users\elvis\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aws-smithy-types-1.3.5\src\date_time\mod.rs:186:5
+    |
+186 |     pub fn secs(&self) -> i64 {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+help: consider using `Option::expect` to unwrap the `&aws_sdk_secretsmanager::primitives::DateTime` value, panicking if the value is an `Option::None`
+    |
+ 52 |             updated_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_last_modified_date().expect("REASON").secs(), 0).unwrap_or_default()),
+    |                                                                                                            +++++++++++++++++
+
+error[E0308]: mismatched types
+   --> crates\cloudkit-aws\src\cognito.rs:83:39
+    |
+ 83 |               req = req.user_attributes(aws_sdk_cognitoidentityprovider::types::AttributeType::builder()
+    |  _______________________---------------_^
+    | |                       |
+    | |                       arguments to this method are incorrect
+ 84 | |                 .name("email")
+ 85 | |                 .value(e)
+ 86 | |                 .build());
+    | |________________________^ expected `AttributeType`, found `Result<AttributeType, BuildError>`
+    |
+    = note: expected struct `AttributeType`
+                 found enum `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>`
+note: method defined here
+   --> C:\Users\elvis\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aws-sdk-cognitoidentityprovider-1.105.0\src\operation\admin_create_user\builders.rs:203:12
+    |
+203 |     pub fn user_attributes(mut self, input: crate::types::AttributeType) -> Self {
+    |            ^^^^^^^^^^^^^^^
+help: consider using `Result::expect` to unwrap the `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>` value, panicking if the value is a `Result::Err`
+    |
+ 86 |                 .build().expect("REASON"));
+    |                         +++++++++++++++++
+
+error[E0308]: mismatched types
+   --> crates\cloudkit-aws\src\cognito.rs:124:39
+    |
+115 |               aws_attrs.push(aws_sdk_cognitoidentityprovider::types::AttributeType::builder()
+    |  _____________---------______-
+    | |             |
+    | |             ... which causes `aws_attrs` to have type `Vec<Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>>`
+116 | |                 .name(k)
+117 | |                 .value(v)
+118 | |                 .build());
+    | |________________________- this argument has type `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>`...
+...
+124 |               .set_user_attributes(Some(aws_attrs))
+    |                                    ---- ^^^^^^^^^ expected `Vec<AttributeType>`, found `Vec<Result<AttributeType, BuildError>>`
+    |                                    |
+    |                                    arguments to this enum variant are incorrect
+    |
+    = note: expected struct `Vec<AttributeType>`
+               found struct `Vec<Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>>`
+help: the type constructed contains `Vec<Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>>` due to the type of the argument passed
+   --> crates\cloudkit-aws\src\cognito.rs:124:34
+    |
+124 |             .set_user_attributes(Some(aws_attrs))
+    |                                  ^^^^^---------^
+    |                                       |
+    |                                       this argument influences the type of `Some`
+note: tuple variant defined here
+   --> /rustc/ed61e7d7e242494fb7057f2657300d9e77bb4fcb\library\core\src\option.rs:602:5
+help: consider using `Result::expect` to unwrap the `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>` value, panicking if the value is a `Result::Err`
+    |
+118 |                 .build().expect("REASON"));
+    |                         +++++++++++++++++
+
+error[E0277]: the trait bound `&HashMap<std::string::String, std::string::String>: std::default::Default` is not satisfied
+   --> crates\cloudkit-aws\src\cognito.rs:204:57
+    |
+204 |                 parameters: resp.challenge_parameters().unwrap_or_default().clone(),
+    |                                                         ^^^^^^^^^^^^^^^^^ the trait `std::default::Default` is not implemented for `&HashMap<std::string::String, std::string::String>`
+    |
+    = help: the trait `std::default::Default` is implemented for `HashMap<K, V, S>`
+note: required by a bound in `std::option::Option::<T>::unwrap_or_default`
+   --> /rustc/ed61e7d7e242494fb7057f2657300d9e77bb4fcb\library\core\src\option.rs:1087:5
+
+error[E0277]: the trait bound `&HashMap<std::string::String, std::string::String>: std::default::Default` is not satisfied
+   --> crates\cloudkit-aws\src\cognito.rs:238:57
+    |
+238 |                 parameters: resp.challenge_parameters().unwrap_or_default().clone(),
+    |                                                         ^^^^^^^^^^^^^^^^^ the trait `std::default::Default` is not implemented for `&HashMap<std::string::String, std::string::String>`
+    |
+    = help: the trait `std::default::Default` is implemented for `HashMap<K, V, S>`
+note: required by a bound in `std::option::Option::<T>::unwrap_or_default`
+   --> /rustc/ed61e7d7e242494fb7057f2657300d9e77bb4fcb\library\core\src\option.rs:1087:5
+
+error[E0599]: no variant or associated item named `EccSecgP256K1` found for enum `cloudkit::api::KeySpec` in the current scope
+  --> crates\cloudkit-aws\src\kms.rs:47:22
+   |
+47 |             KeySpec::EccSecgP256K1 => aws_sdk_kms::types::KeySpec::EccSecgP256K1,
+   |                      ^^^^^^^^^^^^^ variant or associated item not found in `cloudkit::api::KeySpec`
+
+error[E0560]: struct `cloudkit::api::KeyMetadata` has no field named `id`
+  --> crates\cloudkit-aws\src\kms.rs:58:13
+   |
+58 |             id: metadata.key_id().to_string(),
+   |             ^^ `cloudkit::api::KeyMetadata` does not have this field
+   |
+   = note: available fields are: `key_id`, `state`, `deletion_date`, `tags`
+
+error[E0599]: no method named `unwrap_or` found for type `bool` in the current scope
+  --> crates\cloudkit-aws\src\kms.rs:60:41
+   |
+60 |             enabled: metadata.enabled().unwrap_or(false),
+   |                                         ^^^^^^^^^ method not found in `bool`
+
+error[E0560]: struct `cloudkit::api::KeyMetadata` has no field named `id`
+  --> crates\cloudkit-aws\src\kms.rs:78:13
+   |
+78 |             id: metadata.key_id().to_string(),
+   |             ^^ `cloudkit::api::KeyMetadata` does not have this field
+   |
+   = note: available fields are: `key_id`, `state`, `deletion_date`, `tags`
+
+error[E0599]: no method named `unwrap_or` found for type `bool` in the current scope
+  --> crates\cloudkit-aws\src\kms.rs:80:41
+   |
+80 |             enabled: metadata.enabled().unwrap_or(false),
+   |                                         ^^^^^^^^^ method not found in `bool`
+
+error[E0560]: struct `DecryptResult` has no field named `algorithm`
+   --> crates\cloudkit-aws\src\kms.rs:205:13
+    |
+205 |             algorithm: resp.encryption_algorithm().map(|a| a.as_str().to_string()),
+    |             ^^^^^^^^^ `DecryptResult` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0382]: borrow of partially moved value: `resp`
+  --> crates\cloudkit-aws\src\lambda.rs:60:29
+   |
+59 |             payload: resp.payload.map(|b| b.into_inner().to_vec()),
+   |                      ------------ -------------------------------- `resp.payload` partially moved due to this method call
+   |                      |
+   |                      help: consider calling `.as_ref()` or `.as_mut()` to borrow the type's contents
+60 |             function_error: resp.function_error().map(|e| e.to_string()),
+   |                             ^^^^ value borrowed here after partial move
+   |
+note: `std::option::Option::<T>::map` takes ownership of the receiver `self`, which moves `resp.payload`
+  --> /rustc/ed61e7d7e242494fb7057f2657300d9e77bb4fcb\library\core\src\option.rs:1154:28
+   = note: partial move occurs because `resp.payload` has type `std::option::Option<Blob>`, which does not implement the `Copy` trait
+help: you can `clone` the value and consume it, but this might not be your desired behavior
+   |
+59 |             payload: resp.payload.clone().map(|b| b.into_inner().to_vec()),
+   |                                  ++++++++
+
+warning: unused variable: `namespace`
+  --> crates\cloudkit-aws\src\cloudwatch.rs:50:9
+   |
+50 |         namespace: &str,
+   |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_namespace`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+  --> crates\cloudkit-aws\src\cloudwatch.rs:68:13
+   |
+68 |         let mut req = self.client.put_metric_alarm()
+   |             ----^^^
+   |             |
+   |             help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+error[E0308]: mismatched types
+  --> crates\cloudkit-aws\src\kms.rs:65:25
+   |
+65 | ...t: chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default(),
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<DateTime<Utc>>`, found `DateTime<Utc>`
+   |
+   = note: expected enum `std::option::Option<chrono::DateTime<_>>`
+            found struct `chrono::DateTime<_>`
+help: try wrapping the expression in `Some`
+   |
+65 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default()),
+   |                         +++++                                                                                                                               +
+
+error[E0308]: mismatched types
+  --> crates\cloudkit-aws\src\kms.rs:88:25
+   |
+88 | ...t: chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default(),
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<DateTime<Utc>>`, found `DateTime<Utc>`
+   |
+   = note: expected enum `std::option::Option<chrono::DateTime<_>>`
+            found struct `chrono::DateTime<_>`
+help: try wrapping the expression in `Some`
+   |
+88 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default()),
+   |                         +++++                                                                                                                               +
+
+Some errors have detailed explanations: E0277, E0308, E0382, E0560, E0599.
+For more information about an error, try `rustc --explain E0277`.
+warning: `cloudkit-aws` (lib) generated 4 warnings
+error: could not compile `cloudkit-aws` (lib) due to 47 previous errors; 4 warnings emitted
