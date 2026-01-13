@@ -1,0 +1,33 @@
+[package]
+name = "cloudkit-oracle"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Oracle Cloud provider for CloudKit multi-cloud SDK"
+keywords = ["cloud", "oracle", "oci", "object-storage"]
+categories = ["api-bindings", "asynchronous"]
+
+[features]
+default = ["object-storage"]
+object-storage = []
+
+[dependencies]
+# Core CloudKit SPI
+cloudkit_spi = { path = "../cloudkit_spi" }
+cloudkit_api = { path = "../cloudkit_api" }
+
+# Core dependencies
+tokio = { workspace = true }
+async-trait = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+bytes = { workspace = true }
+chrono = { workspace = true }
+reqwest = { workspace = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }

@@ -1,7 +1,7 @@
 //! Main CloudKit entry point.
 
-use crate::common::{CloudConfig, CloudResult, Region};
-use crate::core::{CloudContext, CloudContextBuilder, ProviderType};
+use cloudkit_spi::CloudConfig;
+use cloudkit_spi::{CloudContextBuilder, ProviderType};
 
 /// Main entry point for CloudKit.
 ///

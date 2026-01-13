@@ -5,13 +5,12 @@
 //!
 //! ## Architecture (SEA - Stratified Encapsulation Architecture)
 //!
-//! This crate is organized into five layers:
+//! CloudKit is organized into multiple foundational crates:
 //!
-//! 1. **Common** - Shared types, errors, and utilities
-//! 2. **SPI** - Service Provider Interface for extensions
-//! 3. **API** - Service contracts and traits
-//! 4. **Core** - Default implementations
-//! 5. **Facade** - Public API surface
+//! 1. **cloudkit_spi** - Service Provider Interface (foundation)
+//! 2. **cloudkit_api** - High-level service API traits
+//! 3. **cloudkit_core** - Core orchestration layer
+//! 4. **cloudkit** - Facade (this crate)
 //!
 //! ## Quick Start
 //!
@@ -46,27 +45,20 @@
 #![deny(unsafe_code)]
 
 // =============================================================================
-// LAYER 1: COMMON - Shared types, errors, and utilities
+// RE-EXPORT FOUNDATION CRATES
 // =============================================================================
-pub mod common;
+
+/// SPI (Service Provider Interface) - Foundation types and extension points
+pub use cloudkit_spi;
+
+/// API - High-level service traits
+pub use cloudkit_api;
+
+/// Core - Orchestration layer
+pub use cloudkit_core;
 
 // =============================================================================
-// LAYER 2: SPI - Service Provider Interface for extensions
-// =============================================================================
-pub mod spi;
-
-// =============================================================================
-// LAYER 3: API - Service contracts and traits
-// =============================================================================
-pub mod api;
-
-// =============================================================================
-// LAYER 4: CORE - Default implementations
-// =============================================================================
-pub mod core;
-
-// =============================================================================
-// LAYER 5: FACADE - Public API surface
+// FACADE - Public API surface
 // =============================================================================
 pub mod facade;
 

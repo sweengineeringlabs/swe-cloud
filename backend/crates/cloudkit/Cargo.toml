@@ -14,31 +14,10 @@ categories = ["api-bindings", "asynchronous"]
 default = []
 
 [dependencies]
-# Core
-tokio = { workspace = true }
-async-trait = { workspace = true }
-thiserror = { workspace = true }
-tracing = { workspace = true }
-
-# Serialization
-serde = { workspace = true }
-serde_json = { workspace = true }
-
-# HTTP
-reqwest = { workspace = true }
-
-# Date/Time
-chrono = { workspace = true }
-
-# UUID
-uuid = { workspace = true }
-
-# Bytes
-bytes = { workspace = true }
-
-# Futures
-futures = { workspace = true }
-
+# Foundation crates (re-export everything from these)
+cloudkit_spi = { path = "../cloudkit_spi" }
+cloudkit_api = { path = "../cloudkit_api" }
+cloudkit_core = { path = "../cloudkit_core" }
 
 [dev-dependencies]
 tokio-test = { workspace = true }

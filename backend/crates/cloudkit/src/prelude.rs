@@ -8,64 +8,14 @@
 //! use cloudkit::prelude::*;
 //! ```
 
-// Common types
-pub use crate::common::{
-    BucketMetadata,
-    CloudConfig,
-    CloudError,
-    CloudResult,
-    Credentials,
-    ListResult,
-    ObjectMetadata,
-    PaginationToken,
-    Region,
-    ResourceId,
-    ResourceMetadata,
-};
+// Re-export everything from cloudkit_spi
+pub use cloudkit_spi::*;
 
-// API traits
-pub use crate::api::{
-    Functions,
-    GetOptions,
-    InvocationType,
-    InvokeOptions,
-    InvokeResult,
-    KeyValueStore,
-    KvGetOptions,
-    KvPutOptions,
-    KvQueryOptions,
-    ListOptions,
-    Message,
-    MessageQueue,
-    ObjectStorage,
-    PubSub,
-    PubSubMessage,
-    PutOptions,
-    ReceiveOptions,
-    SendOptions,
-    SubscriptionConfig,
-};
+// Re-export everything from cloudkit_api
+pub use cloudkit_api::*;
 
-// SPI traits
-pub use crate::spi::{
-    AuthProvider,
-    ExponentialBackoff,
-    FixedDelay,
-    Logger,
-    LogLevel,
-    MetricsCollector,
-    NoRetry,
-    OperationMetrics,
-    OperationOutcome,
-    RetryDecision,
-    RetryPolicy,
-};
+// Re-export everything from cloudkit_core
+pub use cloudkit_core::*;
 
-// Core types
-pub use crate::core::{
-    CloudContext,
-    ProviderType,
-};
-
-// Facade
-pub use crate::facade::CloudKit;
+// Re-export facade
+pub use crate::facade::*;

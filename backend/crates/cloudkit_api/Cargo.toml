@@ -1,0 +1,37 @@
+[package]
+name = "cloudkit_api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "High-level service API traits for CloudKit"
+keywords = ["cloud", "api", "traits", "multi-cloud"]
+categories = ["api-bindings"]
+
+[features]
+default = []
+
+[dependencies]
+# Core SPI
+cloudkit_spi = { path = "../cloudkit_spi" }
+
+# Async
+async-trait = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Date/Time
+chrono = { workspace = true }
+
+# UUID
+uuid = { workspace = true }
+
+# Bytes
+bytes = { workspace = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }
