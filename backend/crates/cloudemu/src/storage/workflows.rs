@@ -96,4 +96,20 @@ impl StorageEngine {
             })
         ).map_err(|_| EmulatorError::NotFound("Execution".into(), arn.into()))
     }
+
+    pub fn update_execution_status(&self, arn: &str, status: &str, output: Option<&str>) -> Result<()> {
+        let stop_date = if status == "SUCCEEDED" || status == "FAILED" || status == "ABORTED" {
+            Some(chrono::Utc::now().to_rfc3339())
+        } else {
+            None
+        };
+
+        let db = self.db.lock();
+        db.execute(
+            "UPDATE sf_executions SET status = ?1, output = ?2, stop_date = ?3 WHERE arn = ?4",
+            params![status, output, stop_date, arn],
+        )?;
+
+        Ok(())
+    }
 }

@@ -95,15 +95,41 @@ async fn delete_state_machine(emulator: &Emulator, body: Value) -> Result<Value,
 async fn start_execution(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
     let machine_arn = body["stateMachineArn"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing stateMachineArn".into()))?;
     let name = body["name"].as_str();
-    let input = body["input"].as_str();
+    let input = body["input"].as_str().unwrap_or("{}");
 
-    let exec = emulator.storage.start_execution(
+    // Get state machine definition
+    let machines = emulator.storage.list_state_machines()?;
+    let machine = machines.iter().find(|m| m.arn == machine_arn)
+        .ok_or_else(|| EmulatorError::NotFound("StateMachine".into(), machine_arn.into()))?;
+
+    // Create execution record
+    let mut exec = emulator.storage.start_execution(
         machine_arn,
         name,
-        input,
+        Some(input),
         &emulator.config.account_id,
         &emulator.config.region
     )?;
+
+    // Execute the state machine
+    info!("StepFunctions: Executing state machine: {}", machine.name);
+    match super::interpreter::StateMachineExecutor::execute(&machine.definition, input) {
+        Ok(output) => {
+            // Update execution with success
+            emulator.storage.update_execution_status(&exec.arn, "SUCCEEDED", Some(&output))?;
+            exec.status = "SUCCEEDED".to_string();
+            exec.output = Some(output);
+            info!("StepFunctions: Execution succeeded: {}", exec.name);
+        },
+        Err(e) => {
+            // Update execution with failure
+            let error_msg = format!("Execution failed: {}", e.message());
+            emulator.storage.update_execution_status(&exec.arn, "FAILED", Some(&error_msg))?;
+            exec.status = "FAILED".to_string();
+            exec.output = Some(error_msg);
+            tracing::error!("StepFunctions: Execution failed: {}", e.message());
+        }
+    }
 
     Ok(json!({
         "executionArn": exec.arn,
