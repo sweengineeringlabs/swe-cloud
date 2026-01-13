@@ -153,49 +153,106 @@ async fn encrypt(emulator: &Emulator, body: Value) -> Result<Value, EmulatorErro
     let key_id = body["KeyId"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing KeyId".into()))?;
     let plaintext_b64 = body["Plaintext"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing Plaintext".into()))?;
     
-    // Check key
-    let _key = emulator.storage.get_key(key_id)?;
+    // Check key exists and is enabled
+    let key = emulator.storage.get_key(key_id)?;
+    if key.key_state != "Enabled" {
+        return Err(EmulatorError::InvalidRequest(format!("Key {} is not enabled", key_id)));
+    }
 
-    // Payload: KeyId:PlaintextBase64
-    let payload = format!("MOCK_ENCRYPTED:{}:{}", key_id, plaintext_b64);
-    let ciphertext = BASE64.encode(payload.as_bytes());
+    // Decode plaintext from base64
+    let plaintext = BASE64.decode(plaintext_b64)
+        .map_err(|_| EmulatorError::InvalidArgument("Invalid Plaintext base64".into()))?;
+
+    // Use AES-256-GCM encryption
+    use aes_gcm::{
+        aead::{Aead, AeadCore, KeyInit, OsRng},
+        Aes256Gcm,
+    };
+    use sha2::{Sha256, Digest};
+    
+    // Derive a 256-bit key from the key_id (deterministic for this emulator)
+    let mut hasher = Sha256::new();
+    hasher.update(key_id.as_bytes());
+    hasher.update(b"cloudemu-kms-key");
+    let key_bytes = hasher.finalize();
+    
+    let cipher = Aes256Gcm::new_from_slice(&key_bytes)
+        .map_err(|e| EmulatorError::Internal(format!("Failed to create cipher: {}", e)))?;
+    
+    // Generate random nonce (96 bits for GCM)
+    let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
+    
+    // Encrypt
+    let ciphertext = cipher.encrypt(&nonce, plaintext.as_ref())
+        .map_err(|e| EmulatorError::Internal(format!("Encryption failed: {}", e)))?;
+    
+    // Format: nonce (12 bytes) + ciphertext + auth tag (16 bytes, included in ciphertext)
+    let mut encrypted_data = nonce.to_vec();
+    encrypted_data.extend_from_slice(&ciphertext);
+    
+    let ciphertext_blob = BASE64.encode(&encrypted_data);
 
     Ok(json!({
-        "CiphertextBlob": ciphertext,
-        "KeyId": key_id,
+        "CiphertextBlob": ciphertext_blob,
+        "KeyId": key.arn,
         "EncryptionAlgorithm": "SYMMETRIC_DEFAULT"
     }))
 }
 
 async fn decrypt(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
-    let ciphertext_blob = body["CiphertextBlob"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing CiphertextBlob".into()))?;
+    let ciphertext_blob = body["CiphertextBlob"].as_str()
+        .ok_or_else(|| EmulatorError::InvalidArgument("Missing CiphertextBlob".into()))?;
     
-    let decoded_bytes = BASE64.decode(ciphertext_blob).map_err(|_| EmulatorError::InvalidArgument("Invalid CiphertextBlob".into()))?;
-    let payload = String::from_utf8(decoded_bytes).map_err(|_| EmulatorError::InvalidArgument("Invalid Ciphertext data".into()))?;
+    // Decode the ciphertext blob
+    let encrypted_data = BASE64.decode(ciphertext_blob)
+        .map_err(|_| EmulatorError::InvalidArgument("Invalid CiphertextBlob base64".into()))?;
     
-    if !payload.starts_with("MOCK_ENCRYPTED:") {
-         return Err(EmulatorError::InvalidRequest("Invalid ciphertext format (not mocked by CloudEmu)".into()));
+    if encrypted_data.len() < 12 {
+        return Err(EmulatorError::InvalidArgument("CiphertextBlob too short".into()));
     }
     
-    let parts: Vec<&str> = payload.splitn(3, ':').collect();
-    if parts.len() != 3 {
-         return Err(EmulatorError::Internal("Malformed mock ciphertext".into()));
+    // Extract nonce (first 12 bytes) and ciphertext (rest)
+    let (nonce_bytes, ciphertext) = encrypted_data.split_at(12);
+    
+    use aes_gcm::{
+        aead::{Aead, KeyInit},
+        Aes256Gcm, Nonce,
+    };
+    use sha2::{Sha256, Digest};
+    
+    // Try to decrypt with all keys (in real KMS, key_id is embedded in ciphertext metadata)
+    // For simplicity, we'll try all keys until one works
+    let keys = emulator.storage.list_keys()?;
+    
+    for key in keys {
+        if key.key_state != "Enabled" {
+            continue;
+        }
+        
+        // Derive the same key
+        let mut hasher = Sha256::new();
+        hasher.update(key.id.as_bytes());
+        hasher.update(b"cloudemu-kms-key");
+        let key_bytes = hasher.finalize();
+        
+        let cipher = Aes256Gcm::new_from_slice(&key_bytes)
+            .map_err(|e| EmulatorError::Internal(format!("Failed to create cipher: {}", e)))?;
+        
+        let nonce = Nonce::from_slice(nonce_bytes);
+        
+        // Try to decrypt
+        if let Ok(plaintext) = cipher.decrypt(nonce, ciphertext) {
+            let plaintext_b64 = BASE64.encode(&plaintext);
+            
+            return Ok(json!({
+                "KeyId": key.arn,
+                "Plaintext": plaintext_b64,
+                "EncryptionAlgorithm": "SYMMETRIC_DEFAULT"
+            }));
+        }
     }
     
-    let key_id = parts[1];
-    let plaintext_b64 = parts[2]; // This is what AWS gives back in 'Plaintext', as base64? No, AWS returns raw bytes, SDK handles encoding.
-    // CloudEmu receiving JSON means it sends base64 string.
-    // But decrypt returns Plaintext field.
-    // If input Plaintext was base64 string, we stored it.
-    // So we return it back.
-    
-    let _key = emulator.storage.get_key(key_id)?;
-    
-    Ok(json!({
-        "KeyId": key_id,
-        "Plaintext": plaintext_b64,
-        "EncryptionAlgorithm": "SYMMETRIC_DEFAULT"
-    }))
+    Err(EmulatorError::InvalidRequest("Failed to decrypt: no matching key found".into()))
 }
 
 async fn sign(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
