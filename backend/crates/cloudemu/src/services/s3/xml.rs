@@ -163,3 +163,30 @@ fn escape_xml(s: &str) -> String {
         .replace('"', "&quot;")
         .replace('\'', "&apos;")
 }
+
+/// Generate CreateMultipartUpload response XML
+pub fn create_multipart_upload_xml(bucket: &str, key: &str, upload_id: &str) -> String {
+    format!(
+        r#"<?xml version="1.0" encoding="UTF-8"?>
+<InitiateMultipartUploadResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+    <Bucket>{}</Bucket>
+    <Key>{}</Key>
+    <UploadId>{}</UploadId>
+</InitiateMultipartUploadResult>"#,
+        escape_xml(bucket), escape_xml(key), upload_id
+    )
+}
+
+/// Generate CompleteMultipartUpload response XML
+pub fn complete_multipart_upload_xml(bucket: &str, key: &str, etag: &str) -> String {
+    format!(
+        r#"<?xml version="1.0" encoding="UTF-8"?>
+<CompleteMultipartUploadResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+    <Location>http://{}.s3.amazonaws.com/{}</Location>
+    <Bucket>{}</Bucket>
+    <Key>{}</Key>
+    <ETag>{}</ETag>
+</CompleteMultipartUploadResult>"#,
+        escape_xml(bucket), escape_xml(key), escape_xml(bucket), escape_xml(key), etag
+    )
+}

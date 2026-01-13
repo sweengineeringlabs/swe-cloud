@@ -455,4 +455,77 @@ impl StorageEngine {
         let file_path = self.objects_dir.join(&content_hash[..2]).join(content_hash);
         fs::read(&file_path).map_err(|e| EmulatorError::Internal(e.to_string()))
     }
+
+    // ==================== Multipart Upload Operations ====================
+
+    pub fn create_multipart_upload(&self, bucket: &str, key: &str) -> Result<String> {
+        let upload_id = uuid::Uuid::new_v4().to_string();
+        let initiated = chrono::Utc::now().to_rfc3339();
+        
+        let db = self.db.lock();
+        db.execute(
+            "INSERT INTO multipart_uploads (upload_id, bucket, key, initiated) VALUES (?, ?, ?, ?)",
+            params![upload_id, bucket, key, initiated],
+        )?;
+        
+        Ok(upload_id)
+    }
+
+    pub fn upload_part(&self, upload_id: &str, part_number: i32, data: &[u8]) -> Result<String> {
+        let content_hash = self.store_object_data(data)?;
+        let etag = format!("\"{}\"", &content_hash[..32]);
+        let last_modified = chrono::Utc::now().to_rfc3339();
+        
+        let db = self.db.lock();
+        db.execute(
+            "INSERT OR REPLACE INTO multipart_parts (upload_id, part_number, content_hash, size, etag, last_modified) VALUES (?, ?, ?, ?, ?, ?)",
+            params![upload_id, part_number, content_hash, data.len() as i64, etag, last_modified],
+        )?;
+        
+        Ok(etag)
+    }
+
+    pub fn complete_multipart_upload(&self, bucket: &str, key: &str, upload_id: &str) -> Result<String> {
+        let db = self.db.lock();
+        
+        // Get all parts in order
+        let mut stmt = db.prepare(
+            "SELECT content_hash FROM multipart_parts WHERE upload_id = ? ORDER BY part_number"
+        )?;
+        let parts: Vec<String> = stmt.query_map(params![upload_id], |row| row.get(0))?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        
+        if parts.is_empty() {
+            return Err(EmulatorError::InvalidRequest("No parts uploaded".into()));
+        }
+        
+        // Combine all parts
+        let mut combined_data = Vec::new();
+        for part_hash in &parts {
+            let part_data = self.read_object_data(part_hash)?;
+            combined_data.extend_from_slice(&part_data);
+        }
+        
+        // Store the combined object
+        let final_hash = self.store_object_data(&combined_data)?;
+        let etag = format!("\"{}\"", &final_hash[..32]);
+        
+        // Create object metadata
+        let last_modified = chrono::Utc::now().to_rfc3339();
+        db.execute(
+            "INSERT INTO objects (bucket, key, version_id, is_latest, content_hash, content_length, content_type, etag, last_modified, metadata) VALUES (?, ?, NULL, 1, ?, ?, 'application/octet-stream', ?, ?, NULL)",
+            params![bucket, key, final_hash, combined_data.len() as i64, etag, last_modified],
+        )?;
+        
+        // Clean up multipart data
+        db.execute("DELETE FROM multipart_uploads WHERE upload_id = ?", params![upload_id])?;
+        
+        Ok(etag)
+    }
+
+    pub fn abort_multipart_upload(&self, upload_id: &str) -> Result<()> {
+        let db = self.db.lock();
+        db.execute("DELETE FROM multipart_uploads WHERE upload_id = ?", params![upload_id])?;
+        Ok(())
+    }
 }

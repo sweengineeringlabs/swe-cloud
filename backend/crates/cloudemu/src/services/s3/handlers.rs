@@ -295,6 +295,22 @@ pub async fn object_handler(
     let request_id = uuid::Uuid::new_v4().to_string();
     info!("S3: {} /{}/{}", method, bucket, key);
     
+    // Check for multipart upload operations
+    if params.contains_key("uploads") {
+        return handle_create_multipart_upload(&emulator, &bucket, &key, &request_id).await;
+    }
+    
+    if let Some(upload_id) = params.get("uploadId") {
+        if let Some(part_number_str) = params.get("partNumber") {
+            let part_number: i32 = part_number_str.parse()
+                .map_err(|_| EmulatorError::InvalidArgument("Invalid partNumber".into()))?;
+            return handle_upload_part(&emulator, &bucket, &key, upload_id, part_number, &body, &request_id).await;
+        } else {
+            // Complete or Abort multipart upload
+            return handle_complete_multipart_upload(&emulator, &bucket, &key, upload_id, &body, &request_id).await;
+        }
+    }
+    
     let version_id = params.get("versionId").map(|s| s.as_str());
     
     match method {
@@ -436,4 +452,68 @@ async fn handle_copy_object(
     }
     
     Ok(response.body(Body::from(xml_body)).unwrap())
+}
+
+/// Handle CreateMultipartUpload
+async fn handle_create_multipart_upload(
+    emulator: &Emulator,
+    bucket: &str,
+    key: &str,
+    request_id: &str,
+) -> Result<Response<Body>, EmulatorError> {
+    info!("S3: CreateMultipartUpload {}/{}", bucket, key);
+    
+    let upload_id = emulator.storage.create_multipart_upload(bucket, key)?;
+    let xml_body = xml::create_multipart_upload_xml(bucket, key, &upload_id);
+    
+    Ok(Response::builder()
+        .status(StatusCode::OK)
+        .header(header::CONTENT_TYPE, "application/xml")
+        .header("x-amz-request-id", request_id)
+        .body(Body::from(xml_body))
+        .unwrap())
+}
+
+/// Handle UploadPart
+async fn handle_upload_part(
+    emulator: &Emulator,
+    bucket: &str,
+    key: &str,
+    upload_id: &str,
+    part_number: i32,
+    body: &[u8],
+    request_id: &str,
+) -> Result<Response<Body>, EmulatorError> {
+    info!("S3: UploadPart {}/{} uploadId={} partNumber={}", bucket, key, upload_id, part_number);
+    
+    let etag = emulator.storage.upload_part(upload_id, part_number, body)?;
+    
+    Ok(Response::builder()
+        .status(StatusCode::OK)
+        .header("ETag", &etag)
+        .header("x-amz-request-id", request_id)
+        .body(Body::empty())
+        .unwrap())
+}
+
+/// Handle CompleteMultipartUpload
+async fn handle_complete_multipart_upload(
+    emulator: &Emulator,
+    bucket: &str,
+    key: &str,
+    upload_id: &str,
+    _body: &[u8],
+    request_id: &str,
+) -> Result<Response<Body>, EmulatorError> {
+    info!("S3: CompleteMultipartUpload {}/{} uploadId={}", bucket, key, upload_id);
+    
+    let etag = emulator.storage.complete_multipart_upload(bucket, key, upload_id)?;
+    let xml_body = xml::complete_multipart_upload_xml(bucket, key, &etag);
+    
+    Ok(Response::builder()
+        .status(StatusCode::OK)
+        .header(header::CONTENT_TYPE, "application/xml")
+        .header("x-amz-request-id", request_id)
+        .body(Body::from(xml_body))
+        .unwrap())
 }
