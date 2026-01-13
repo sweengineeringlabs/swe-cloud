@@ -2,7 +2,7 @@
 
 use super::xml;
 use crate::Emulator;
-use crate::error::EmulatorError;
+use crate::error::{ApiError, EmulatorError};
 use axum::{
     body::Body,
     extract::{Path, Query, State},
@@ -15,7 +15,7 @@ use tracing::{info, debug};
 /// List all buckets (GET /)
 pub async fn list_buckets(
     State(emulator): State<Arc<Emulator>>,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     info!("S3: ListBuckets");
     
     let buckets = emulator.storage.list_buckets()?;
@@ -37,7 +37,7 @@ pub async fn bucket_handler(
     Query(params): Query<HashMap<String, String>>,
     _headers: HeaderMap,
     body: axum::body::Bytes,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     let request_id = uuid::Uuid::new_v4().to_string();
     
     // Check for sub-resource operations
@@ -117,7 +117,7 @@ pub async fn bucket_handler(
                     .body(Body::empty())
                     .unwrap())
             } else {
-                Err(EmulatorError::NoSuchBucket(bucket))
+                Err(ApiError(EmulatorError::NoSuchBucket(bucket)))
             }
         }
         _ => {
@@ -136,7 +136,7 @@ async fn handle_bucket_versioning(
     bucket: &str,
     body: &[u8],
     request_id: &str,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     info!("S3: {} /{}?versioning", method, bucket);
     
     match *method {
@@ -159,7 +159,7 @@ async fn handle_bucket_versioning(
             } else if body_str.contains("<Status>Suspended</Status>") {
                 "Suspended"
             } else {
-                return Err(EmulatorError::MalformedXml("Invalid versioning configuration".to_string()));
+                return Err(ApiError(EmulatorError::MalformedXml("Invalid versioning configuration".to_string())));
             };
             
             emulator.storage.set_bucket_versioning(bucket, status)?;
@@ -184,7 +184,7 @@ async fn handle_bucket_policy(
     bucket: &str,
     body: &[u8],
     request_id: &str,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     info!("S3: {} /{}?policy", method, bucket);
     
     match *method {
@@ -235,7 +235,7 @@ async fn handle_bucket_location(
     emulator: &Emulator,
     bucket: &str,
     request_id: &str,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     info!("S3: GET /{}?location", bucket);
     
     let bucket_meta = emulator.storage.get_bucket(bucket)?;
@@ -255,7 +255,7 @@ async fn handle_list_objects_v2(
     bucket: &str,
     params: &HashMap<String, String>,
     request_id: &str,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     info!("S3: GET /{}?list-type=2", bucket);
     
     let prefix = params.get("prefix").map(|s| s.as_str());
@@ -291,7 +291,7 @@ pub async fn object_handler(
     Query(params): Query<HashMap<String, String>>,
     headers: HeaderMap,
     body: axum::body::Bytes,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     let request_id = uuid::Uuid::new_v4().to_string();
     info!("S3: {} /{}/{}", method, bucket, key);
     
@@ -423,7 +423,7 @@ async fn handle_copy_object(
     dest_key: &str,
     copy_source: &axum::http::HeaderValue,
     request_id: &str,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     let source = copy_source.to_str().unwrap_or("");
     let source = percent_encoding::percent_decode_str(source)
         .decode_utf8_lossy();
@@ -460,7 +460,7 @@ async fn handle_create_multipart_upload(
     bucket: &str,
     key: &str,
     request_id: &str,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     info!("S3: CreateMultipartUpload {}/{}", bucket, key);
     
     let upload_id = emulator.storage.create_multipart_upload(bucket, key)?;
@@ -483,7 +483,7 @@ async fn handle_upload_part(
     part_number: i32,
     body: &[u8],
     request_id: &str,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     info!("S3: UploadPart {}/{} uploadId={} partNumber={}", bucket, key, upload_id, part_number);
     
     let etag = emulator.storage.upload_part(upload_id, part_number, body)?;
@@ -504,7 +504,7 @@ async fn handle_complete_multipart_upload(
     upload_id: &str,
     _body: &[u8],
     request_id: &str,
-) -> Result<Response<Body>, EmulatorError> {
+) -> Result<Response<Body>, ApiError> {
     info!("S3: CompleteMultipartUpload {}/{} uploadId={}", bucket, key, upload_id);
     
     let etag = emulator.storage.complete_multipart_upload(bucket, key, upload_id)?;

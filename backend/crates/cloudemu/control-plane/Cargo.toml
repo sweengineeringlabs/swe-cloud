@@ -36,6 +36,10 @@ tower-http = { version = "0.6", features = ["cors", "trace"] }
 hyper = { version = "1.6", features = ["full"] }
 quick-xml = { version = "0.37", features = ["serialize"] }
 percent-encoding = "2.3"
+base64 = "0.22"
+hmac = "0.12"
+sha2 = "0.10"
+aes-gcm = "0.10"
 
 [dev-dependencies]
 reqwest = { version = "0.12", features = ["json"] }

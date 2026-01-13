@@ -71,7 +71,7 @@ pub async fn create_function(emulator: &Emulator, body: Value) -> Result<Value, 
     let handler = body["Handler"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing Handler".into()))?;
     
     
-    let func = emulator.storage.create_function(crate::storage::CreateFunctionParams {
+    let func = emulator.storage.create_function(data_plane::storage::CreateFunctionParams {
         name,
         runtime,
         role,

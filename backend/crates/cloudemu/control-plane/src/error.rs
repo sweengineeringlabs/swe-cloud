@@ -8,9 +8,29 @@ pub struct ApiError(pub data_plane::error::EmulatorError);
 // Re-export for convenience
 pub use data_plane::error::EmulatorError;
 
+impl std::fmt::Display for ApiError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl std::error::Error for ApiError {}
+
 impl From<EmulatorError> for ApiError {
     fn from(inner: EmulatorError) -> Self {
         ApiError(inner)
+    }
+}
+
+impl From<std::io::Error> for ApiError {
+    fn from(e: std::io::Error) -> Self {
+        ApiError(EmulatorError::Io(e))
+    }
+}
+
+impl From<serde_json::Error> for ApiError {
+    fn from(e: serde_json::Error) -> Self {
+        ApiError(EmulatorError::Json(e))
     }
 }
 

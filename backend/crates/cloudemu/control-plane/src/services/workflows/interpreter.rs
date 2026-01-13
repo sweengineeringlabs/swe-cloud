@@ -1,7 +1,8 @@
 /// Step Functions State Machine Interpreter
 /// Implements Amazon States Language (ASL) execution
 use serde_json::{json, Value};
-use crate::error::{EmulatorError, Result};
+use crate::error::EmulatorError;
+type Result<T> = std::result::Result<T, EmulatorError>;
 
 pub struct StateMachineExecutor;
 
