@@ -61,4 +61,26 @@ impl StorageEngine {
         }
         Ok(result)
     }
+
+    pub fn list_subscriptions_by_topic(&self, topic_arn: &str) -> Result<Vec<super::engine::SubscriptionMetadata>> {
+        let db = self.db.lock();
+        let mut stmt = db.prepare(
+            "SELECT arn, topic_arn, protocol, endpoint, created_at FROM sns_subscriptions WHERE topic_arn = ?"
+        )?;
+        let rows = stmt.query_map(params![topic_arn], |row| {
+            Ok(super::engine::SubscriptionMetadata {
+                arn: row.get(0)?,
+                topic_arn: row.get(1)?,
+                protocol: row.get(2)?,
+                endpoint: row.get(3)?,
+                created_at: row.get(4)?,
+            })
+        })?;
+        
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?);
+        }
+        Ok(result)
+    }
 }

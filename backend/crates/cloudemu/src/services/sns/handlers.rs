@@ -8,6 +8,7 @@ use axum::{
 };
 use serde_json::{json, Value};
 use std::sync::Arc;
+use tracing::info;
 
 pub async fn handle_request(
     State(emulator): State<Arc<Emulator>>,
@@ -68,9 +69,65 @@ async fn subscribe(emulator: &Emulator, body: Value) -> Result<Value, EmulatorEr
     }))
 }
 
-async fn publish(_emulator: &Emulator, _body: Value) -> Result<Value, EmulatorError> {
-    // Basic implementation - just returns a message ID
+async fn publish(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
+    let topic_arn = body["TopicArn"].as_str()
+        .ok_or_else(|| EmulatorError::InvalidArgument("Missing TopicArn".into()))?;
+    let message = body["Message"].as_str()
+        .ok_or_else(|| EmulatorError::InvalidArgument("Missing Message".into()))?;
+    let subject = body["Subject"].as_str();
+    
     let message_id = uuid::Uuid::new_v4().to_string();
+    
+    // Get all subscriptions for this topic
+    let subscriptions = emulator.storage.list_subscriptions_by_topic(topic_arn)?;
+    
+    info!("SNS: Publishing message to {} ({} subscribers)", topic_arn, subscriptions.len());
+    
+    // Deliver to each subscriber
+    for sub in subscriptions {
+        match sub.protocol.as_str() {
+            "sqs" => {
+                // Deliver to SQS queue
+                if let Some(queue_name) = sub.endpoint.split('/').last() {
+                    let sqs_message = json!({
+                        "Type": "Notification",
+                        "MessageId": message_id,
+                        "TopicArn": topic_arn,
+                        "Subject": subject.unwrap_or(""),
+                        "Message": message,
+                        "Timestamp": chrono::Utc::now().to_rfc3339()
+                    });
+                    
+                    if let Err(e) = emulator.storage.send_message(
+                        queue_name,
+                        &sqs_message.to_string()
+                    ) {
+                        tracing::warn!("Failed to deliver SNS message to SQS {}: {}", queue_name, e);
+                    } else {
+                        info!("SNS: Delivered to SQS queue {}", queue_name);
+                    }
+                }
+            },
+            "http" | "https" => {
+                // For HTTP/HTTPS, we'd need to make actual HTTP requests
+                // For a local emulator, we'll log it
+                info!("SNS: Would deliver to HTTP endpoint {} (not implemented in emulator)", sub.endpoint);
+            },
+            "email" | "email-json" => {
+                info!("SNS: Would send email to {} (not implemented in emulator)", sub.endpoint);
+            },
+            "sms" => {
+                info!("SNS: Would send SMS to {} (not implemented in emulator)", sub.endpoint);
+            },
+            "lambda" => {
+                // Invoke Lambda function
+                info!("SNS: Would invoke Lambda {} (Lambda execution not yet implemented)", sub.endpoint);
+            },
+            _ => {
+                tracing::warn!("SNS: Unknown protocol {}", sub.protocol);
+            }
+        }
+    }
     
     Ok(json!({
         "PublishResponse": {
