@@ -16,8 +16,8 @@ object-storage = []
 
 [dependencies]
 # Core CloudKit SPI
-cloudkit_spi = { path = "../cloudkit_spi" }
-cloudkit_api = { path = "../cloudkit_api" }
+cloudkit_spi = { path = "../../cloudkit_spi" }
+cloudkit_api = { path = "../../cloudkit_api" }
 
 # Core dependencies
 tokio = { workspace = true }

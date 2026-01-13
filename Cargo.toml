@@ -4,6 +4,11 @@ members = [
     "cloudemu/crates/control-plane",
     "cloudemu/crates/data-plane",
     "cloudkit/crates/cloudkit_*",
+    # Nested provider crates under cloudkit_core
+    "cloudkit/crates/cloudkit_core/aws",
+    "cloudkit/crates/cloudkit_core/azure",
+    "cloudkit/crates/cloudkit_core/gcp",
+    "cloudkit/crates/cloudkit_core/oracle",
     "frontend",
     "apps/*",
 ]
@@ -25,10 +30,11 @@ cloudkit_api = { path = "cloudkit/crates/cloudkit_api" }
 cloudkit_core = { path = "cloudkit/crates/cloudkit_core" }
 cloudemu = { path = "cloudemu/crates/control-plane" }
 data-plane = { path = "cloudemu/crates/data-plane" }
-cloudkit-aws = { path = "cloudkit/crates/cloudkit_aws" }
-cloudkit-azure = { path = "cloudkit/crates/cloudkit_azure" }
-cloudkit-gcp = { path = "cloudkit/crates/cloudkit_gcp" }
-cloudkit-oracle = { path = "cloudkit/crates/cloudkit_oracle" }
+# Provider crates (nested under cloudkit_core)
+cloudkit-aws = { path = "cloudkit/crates/cloudkit_core/aws" }
+cloudkit-azure = { path = "cloudkit/crates/cloudkit_core/azure" }
+cloudkit-gcp = { path = "cloudkit/crates/cloudkit_core/gcp" }
+cloudkit-oracle = { path = "cloudkit/crates/cloudkit_core/oracle" }
 
 
 # Async

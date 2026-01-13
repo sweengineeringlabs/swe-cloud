@@ -25,7 +25,7 @@ tokio-test = { workspace = true }
 mockall = { workspace = true }
 wiremock = { workspace = true }
 tracing-subscriber = { workspace = true }
-cloudkit-aws = { path = "../cloudkit_aws" }
-cloudkit-gcp = { path = "../cloudkit_gcp" }
-# cloudkit-azure = { path = "../cloudkit_azure" } # Uncomment when Azure is ready
+cloudkit-aws = { path = "../cloudkit_core/aws" }
+cloudkit-gcp = { path = "../cloudkit_core/gcp" }
+# cloudkit-azure = { path = "../cloudkit_core/azure" } # Uncomment when Azure is ready
 

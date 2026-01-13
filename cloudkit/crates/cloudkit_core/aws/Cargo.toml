@@ -25,9 +25,9 @@ cognito = ["dep:aws-sdk-cognitoidentityprovider"]
 kms = ["dep:aws-sdk-kms"]
 
 [dependencies]
-# Core CloudKit SPI
-cloudkit_spi = { path = "../cloudkit_spi" }
-cloudkit_api = { path = "../cloudkit_api" }
+# Core CloudKit SPI (now two levels up)
+cloudkit_spi = { path = "../../cloudkit_spi" }
+cloudkit_api = { path = "../../cloudkit_api" }
 
 # Core dependencies
 tokio = { workspace = true }

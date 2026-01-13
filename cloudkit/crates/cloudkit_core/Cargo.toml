@@ -23,11 +23,11 @@ full = ["aws", "gcp", "azure", "oracle"]
 cloudkit_spi = { path = "../cloudkit_spi" }
 cloudkit_api = { path = "../cloudkit_api" }
 
-# Provider implementations (optional)
-cloudkit-aws = { path = "../cloudkit_aws", optional = true }
-cloudkit-gcp = { path = "../cloudkit_gcp", optional = true }
-cloudkit-azure = { path = "../cloudkit_azure", optional = true }
-cloudkit-oracle = { path = "../cloudkit_oracle", optional = true }
+# Provider implementations (optional, nested under this crate)
+cloudkit-aws = { path = "./aws", optional = true }
+cloudkit-gcp = { path = "./gcp", optional = true }
+cloudkit-azure = { path = "./azure", optional = true }
+cloudkit-oracle = { path = "./oracle", optional = true }
 
 # Core async
 tokio = { workspace = true }
