@@ -190,6 +190,30 @@ async fn put_events(emulator: &Emulator, body: Value) -> Result<Value, EmulatorE
             Some(&resources)
         )?;
 
+        // Match event against rules and trigger targets
+        let rules = emulator.storage.list_rules(bus_name)?;
+        
+        for rule in rules {
+            if rule.state != "ENABLED" {
+                continue;
+            }
+            
+            // Check if event matches rule pattern
+            if let Some(pattern_str) = &rule.event_pattern {
+                if matches_pattern(entry, pattern_str) {
+                    info!("EventBridge: Event {} matched rule {}", event_id, rule.name);
+                    
+                    // Get targets for this rule
+                    let targets = emulator.storage.list_targets(&rule.name, bus_name)?;
+                    
+                    // Trigger each target
+                    for target in targets {
+                        trigger_target(emulator, &target, entry, &event_id).await;
+                    }
+                }
+            }
+        }
+
         results.push(json!({
             "EventId": event_id
         }));
@@ -199,4 +223,69 @@ async fn put_events(emulator: &Emulator, body: Value) -> Result<Value, EmulatorE
         "Entries": results,
         "FailedEntryCount": 0
     }))
+}
+
+/// Check if an event matches an EventBridge pattern
+fn matches_pattern(event: &Value, pattern_str: &str) -> bool {
+    let pattern: Value = match serde_json::from_str(pattern_str) {
+        Ok(p) => p,
+        Err(_) => return false,
+    };
+    
+    // Simple pattern matching - check source and detail-type
+    if let Some(sources) = pattern["source"].as_array() {
+        let event_source = event["Source"].as_str().unwrap_or("");
+        let source_match = sources.iter().any(|s| s.as_str() == Some(event_source));
+        if !source_match {
+            return false;
+        }
+    }
+    
+    if let Some(detail_types) = pattern["detail-type"].as_array() {
+        let event_detail_type = event["DetailType"].as_str().unwrap_or("");
+        let type_match = detail_types.iter().any(|t| t.as_str() == Some(event_detail_type));
+        if !type_match {
+            return false;
+        }
+    }
+    
+    // For full implementation, we'd need deeper pattern matching on detail object
+    // For now, this covers the most common use cases
+    true
+}
+
+/// Trigger a target with an event
+async fn trigger_target(emulator: &Emulator, target: &EventTargetMetadata, event: &Value, event_id: &str) {
+    let arn = &target.arn;
+    
+    // Parse ARN to determine target type
+    if arn.contains(":sqs:") {
+        // Send to SQS queue
+        if let Some(queue_name) = arn.split(':').last() {
+            let message = json!({
+                "version": "0",
+                "id": event_id,
+                "detail-type": event["DetailType"],
+                "source": event["Source"],
+                "time": chrono::Utc::now().to_rfc3339(),
+                "region": emulator.config.region,
+                "resources": event.get("Resources").unwrap_or(&json!([])),
+                "detail": serde_json::from_str::<Value>(event["Detail"].as_str().unwrap_or("{}")).unwrap_or(json!({}))
+            });
+            
+            if let Err(e) = emulator.storage.send_message(queue_name, &message.to_string()) {
+                tracing::warn!("EventBridge: Failed to send to SQS {}: {}", queue_name, e);
+            } else {
+                info!("EventBridge: Sent event to SQS queue {}", queue_name);
+            }
+        }
+    } else if arn.contains(":sns:") {
+        // Publish to SNS topic  
+        info!("EventBridge: Would publish to SNS topic {} (SNS publish via EventBridge integration)", arn);
+    } else if arn.contains(":lambda:") {
+        // Invoke Lambda
+        info!("EventBridge: Would invoke Lambda {} (Lambda execution not yet implemented)", arn);
+    } else {
+        tracing::warn!("EventBridge: Unknown target type: {}", arn);
+    }
 }
