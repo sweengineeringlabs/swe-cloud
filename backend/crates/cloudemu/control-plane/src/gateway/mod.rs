@@ -1,6 +1,7 @@
-//! HTTP Gateway - Router and middleware
+//! HTTP Gateway - Ingress, Router, Dispatcher
 
-mod router;
-mod dispatch;
+pub mod dispatcher;
+pub mod gateway;
+pub mod ingress;
 
-pub use router::create_router;
+pub use gateway::create_router;
