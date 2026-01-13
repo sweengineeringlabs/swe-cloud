@@ -5,3 +5,6 @@ mod service;
 mod xml;
 
 pub use service::S3Service;
+
+#[cfg(test)]
+mod tests;
