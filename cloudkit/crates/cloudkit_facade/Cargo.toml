@@ -20,7 +20,12 @@ cloudkit_api = { path = "../cloudkit_api" }
 cloudkit_core = { path = "../cloudkit_core" }
 
 [dev-dependencies]
+tokio = { workspace = true, features = ["full"] }
 tokio-test = { workspace = true }
 mockall = { workspace = true }
 wiremock = { workspace = true }
 tracing-subscriber = { workspace = true }
+cloudkit-aws = { path = "../cloudkit_aws" }
+cloudkit-gcp = { path = "../cloudkit_gcp" }
+# cloudkit-azure = { path = "../cloudkit_azure" } # Uncomment when Azure is ready
+

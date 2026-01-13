@@ -1,12 +1,13 @@
 [workspace]
 resolver = "2"
 members = [
-    "backend/crates/*",
+    "cloudemu/crates/control-plane",
+    "cloudemu/crates/data-plane",
+    "cloudkit/crates/cloudkit_*",
     "frontend",
-    "apps/cloudemu-desktop",
-    "apps/cloudemu-web",
-    "apps/cloudemu-native",
+    "apps/*",
 ]
+
 
 [workspace.package]
 version = "0.1.0"
@@ -17,36 +18,45 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/sweengineeringlabs/swe-cloud"
 
 [workspace.dependencies]
-# Backend
-cloudkit = { path = "backend/crates/cloudkit" }
-cloudemu = { path = "backend/crates/cloudemu" }
+# Cloud Modules
+cloudkit = { path = "cloudkit/crates/cloudkit_facade" }
+cloudkit_spi = { path = "cloudkit/crates/cloudkit_spi" }
+cloudkit_api = { path = "cloudkit/crates/cloudkit_api" }
+cloudkit_core = { path = "cloudkit/crates/cloudkit_core" }
+cloudemu = { path = "cloudemu/crates/control-plane" }
+data-plane = { path = "cloudemu/crates/data-plane" }
+cloudkit-aws = { path = "cloudkit/crates/cloudkit_aws" }
+cloudkit-azure = { path = "cloudkit/crates/cloudkit_azure" }
+cloudkit-gcp = { path = "cloudkit/crates/cloudkit_gcp" }
+cloudkit-oracle = { path = "cloudkit/crates/cloudkit_oracle" }
+
 
 # Async
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1.42", features = ["full"] }
 async-trait = "0.1"
 futures = "0.3"
+tokio-stream = "0.1"
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
-# HTTP
-reqwest = { version = "0.12", features = ["json"] }
+# Representation
 bytes = "1.9"
-
-# Date/Time
+http = "1.4"
+base64 = "0.22"
+uuid = { version = "1.11", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 
-# UUID
-uuid = { version = "1", features = ["v4", "serde"] }
+# Web
+axum = { version = "0.7", features = ["macros"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace", "fs"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
 
 # UI
 dioxus = { version = "0.6", features = ["web", "router"] }
 dioxus-desktop = "0.6"
-
-# Web server
-axum = "0.8"
-tower-http = { version = "0.6", features = ["cors", "fs"] }
 
 # Native GUI
 iced = { version = "0.13", features = ["tokio"] }
@@ -57,27 +67,27 @@ anyhow = "1.0"
 
 # Logging
 tracing = "0.1"
-tracing-subscriber = "0.3"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 # Testing
-tokio-test = "0.4"
 mockall = "0.13"
 wiremock = "0.6"
+tokio-test = "0.4"
 
 # AWS SDK
 aws-config = "1.5"
 aws-sdk-s3 = "1.65"
-aws-sdk-dynamodb = "1.55"
-aws-sdk-sqs = "1.52"
-aws-sdk-sns = "1.52"
-aws-sdk-lambda = "1.56"
-aws-sdk-secretsmanager = "1.60"
-aws-sdk-cloudwatch = "1.60"
-aws-sdk-cloudwatchlogs = "1.60"
-aws-sdk-eventbridge = "1.60"
-aws-sdk-sfn = "1.60"
-aws-sdk-cognitoidentityprovider = "1.60"
-aws-sdk-kms = "1.60"
+aws-sdk-dynamodb = "1.56"
+aws-sdk-sqs = "1.51"
+aws-sdk-sns = "1.53"
+aws-sdk-lambda = "1.60"
+aws-sdk-secretsmanager = "1.52"
+aws-sdk-cloudwatch = "1.52"
+aws-sdk-cloudwatchlogs = "1.52"
+aws-sdk-eventbridge = "1.52"
+aws-sdk-sfn = "1.54"
+aws-sdk-cognitoidentityprovider = "1.54"
+aws-sdk-kms = "1.52"
 
 # Azure SDK
 azure_core = "0.21"
@@ -89,3 +99,4 @@ azure_security_keyvault = "0.21"
 # GCP SDK
 google-cloud-storage = "0.22"
 google-cloud-pubsub = "0.29"
+
