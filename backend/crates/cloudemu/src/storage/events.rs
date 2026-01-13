@@ -154,3 +154,57 @@ impl StorageEngine {
         Ok(id)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_events_bus_lifecycle() {
+        let engine = StorageEngine::in_memory().unwrap();
+        
+        // Create Bus
+        let bus = engine.create_event_bus("test-bus", "123", "us-east-1").unwrap();
+        assert_eq!(bus.name, "test-bus");
+        
+        // Get Bus
+        let fetched = engine.get_event_bus("test-bus").unwrap();
+        assert_eq!(fetched.arn, bus.arn);
+        
+        // List Buses
+        let buses = engine.list_event_buses().unwrap();
+        assert!(buses.iter().any(|b| b.name == "test-bus"));
+        
+        // Delete Bus
+        engine.delete_event_bus("test-bus").unwrap();
+        assert!(engine.get_event_bus("test-bus").is_err());
+    }
+    
+    #[test]
+    fn test_events_rules_and_targets() {
+        let engine = StorageEngine::in_memory().unwrap();
+        engine.create_event_bus("default", "123", "us-east-1").unwrap();
+        
+        // Put Rule
+        let pattern = r#"{"source": ["aws.ec2"]}"#;
+        let rule_arn = engine.put_rule("rule1", "default", Some(pattern), "ENABLED", None, None, "123", "us-east-1").unwrap();
+        assert!(rule_arn.contains("rule1"));
+        
+        // Put Targets
+        let targets = vec![EventTargetMetadata {
+            id: "t1".to_string(),
+            rule_name: "rule1".to_string(),
+            event_bus_name: "default".to_string(),
+            arn: "arn:aws:lambda:us-east-1:123:function:my-func".to_string(),
+            input: None,
+            input_path: None,
+        }];
+        engine.put_targets("default", "rule1", targets).unwrap();
+        
+        // List Targets
+        let fetched_targets = engine.list_targets("default", "rule1").unwrap();
+        assert_eq!(fetched_targets.len(), 1);
+        assert_eq!(fetched_targets[0].id, "t1");
+    }
+}
+

@@ -35,6 +35,16 @@ impl StorageEngine {
 
     pub fn put_item(&self, table_name: &str, pk: &str, sk: Option<&str>, item_json: &str) -> Result<()> {
         let db = self.db.lock();
+        
+        // SQLite treats NULLs as distinct in UNIQUE/PK constraints, so INSERT OR REPLACE doesn't work for NULL sort_keys.
+        // We manually delete conflict if it exists.
+        if sk.is_none() {
+            db.execute(
+                "DELETE FROM ddb_items WHERE table_name = ?1 AND partition_key = ?2 AND sort_key IS NULL",
+                params![table_name, pk],
+            )?;
+        }
+        
         db.execute(
             "INSERT OR REPLACE INTO ddb_items (table_name, partition_key, sort_key, item_json) VALUES (?1, ?2, ?3, ?4)",
             params![table_name, pk, sk, item_json],
@@ -78,5 +88,51 @@ impl StorageEngine {
             items.push(item.map_err(|e| EmulatorError::Database(e.to_string()))?);
         }
         Ok(items)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    
+    #[test]
+    fn test_dynamodb_query_and_scan() {
+        let engine = StorageEngine::in_memory().unwrap();
+        
+        // Create table
+        engine.create_table("users", "{}", "{}", "000000000000", "us-east-1").unwrap();
+        
+        // Put multiple items
+        let items = vec![
+            json!({"userId": {"S": "user1"}, "name": {"S": "Alice"}}),
+            json!({"userId": {"S": "user1"}, "name": {"S": "Alice Updated"}}),
+            json!({"userId": {"S": "user2"}, "name": {"S": "Bob"}}),
+        ];
+        
+        for item in items.iter() {
+            let pk = item["userId"]["S"].as_str().unwrap();
+            engine.put_item("users", pk, None, &item.to_string()).unwrap();
+        }
+        
+        // Query by partition key
+        let query_results = engine.query_items("users", "user1").unwrap();
+        assert_eq!(query_results.len(), 1);
+        
+        // Scan entire table
+        let scan_results = engine.scan_items("users").unwrap();
+        assert_eq!(scan_results.len(), 2);
+    }
+    
+    #[test]
+    fn test_dynamodb_get_put() {
+        let engine = StorageEngine::in_memory().unwrap();
+        engine.create_table("test", "{}", "{}", "000000000000", "us-east-1").unwrap();
+        
+        let item = json!({"id": {"S": "1"}, "data": {"S": "value"}}).to_string();
+        engine.put_item("test", "1", None, &item).unwrap();
+        
+        let retrieved = engine.get_item("test", "1", None).unwrap();
+        assert_eq!(retrieved, Some(item));
     }
 }

@@ -529,3 +529,84 @@ impl StorageEngine {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn test_s3_basic_operations() {
+        let engine = StorageEngine::in_memory().unwrap();
+        
+        // Create bucket
+        engine.create_bucket("test-bucket", "us-east-1").unwrap();
+        assert!(engine.bucket_exists("test-bucket").unwrap());
+        
+        // Put object
+        let data = b"Hello, S3!";
+        let obj = engine.put_object("test-bucket", "test.txt", data, Some("text/plain"), None).unwrap();
+        assert!(!obj.etag.is_empty());
+        
+        // Get object
+        let (retrieved_meta, retrieved_data) = engine.get_object("test-bucket", "test.txt", None).unwrap();
+        assert_eq!(retrieved_data, data);
+        assert_eq!(retrieved_meta.content_type, "text/plain");
+        
+        // Delete object
+        engine.delete_object("test-bucket", "test.txt", None).unwrap();
+        assert!(engine.get_object("test-bucket", "test.txt", None).is_err());
+    }
+    
+    #[test]
+    fn test_s3_multipart_upload() {
+        let engine = StorageEngine::in_memory().unwrap();
+        engine.create_bucket("multipart-bucket", "us-east-1").unwrap();
+        
+        // Initiate multipart upload
+        let upload_id = engine.create_multipart_upload("multipart-bucket", "large.bin").unwrap();
+        assert!(!upload_id.is_empty());
+        
+        // Upload parts
+        let part1 = b"Part 1 data";
+        let part2 = b"Part 2 data";
+        
+        let etag1 = engine.upload_part(&upload_id, 1, part1).unwrap();
+        let etag2 = engine.upload_part(&upload_id, 2, part2).unwrap();
+        assert!(etag1.starts_with('"'));
+        assert!(etag2.starts_with('"'));
+        
+        // Complete upload
+        let final_etag = engine.complete_multipart_upload("multipart-bucket", "large.bin", &upload_id).unwrap();
+        assert!(final_etag.starts_with('"'));
+        
+        // Verify combined file
+        let (_, data) = engine.get_object("multipart-bucket", "large.bin", None).unwrap();
+        let mut expected = Vec::new();
+        expected.extend_from_slice(part1);
+        expected.extend_from_slice(part2);
+        assert_eq!(data, expected);
+    }
+    
+    #[test]
+    fn test_s3_versioning() {
+        let engine = StorageEngine::in_memory().unwrap();
+        engine.create_bucket("versioned", "us-east-1").unwrap();
+        
+        // Enable versioning
+        engine.set_bucket_versioning("versioned", "Enabled").unwrap();
+        let status = engine.get_bucket_versioning("versioned").unwrap();
+        assert_eq!(status, "Enabled");
+        
+        // Put two versions
+        engine.put_object("versioned", "file.txt", b"v1", None, None).unwrap();
+        let obj2 = engine.put_object("versioned", "file.txt", b"v2", None, None).unwrap();
+        
+        // Latest should be v2
+        let (_, latest_data) = engine.get_object("versioned", "file.txt", None).unwrap();
+        assert_eq!(latest_data, b"v2");
+        
+        // Can retrieve specific version
+        let (_, v2_data) = engine.get_object("versioned", "file.txt", obj2.version_id.as_deref()).unwrap();
+        assert_eq!(v2_data, b"v2");
+    }
+}

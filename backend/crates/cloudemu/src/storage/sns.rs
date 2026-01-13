@@ -84,3 +84,34 @@ impl StorageEngine {
         Ok(result)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sns_topics_and_subscriptions() {
+        let engine = StorageEngine::in_memory().unwrap();
+        
+        // Create Topic
+        let topic = engine.create_topic("my-topic", "123456789012", "us-east-1").unwrap();
+        assert_eq!(topic.name, "my-topic");
+        assert!(topic.arn.ends_with(":my-topic"));
+        
+        // List Topics
+        let topics = engine.list_topics().unwrap();
+        assert_eq!(topics.len(), 1);
+        assert_eq!(topics[0].name, "my-topic");
+
+        // Subscribe
+        let sub_arn = engine.subscribe(&topic.arn, "sqs", "arn:aws:sqs:us-east-1:123:queue").unwrap();
+        
+        // List Subscriptions
+        let subs = engine.list_subscriptions_by_topic(&topic.arn).unwrap();
+        assert_eq!(subs.len(), 1);
+        assert_eq!(subs[0].arn, sub_arn);
+        assert_eq!(subs[0].protocol, "sqs");
+        assert_eq!(subs[0].endpoint, "arn:aws:sqs:us-east-1:123:queue");
+    }
+}
+

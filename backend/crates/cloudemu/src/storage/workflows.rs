@@ -113,3 +113,36 @@ impl StorageEngine {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_state_machine_workflow() {
+        let engine = StorageEngine::in_memory().unwrap();
+        
+        let def = r#"{"StartAt": "Pass", "States": {"Pass": {"Type": "Pass", "End": true}}}"#;
+        
+        // Create Machine
+        let machine = engine.create_state_machine("my-machine", def, "role:arn", "STANDARD", "123", "us-east-1").unwrap();
+        assert_eq!(machine.name, "my-machine");
+        
+        // List Machines
+        let machines = engine.list_state_machines().unwrap();
+        assert_eq!(machines.len(), 1);
+        
+        // Start Execution
+        let exec = engine.start_execution(&machine.arn, Some("exec-1"), Some("{}"), "123", "us-east-1").unwrap();
+        assert_eq!(exec.status, "RUNNING");
+        
+        // Update Status
+        engine.update_execution_status(&exec.arn, "SUCCEEDED", Some("{\"done\": true}")).unwrap();
+        
+        // Describe Execution
+        let fetched_exec = engine.describe_execution(&exec.arn).unwrap();
+        assert_eq!(fetched_exec.status, "SUCCEEDED");
+        assert_eq!(fetched_exec.output, Some("{\"done\": true}".to_string()));
+    }
+}
+

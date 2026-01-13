@@ -130,3 +130,53 @@ impl StorageEngine {
         Ok(events)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_cloudwatch_metrics() {
+        let engine = StorageEngine::in_memory().unwrap();
+        
+        // Put Metric
+        let metric = MetricMetadata {
+            namespace: "MyNamespace".to_string(),
+            metric_name: "MyMetric".to_string(),
+            dimensions: None,
+            value: 100.0,
+            unit: None,
+            timestamp: "2023-01-01T00:00:00Z".to_string(),
+        };
+        engine.put_metric_data("MyNamespace", vec![metric]).unwrap();
+        
+        // List Metrics
+        let metrics = engine.list_metrics(Some("MyNamespace"), None).unwrap();
+        assert_eq!(metrics.len(), 1);
+        assert_eq!(metrics[0].value, 100.0);
+    }
+    
+    #[test]
+    fn test_cloudwatch_logs() {
+        let engine = StorageEngine::in_memory().unwrap();
+        
+        // Create Log Group
+        engine.create_log_group("my-logs", "123", "us-east-1").unwrap();
+        
+        // Create Log Stream
+        engine.create_log_stream("my-logs", "stream-1", "123", "us-east-1").unwrap();
+        
+        // Put Events
+        let events = vec![
+            LogEventMetadata { timestamp: "1000".to_string(), message: "msg1".to_string() },
+            LogEventMetadata { timestamp: "2000".to_string(), message: "msg2".to_string() },
+        ];
+        engine.put_log_events("my-logs", "stream-1", events).unwrap();
+        
+        // Get Events
+        let fetched = engine.get_log_events("my-logs", "stream-1").unwrap();
+        assert_eq!(fetched.len(), 2);
+        assert_eq!(fetched[0].message, "msg1");
+    }
+}
+

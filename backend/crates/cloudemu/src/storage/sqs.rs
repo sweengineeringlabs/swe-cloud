@@ -112,3 +112,36 @@ impl StorageEngine {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sqs_workflow() {
+        let engine = StorageEngine::in_memory().unwrap();
+        
+        // Create Queue
+        let queue = engine.create_queue("my-queue", "123", "us-east-1").unwrap();
+        assert_eq!(queue.name, "my-queue");
+        assert!(queue.url.contains("my-queue"));
+        
+        // Send Message
+        let msg_id = engine.send_message("my-queue", "hello world").unwrap();
+        assert!(!msg_id.is_empty());
+        
+        // Receive Message (should be visible immediately)
+        let messages = engine.receive_message("my-queue", 10).unwrap();
+        assert_eq!(messages.len(), 1);
+        assert_eq!(messages[0].body, "hello world");
+        assert!(messages[0].receipt_handle.is_some());
+        
+        // Delete Message
+        engine.delete_message("my-queue", messages[0].receipt_handle.as_ref().unwrap()).unwrap();
+        
+        // Verify Empty
+        let messages_after = engine.receive_message("my-queue", 10).unwrap();
+        assert_eq!(messages_after.len(), 0);
+    }
+}
+
