@@ -190,3 +190,36 @@ pub fn complete_multipart_upload_xml(bucket: &str, key: &str, etag: &str) -> Str
         escape_xml(bucket), escape_xml(key), escape_xml(bucket), escape_xml(key), etag
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_escape_xml() {
+        assert_eq!(escape_xml("<foo>"), "&lt;foo&gt;");
+        assert_eq!(escape_xml("&\"'"), "&amp;&quot;&apos;");
+    }
+
+    #[test]
+    fn test_get_bucket_location_xml() {
+        // us-east-1 should be empty
+        let xml = get_bucket_location_xml("us-east-1");
+        assert!(xml.contains("<LocationConstraint"));
+        assert!(!xml.contains(">us-east-1<"));
+        
+        // other regions should have content
+        let xml = get_bucket_location_xml("us-west-2");
+        assert!(xml.contains(">us-west-2<"));
+    }
+    
+    #[test]
+    fn test_get_bucket_versioning_xml() {
+        let disabled = get_bucket_versioning_xml("Disabled");
+        assert!(disabled.contains("VersioningConfiguration"));
+        assert!(!disabled.contains("<Status>")); // Should be empty self-closing or empty content
+        
+        let enabled = get_bucket_versioning_xml("Enabled");
+        assert!(enabled.contains("<Status>Enabled</Status>"));
+    }
+}
