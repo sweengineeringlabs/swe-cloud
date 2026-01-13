@@ -17,7 +17,8 @@ pub struct AwsSecretsManager {
 
 impl AwsSecretsManager {
     /// Create a new Secrets Manager client.
-    pub fn new(context: Arc<CloudContext>, client: Client) -> Self {
+    pub fn new(context: Arc<CloudContext>, sdk_config: aws_config::SdkConfig) -> Self {
+        let client = Client::new(&sdk_config);
         Self { _context: context, client }
     }
 

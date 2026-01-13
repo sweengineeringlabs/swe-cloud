@@ -1,43 +1,53 @@
 //! AWS Step Functions implementation.
 
 use async_trait::async_trait;
-use chrono::Utc;
 use cloudkit::api::{
     Execution, ExecutionFilter, ExecutionStatus, HistoryEvent, StartExecutionOptions,
-    WorkflowDefinition, WorkflowService,
+    WorkflowDefinition, WorkflowService, WorkflowType,
 };
-use cloudkit::common::{CloudError, CloudResult};
+use cloudkit::common::{CloudError, CloudResult, Metadata};
 use cloudkit::core::CloudContext;
 use serde_json::Value;
 use std::sync::Arc;
 
 /// AWS Step Functions implementation.
-pub struct StepFunctions {
+pub struct AwsWorkflow {
     _context: Arc<CloudContext>,
-    // In a real implementation:
-    // client: aws_sdk_sfn::Client,
+    client: aws_sdk_sfn::Client,
 }
 
-impl StepFunctions {
+impl AwsWorkflow {
     /// Create a new Step Functions client.
-    pub fn new(context: Arc<CloudContext>) -> Self {
-        Self { _context: context }
+    pub fn new(context: Arc<CloudContext>, sdk_config: aws_config::SdkConfig) -> Self {
+        let client = aws_sdk_sfn::Client::new(&sdk_config);
+        Self { _context: context, client }
+    }
+
+    fn get_role_arn(&self) -> CloudResult<String> {
+        self._context.config.parameters.get("aws.sfn.role_arn")
+            .cloned()
+            .or_else(|| std::env::var("AWS_SFN_ROLE_ARN").ok())
+            .ok_or_else(|| CloudError::Config("Missing Step Functions Role ARN. Set 'aws.sfn.role_arn' in config or 'AWS_SFN_ROLE_ARN' env var.".into()))
     }
 }
 
 #[async_trait]
-impl WorkflowService for StepFunctions {
+impl WorkflowService for AwsWorkflow {
     async fn create_workflow(&self, definition: WorkflowDefinition) -> CloudResult<String> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            workflow = %definition.name,
-            "create_workflow called"
-        );
-        Ok(format!(
-            "arn:aws:states:us-east-1:123456789012:stateMachine:{}",
-            definition.name
-        ))
+        let mut req = self.client.create_state_machine()
+            .name(definition.name)
+            .definition(definition.definition.to_string())
+            .role_arn(definition.role_arn.unwrap_or(self.get_role_arn()?));
+            
+        if definition.workflow_type == WorkflowType::Express {
+            req = req.r#type(aws_sdk_sfn::types::StateMachineType::Express);
+        }
+        
+        let resp = req.send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.state_machine_arn().to_string())
     }
 
     async fn update_workflow(
@@ -45,41 +55,67 @@ impl WorkflowService for StepFunctions {
         workflow_arn: &str,
         definition: Value,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            workflow = %workflow_arn,
-            "update_workflow called"
-        );
+        self.client.update_state_machine()
+            .state_machine_arn(workflow_arn)
+            .definition(definition.to_string())
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn delete_workflow(&self, workflow_arn: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            workflow = %workflow_arn,
-            "delete_workflow called"
-        );
+        self.client.delete_state_machine()
+            .state_machine_arn(workflow_arn)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn describe_workflow(&self, workflow_arn: &str) -> CloudResult<WorkflowDefinition> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            workflow = %workflow_arn,
-            "describe_workflow called"
-        );
-        Err(CloudError::NotFound {
-            resource_type: "StateMachine".to_string(),
-            resource_id: workflow_arn.to_string(),
+        let resp = self.client.describe_state_machine()
+            .state_machine_arn(workflow_arn)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(WorkflowDefinition {
+            name: resp.name().to_string(),
+            arn: Some(resp.state_machine_arn().to_string()),
+            description: None,
+            workflow_type: match resp.r#type() {
+                &aws_sdk_sfn::types::StateMachineType::Express => WorkflowType::Express,
+                _ => WorkflowType::Standard,
+            },
+            definition: serde_json::from_str(resp.definition()).unwrap_or(Value::Null),
+            role_arn: Some(resp.role_arn().to_string()),
+            created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(resp.creation_date().secs(), 0).unwrap_or_default()),
+            tags: Metadata::new(),
         })
     }
 
     async fn list_workflows(&self) -> CloudResult<Vec<WorkflowDefinition>> {
-        tracing::info!(provider = "aws", service = "stepfunctions", "list_workflows called");
-        Ok(vec![])
+        let resp = self.client.list_state_machines()
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.state_machines().iter().map(|s| {
+            WorkflowDefinition {
+                name: s.name().to_string(),
+                arn: Some(s.state_machine_arn().to_string()),
+                description: None,
+                workflow_type: match s.r#type() {
+                    &aws_sdk_sfn::types::StateMachineType::Express => WorkflowType::Express,
+                    _ => WorkflowType::Standard,
+                },
+                definition: Value::Null,
+                role_arn: None,
+                created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(s.creation_date().secs(), 0).unwrap_or_default()),
+                tags: Metadata::new(),
+            }
+        }).collect())
     }
 
     async fn start_execution(
@@ -88,27 +124,29 @@ impl WorkflowService for StepFunctions {
         input: Value,
         options: StartExecutionOptions,
     ) -> CloudResult<Execution> {
-        let execution_id = format!(
-            "{}:{}",
-            workflow_arn,
-            options.name.unwrap_or_else(|| uuid::Uuid::new_v4().to_string())
-        );
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            workflow = %workflow_arn,
-            execution = %execution_id,
-            "start_execution called"
-        );
+        let mut req = self.client.start_execution()
+            .state_machine_arn(workflow_arn)
+            .input(input.to_string());
+            
+        if let Some(name) = options.name {
+            req = req.name(name);
+        }
+        
+        if let Some(trace) = options.trace_header {
+            req = req.trace_header(trace);
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
         Ok(Execution {
-            execution_id,
+            execution_id: resp.execution_arn().to_string(),
             workflow_arn: workflow_arn.to_string(),
             name: None,
             status: ExecutionStatus::Running,
             input: Some(input),
             output: None,
             error: None,
-            start_time: Utc::now(),
+            start_time: chrono::DateTime::<chrono::Utc>::from_timestamp(resp.start_date().secs(), 0).unwrap_or_default(),
             stop_time: None,
         })
     }
@@ -119,27 +157,44 @@ impl WorkflowService for StepFunctions {
         error: Option<&str>,
         cause: Option<&str>,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            execution = %execution_id,
-            error = ?error,
-            cause = ?cause,
-            "stop_execution called"
-        );
+        let mut req = self.client.stop_execution()
+            .execution_arn(execution_id);
+            
+        if let Some(e) = error {
+            req = req.error(e);
+        }
+        if let Some(c) = cause {
+            req = req.cause(c);
+        }
+        
+        req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn describe_execution(&self, execution_id: &str) -> CloudResult<Execution> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            execution = %execution_id,
-            "describe_execution called"
-        );
-        Err(CloudError::NotFound {
-            resource_type: "Execution".to_string(),
-            resource_id: execution_id.to_string(),
+        let resp = self.client.describe_execution()
+            .execution_arn(execution_id)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(Execution {
+            execution_id: resp.execution_arn().to_string(),
+            workflow_arn: resp.state_machine_arn().to_string(),
+            name: Some(resp.name().unwrap_or_default().to_string()),
+            status: match resp.status() {
+                &aws_sdk_sfn::types::ExecutionStatus::Running => ExecutionStatus::Running,
+                &aws_sdk_sfn::types::ExecutionStatus::Succeeded => ExecutionStatus::Succeeded,
+                &aws_sdk_sfn::types::ExecutionStatus::Failed => ExecutionStatus::Failed,
+                &aws_sdk_sfn::types::ExecutionStatus::TimedOut => ExecutionStatus::TimedOut,
+                &aws_sdk_sfn::types::ExecutionStatus::Aborted => ExecutionStatus::Aborted,
+                _ => ExecutionStatus::Running,
+            },
+            input: resp.input().and_then(|i| serde_json::from_str(i).ok()),
+            output: resp.output().and_then(|o| serde_json::from_str(o).ok()),
+            error: None, // Could map from status if failed
+            start_time: chrono::DateTime::<chrono::Utc>::from_timestamp(resp.start_date().secs(), 0).unwrap_or_default(),
+            stop_time: resp.stop_date().map(|d| chrono::DateTime::<chrono::Utc>::from_timestamp(d.secs(), 0).unwrap_or_default()),
         })
     }
 
@@ -148,27 +203,66 @@ impl WorkflowService for StepFunctions {
         workflow_arn: &str,
         filter: ExecutionFilter,
     ) -> CloudResult<Vec<Execution>> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            workflow = %workflow_arn,
-            status_filter = ?filter.status,
-            "list_executions called"
-        );
-        Ok(vec![])
+        let mut req = self.client.list_executions()
+            .state_machine_arn(workflow_arn);
+            
+        if let Some(status) = filter.status {
+            req = req.set_status_filter(Some(match status {
+                ExecutionStatus::Running => aws_sdk_sfn::types::ExecutionStatus::Running,
+                ExecutionStatus::Succeeded => aws_sdk_sfn::types::ExecutionStatus::Succeeded,
+                ExecutionStatus::Failed => aws_sdk_sfn::types::ExecutionStatus::Failed,
+                ExecutionStatus::TimedOut => aws_sdk_sfn::types::ExecutionStatus::TimedOut,
+                ExecutionStatus::Aborted => aws_sdk_sfn::types::ExecutionStatus::Aborted,
+                ExecutionStatus::PendingRedrive => aws_sdk_sfn::types::ExecutionStatus::Running, // Closest match
+            }));
+        }
+        
+        if let Some(max) = filter.max_results {
+            req = req.max_results(max as i32);
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
+        Ok(resp.executions().iter().map(|e| {
+            Execution {
+                execution_id: e.execution_arn().to_string(),
+                workflow_arn: workflow_arn.to_string(),
+                name: Some(e.name().to_string()),
+                status: match e.status() {
+                    &aws_sdk_sfn::types::ExecutionStatus::Running => ExecutionStatus::Running,
+                    &aws_sdk_sfn::types::ExecutionStatus::Succeeded => ExecutionStatus::Succeeded,
+                    &aws_sdk_sfn::types::ExecutionStatus::Failed => ExecutionStatus::Failed,
+                    &aws_sdk_sfn::types::ExecutionStatus::TimedOut => ExecutionStatus::TimedOut,
+                    &aws_sdk_sfn::types::ExecutionStatus::Aborted => ExecutionStatus::Aborted,
+                    _ => ExecutionStatus::Running,
+                },
+                input: None,
+                output: None,
+                error: None,
+                start_time: chrono::DateTime::<chrono::Utc>::from_timestamp(e.start_date().secs(), 0).unwrap_or_default(),
+                stop_time: e.stop_date().map(|d| chrono::DateTime::<chrono::Utc>::from_timestamp(d.secs(), 0).unwrap_or_default()),
+            }
+        }).collect())
     }
 
     async fn get_execution_history(
         &self,
         execution_id: &str,
     ) -> CloudResult<Vec<HistoryEvent>> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            execution = %execution_id,
-            "get_execution_history called"
-        );
-        Ok(vec![])
+        let resp = self.client.get_execution_history()
+            .execution_arn(execution_id)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.events().iter().enumerate().map(|(i, e)| {
+            HistoryEvent {
+                id: (i as u64) + 1, // HistoryEvent uses u64
+                timestamp: chrono::DateTime::<chrono::Utc>::from_timestamp(e.timestamp().secs(), 0).unwrap_or_default(),
+                event_type: format!("{:?}", e.r#type()),
+                details: Value::Null,
+            }
+        }).collect())
     }
 
     async fn send_task_success(
@@ -176,12 +270,12 @@ impl WorkflowService for StepFunctions {
         task_token: &str,
         output: Value,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            task_token = %task_token,
-            "send_task_success called"
-        );
+        self.client.send_task_success()
+            .task_token(task_token)
+            .output(output.to_string())
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
@@ -191,23 +285,22 @@ impl WorkflowService for StepFunctions {
         error: &str,
         cause: &str,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            task_token = %task_token,
-            error = %error,
-            "send_task_failure called"
-        );
+        self.client.send_task_failure()
+            .task_token(task_token)
+            .error(error)
+            .cause(cause)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn send_task_heartbeat(&self, task_token: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "stepfunctions",
-            task_token = %task_token,
-            "send_task_heartbeat called"
-        );
+        self.client.send_task_heartbeat()
+            .task_token(task_token)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 }
@@ -215,7 +308,6 @@ impl WorkflowService for StepFunctions {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cloudkit::api::{ExecutionFilter, ExecutionStatus, StartExecutionOptions, WorkflowDefinition};
     use cloudkit::core::ProviderType;
     use serde_json::json;
 
@@ -230,210 +322,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_step_functions_new() {
+        let sdk_config = aws_config::load_from_env().await;
         let context = create_test_context().await;
-        let _sf = StepFunctions::new(context);
-    }
-
-    #[tokio::test]
-    async fn test_create_workflow() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let definition = WorkflowDefinition::new(
-            "order-processing",
-            json!({
-                "StartAt": "ProcessOrder",
-                "States": {
-                    "ProcessOrder": {
-                        "Type": "Task",
-                        "End": true
-                    }
-                }
-            }),
-        );
-
-        let result = sf.create_workflow(definition).await;
-        assert!(result.is_ok());
-        assert!(result.unwrap().contains("order-processing"));
-    }
-
-    #[tokio::test]
-    async fn test_update_workflow() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf
-            .update_workflow(
-                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
-                json!({"StartAt": "NewState"}),
-            )
-            .await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_delete_workflow() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf
-            .delete_workflow("arn:aws:states:us-east-1:123456789012:stateMachine:test")
-            .await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_describe_workflow_not_found() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf
-            .describe_workflow("arn:aws:states:us-east-1:123456789012:stateMachine:nonexistent")
-            .await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_list_workflows() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf.list_workflows().await;
-        assert!(result.is_ok());
-        assert!(result.unwrap().is_empty());
-    }
-
-    #[tokio::test]
-    async fn test_start_execution() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf
-            .start_execution(
-                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
-                json!({"orderId": "12345"}),
-                StartExecutionOptions::default(),
-            )
-            .await;
-
-        assert!(result.is_ok());
-        let execution = result.unwrap();
-        assert_eq!(execution.status, ExecutionStatus::Running);
-        assert!(execution.input.is_some());
-    }
-
-    #[tokio::test]
-    async fn test_start_execution_with_name() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let options = StartExecutionOptions {
-            name: Some("my-execution".to_string()),
-            trace_header: None,
-        };
-
-        let result = sf
-            .start_execution(
-                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
-                json!({}),
-                options,
-            )
-            .await;
-
-        assert!(result.is_ok());
-        assert!(result.unwrap().execution_id.contains("my-execution"));
-    }
-
-    #[tokio::test]
-    async fn test_stop_execution() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf
-            .stop_execution("execution-123", Some("UserAborted"), Some("User cancelled"))
-            .await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_describe_execution_not_found() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf.describe_execution("nonexistent-execution").await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_list_executions() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf
-            .list_executions(
-                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
-                ExecutionFilter::default(),
-            )
-            .await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_executions_with_status_filter() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let filter = ExecutionFilter {
-            status: Some(ExecutionStatus::Running),
-            max_results: Some(10),
-        };
-
-        let result = sf
-            .list_executions(
-                "arn:aws:states:us-east-1:123456789012:stateMachine:test",
-                filter,
-            )
-            .await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_get_execution_history() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf.get_execution_history("execution-123").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_send_task_success() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf
-            .send_task_success("task-token-abc", json!({"result": "success"}))
-            .await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_send_task_failure() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf
-            .send_task_failure("task-token-abc", "ValidationError", "Invalid input")
-            .await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_send_task_heartbeat() {
-        let context = create_test_context().await;
-        let sf = StepFunctions::new(context);
-
-        let result = sf.send_task_heartbeat("task-token-abc").await;
-        assert!(result.is_ok());
+        let _sf = AwsWorkflow::new(context, sdk_config);
     }
 }

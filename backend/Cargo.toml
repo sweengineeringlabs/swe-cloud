@@ -7,6 +7,8 @@ members = [
     "crates/cloudkit-gcp",
     "crates/cloudkit-oracle",
     "crates/cloudemu",
+    "crates/data-plane",
+    "crates/control-plane",
 ]
 
 [workspace.package]

@@ -111,6 +111,18 @@ pub struct BucketMetadata {
     pub versioning_enabled: bool,
 }
 
+impl BucketMetadata {
+    /// Create new bucket metadata.
+    pub fn new(name: impl Into<String>, region: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            created_at: Utc::now(),
+            region: region.into(),
+            versioning_enabled: false,
+        }
+    }
+}
+
 /// Pagination token for list operations.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PaginationToken(pub Option<String>);

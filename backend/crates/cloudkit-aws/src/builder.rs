@@ -2,7 +2,7 @@
 
 use cloudkit::common::{CloudConfig, CloudResult, Region};
 use cloudkit::core::{CloudContext, ProviderType};
-use cloudkit::spi::{AuthProvider, MetricsCollector, RetryPolicy};
+// use cloudkit::spi::{AuthProvider, MetricsCollector, RetryPolicy};
 use std::sync::Arc;
 
 /// AWS client builder.
@@ -54,20 +54,16 @@ impl AwsBuilder {
             .await?;
 
         // Initialize SDK config
-        let mut loader = aws_config::from_env();
+        let mut loader = aws_config::defaults(aws_config::BehaviorVersion::latest());
         if let Some(ref profile) = self.profile {
             loader = loader.profile_name(profile);
         }
         let sdk_config = loader.load().await;
 
-        #[cfg(feature = "secrets")]
-        let secrets_client = aws_sdk_secretsmanager::Client::new(&sdk_config);
-
         Ok(AwsClient {
             context: Arc::new(context),
             profile: self.profile,
-            #[cfg(feature = "secrets")]
-            secrets_client,
+            sdk_config,
         })
     }
 }
@@ -82,8 +78,7 @@ impl Default for AwsBuilder {
 pub struct AwsClient {
     context: Arc<CloudContext>,
     profile: Option<String>,
-    #[cfg(feature = "secrets")]
-    secrets_client: aws_sdk_secretsmanager::Client,
+    sdk_config: aws_config::SdkConfig,
 }
 
 impl AwsClient {
@@ -100,37 +95,67 @@ impl AwsClient {
     /// Get the S3 storage client.
     #[cfg(feature = "s3")]
     pub fn storage(&self) -> super::s3::S3Storage {
-        super::s3::S3Storage::new(self.context.clone())
+        super::s3::S3Storage::new(self.context.clone(), self.sdk_config.clone())
     }
 
     /// Get the DynamoDB client.
     #[cfg(feature = "dynamodb")]
     pub fn kv_store(&self) -> super::dynamodb::DynamoDbStore {
-        super::dynamodb::DynamoDbStore::new(self.context.clone())
+        super::dynamodb::DynamoDbStore::new(self.context.clone(), self.sdk_config.clone())
     }
 
     /// Get the SQS client.
     #[cfg(feature = "sqs")]
     pub fn queue(&self) -> super::sqs::SqsQueue {
-        super::sqs::SqsQueue::new(self.context.clone())
+        super::sqs::SqsQueue::new(self.context.clone(), self.sdk_config.clone())
     }
 
     /// Get the SNS client.
     #[cfg(feature = "sns")]
     pub fn pubsub(&self) -> super::sns::SnsPubSub {
-        super::sns::SnsPubSub::new(self.context.clone())
+        super::sns::SnsPubSub::new(self.context.clone(), self.sdk_config.clone())
     }
 
     /// Get the Lambda client.
     #[cfg(feature = "lambda")]
     pub fn functions(&self) -> super::lambda::LambdaFunctions {
-        super::lambda::LambdaFunctions::new(self.context.clone())
+        super::lambda::LambdaFunctions::new(self.context.clone(), self.sdk_config.clone())
     }
 
     /// Get the Secrets Manager client.
     #[cfg(feature = "secrets")]
     pub fn secrets(&self) -> super::secrets::AwsSecretsManager {
-        super::secrets::AwsSecretsManager::new(self.context.clone(), self.secrets_client.clone())
+        super::secrets::AwsSecretsManager::new(self.context.clone(), self.sdk_config.clone())
+    }
+
+    /// Get the KMS client.
+    #[cfg(feature = "kms")]
+    pub fn kms(&self) -> super::kms::AwsKms {
+        super::kms::AwsKms::new(self.context.clone(), self.sdk_config.clone())
+    }
+
+    /// Get the CloudWatch client.
+    #[cfg(feature = "cloudwatch")]
+    pub fn monitoring(&self) -> super::cloudwatch::AwsMonitoring {
+        super::cloudwatch::AwsMonitoring::new(self.context.clone(), self.sdk_config.clone())
+    }
+
+    /// Get the EventBridge client.
+    #[cfg(feature = "eventbridge")]
+    pub fn events(&self) -> super::eventbridge::AwsEvents {
+        super::eventbridge::AwsEvents::new(self.context.clone(), self.sdk_config.clone())
+    }
+
+    /// Get the Step Functions client.
+    #[cfg(feature = "stepfunctions")]
+    pub fn workflow(&self) -> super::stepfunctions::AwsWorkflow {
+        super::stepfunctions::AwsWorkflow::new(self.context.clone(), self.sdk_config.clone())
+    }
+
+    /// Get the Cognito client.
+    #[cfg(feature = "cognito")]
+    pub fn identity(&self) -> super::cognito::AwsIdentity {
+        super::cognito::AwsIdentity::new(self.context.clone(), self.sdk_config.clone())
     }
 }
 

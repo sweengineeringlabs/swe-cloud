@@ -19,6 +19,8 @@ pub struct CloudConfig {
     pub enable_tracing: bool,
     /// Custom endpoint (for local testing or private endpoints)
     pub endpoint: Option<String>,
+    /// Provider-specific parameters
+    pub parameters: super::Metadata,
 }
 
 impl Default for CloudConfig {
@@ -30,6 +32,7 @@ impl Default for CloudConfig {
             max_retries: 3,
             enable_tracing: false,
             endpoint: None,
+            parameters: super::Metadata::new(),
         }
     }
 }
@@ -50,6 +53,7 @@ pub struct CloudConfigBuilder {
     max_retries: Option<u32>,
     enable_tracing: Option<bool>,
     endpoint: Option<String>,
+    parameters: super::Metadata,
 }
 
 impl CloudConfigBuilder {
@@ -89,6 +93,18 @@ impl CloudConfigBuilder {
         self
     }
 
+    /// Set a provider-specific parameter.
+    pub fn parameter(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
+        self.parameters.insert(key.into(), value.into());
+        self
+    }
+
+    /// Set provider-specific parameters.
+    pub fn parameters(mut self, parameters: super::Metadata) -> Self {
+        self.parameters = parameters;
+        self
+    }
+
     /// Build the configuration.
     pub fn build(self) -> CloudResult<CloudConfig> {
         let default = CloudConfig::default();
@@ -100,6 +116,7 @@ impl CloudConfigBuilder {
             max_retries: self.max_retries.unwrap_or(default.max_retries),
             enable_tracing: self.enable_tracing.unwrap_or(default.enable_tracing),
             endpoint: self.endpoint.or(default.endpoint),
+            parameters: if self.parameters.is_empty() { default.parameters } else { self.parameters },
         })
     }
 }

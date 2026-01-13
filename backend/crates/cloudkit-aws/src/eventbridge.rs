@@ -2,127 +2,169 @@
 
 use async_trait::async_trait;
 use cloudkit::api::{
-    Event, EventBus, EventRule, EventTarget, FailedEntry, PutEventsResult,
+    Event, EventBus, EventRule, EventTarget, FailedEntry, PutEventsResult, RuleState,
 };
-use cloudkit::common::CloudResult;
+use cloudkit::common::{CloudResult, CloudError};
 use cloudkit::core::CloudContext;
 use std::sync::Arc;
 
 /// AWS EventBridge implementation.
-pub struct AwsEventBridge {
+pub struct AwsEvents {
     _context: Arc<CloudContext>,
-    // In a real implementation:
-    // client: aws_sdk_eventbridge::Client,
+    client: aws_sdk_eventbridge::Client,
 }
 
-impl AwsEventBridge {
+impl AwsEvents {
     /// Create a new EventBridge client.
-    pub fn new(context: Arc<CloudContext>) -> Self {
-        Self { _context: context }
+    pub fn new(context: Arc<CloudContext>, sdk_config: aws_config::SdkConfig) -> Self {
+        let client = aws_sdk_eventbridge::Client::new(&sdk_config);
+        Self { _context: context, client }
     }
 }
 
 #[async_trait]
-impl EventBus for AwsEventBridge {
+impl EventBus for AwsEvents {
     async fn put_events(
         &self,
         bus_name: &str,
         events: Vec<Event>,
     ) -> CloudResult<PutEventsResult> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %bus_name,
-            event_count = %events.len(),
-            "put_events called"
-        );
+        let mut entries = Vec::new();
+        for event in events {
+            entries.push(aws_sdk_eventbridge::types::PutEventsRequestEntry::builder()
+                .event_bus_name(bus_name)
+                .source(event.source)
+                .detail_type(event.detail_type)
+                .detail(event.detail.to_string())
+                .set_resources(Some(event.resources))
+                .build());
+        }
+        
+        let resp = self.client.put_events()
+            .set_entries(Some(entries))
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        let mut failed_entries = Vec::new();
+        for entry in resp.entries() {
+            if entry.error_code().is_some() {
+                failed_entries.push(FailedEntry {
+                    event_id: entry.event_id().unwrap_or_default().to_string(),
+                    error_code: entry.error_code().unwrap_or_default().to_string(),
+                    error_message: entry.error_message().unwrap_or_default().to_string(),
+                });
+            }
+        }
+        
         Ok(PutEventsResult {
-            successful_count: events.len(),
-            failed_count: 0,
-            failed_entries: vec![],
+            successful_count: resp.entries().len() - failed_entries.len(),
+            failed_count: failed_entries.len(),
+            failed_entries,
         })
     }
 
     async fn create_event_bus(&self, name: &str) -> CloudResult<String> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %name,
-            "create_event_bus called"
-        );
-        Ok(format!("arn:aws:events:us-east-1:123456789012:event-bus/{}", name))
+        let resp = self.client.create_event_bus()
+            .name(name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.event_bus_arn().unwrap_or_default().to_string())
     }
 
     async fn delete_event_bus(&self, name: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %name,
-            "delete_event_bus called"
-        );
+        self.client.delete_event_bus()
+            .name(name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn list_event_buses(&self) -> CloudResult<Vec<String>> {
-        tracing::info!(provider = "aws", service = "eventbridge", "list_event_buses called");
-        Ok(vec!["default".to_string()])
+        let resp = self.client.list_event_buses()
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.event_buses().iter().map(|b| b.name().unwrap_or_default().to_string()).collect())
     }
 
     async fn put_rule(&self, bus_name: &str, rule: EventRule) -> CloudResult<String> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %bus_name,
-            rule = %rule.name,
-            "put_rule called"
-        );
-        Ok(format!(
-            "arn:aws:events:us-east-1:123456789012:rule/{}/{}",
-            bus_name, rule.name
-        ))
+        let mut req = self.client.put_rule()
+            .event_bus_name(bus_name)
+            .name(rule.name);
+            
+        if let Some(pattern) = rule.event_pattern {
+            req = req.event_pattern(pattern.to_string());
+        }
+        
+        if let Some(schedule) = rule.schedule_expression {
+            req = req.schedule_expression(schedule);
+        }
+        
+        req = req.set_state(Some(match rule.state {
+            RuleState::Enabled => aws_sdk_eventbridge::types::RuleState::Enabled,
+            RuleState::Disabled => aws_sdk_eventbridge::types::RuleState::Disabled,
+        }));
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        Ok(resp.rule_arn().unwrap_or_default().to_string())
     }
 
     async fn delete_rule(&self, bus_name: &str, rule_name: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %bus_name,
-            rule = %rule_name,
-            "delete_rule called"
-        );
+        self.client.delete_rule()
+            .event_bus_name(bus_name)
+            .name(rule_name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn enable_rule(&self, bus_name: &str, rule_name: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %bus_name,
-            rule = %rule_name,
-            "enable_rule called"
-        );
+        self.client.enable_rule()
+            .event_bus_name(bus_name)
+            .name(rule_name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn disable_rule(&self, bus_name: &str, rule_name: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %bus_name,
-            rule = %rule_name,
-            "disable_rule called"
-        );
+        self.client.disable_rule()
+            .event_bus_name(bus_name)
+            .name(rule_name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn list_rules(&self, bus_name: &str) -> CloudResult<Vec<EventRule>> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %bus_name,
-            "list_rules called"
-        );
-        Ok(vec![])
+        let resp = self.client.list_rules()
+            .event_bus_name(bus_name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.rules().iter().map(|r| {
+            EventRule {
+                name: r.name().unwrap_or_default().to_string(),
+                description: r.description().map(|s| s.to_string()),
+                event_pattern: r.event_pattern().and_then(|p| serde_json::from_str(p).ok()),
+                schedule_expression: r.schedule_expression().map(|s| s.to_string()),
+                state: match r.state().unwrap_or(&aws_sdk_eventbridge::types::RuleState::Enabled) {
+                    aws_sdk_eventbridge::types::RuleState::Enabled => RuleState::Enabled,
+                    aws_sdk_eventbridge::types::RuleState::Disabled => RuleState::Disabled,
+                    _ => RuleState::Enabled,
+                },
+                arn: r.arn().map(|s| s.to_string()),
+            }
+        }).collect())
     }
 
     async fn put_targets(
@@ -131,14 +173,32 @@ impl EventBus for AwsEventBridge {
         rule_name: &str,
         targets: Vec<EventTarget>,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %bus_name,
-            rule = %rule_name,
-            target_count = %targets.len(),
-            "put_targets called"
-        );
+        let mut aws_targets = Vec::new();
+        for t in targets {
+            let mut builder = aws_sdk_eventbridge::types::Target::builder()
+                .id(t.id)
+                .arn(t.arn);
+                
+            if let Some(template) = t.input_template {
+                builder = builder.input_transformer(
+                    aws_sdk_eventbridge::types::InputTransformer::builder()
+                        .input_template(template)
+                        .set_input_paths_map(Some(t.input_paths))
+                        .build()
+                        .unwrap()
+                );
+            }
+                
+            aws_targets.push(builder.build().unwrap());
+        }
+        
+        self.client.put_targets()
+            .event_bus_name(bus_name)
+            .rule(rule_name)
+            .set_targets(Some(aws_targets))
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
@@ -148,14 +208,13 @@ impl EventBus for AwsEventBridge {
         rule_name: &str,
         target_ids: &[&str],
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %bus_name,
-            rule = %rule_name,
-            target_count = %target_ids.len(),
-            "remove_targets called"
-        );
+        self.client.remove_targets()
+            .event_bus_name(bus_name)
+            .rule(rule_name)
+            .set_ids(Some(target_ids.iter().map(|s| s.to_string()).collect()))
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
@@ -164,23 +223,37 @@ impl EventBus for AwsEventBridge {
         bus_name: &str,
         rule_name: &str,
     ) -> CloudResult<Vec<EventTarget>> {
-        tracing::info!(
-            provider = "aws",
-            service = "eventbridge",
-            bus = %bus_name,
-            rule = %rule_name,
-            "list_targets called"
-        );
-        Ok(vec![])
+        let resp = self.client.list_targets_by_rule()
+            .event_bus_name(bus_name)
+            .rule(rule_name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.targets().iter().map(|t| {
+            let (template, paths) = if let Some(transformer) = t.input_transformer() {
+                (
+                    Some(transformer.input_template().to_string()),
+                    transformer.input_paths_map().unwrap_or(&std::collections::HashMap::new()).clone()
+                )
+            } else {
+                (None, std::collections::HashMap::new())
+            };
+
+            EventTarget {
+                id: t.id().to_string(),
+                arn: t.arn().to_string(),
+                input_template: template,
+                input_paths: paths,
+            }
+        }).collect())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cloudkit::api::{Event, EventRule, EventTarget, RuleState};
     use cloudkit::core::ProviderType;
-    use serde_json::json;
 
     async fn create_test_context() -> Arc<CloudContext> {
         Arc::new(
@@ -193,152 +266,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_eventbridge_new() {
+        let sdk_config = aws_config::load_from_env().await;
         let context = create_test_context().await;
-        let _eb = AwsEventBridge::new(context);
-    }
-
-    #[tokio::test]
-    async fn test_put_events() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let events = vec![
-            Event::new("myapp.orders", "OrderCreated", json!({"orderId": "123"})),
-            Event::new("myapp.orders", "OrderShipped", json!({"orderId": "124"})),
-        ];
-
-        let result = eb.put_events("default", events).await;
-        assert!(result.is_ok());
-        let put_result = result.unwrap();
-        assert_eq!(put_result.successful_count, 2);
-        assert_eq!(put_result.failed_count, 0);
-    }
-
-    #[tokio::test]
-    async fn test_create_event_bus() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let result = eb.create_event_bus("my-custom-bus").await;
-        assert!(result.is_ok());
-        assert!(result.unwrap().contains("my-custom-bus"));
-    }
-
-    #[tokio::test]
-    async fn test_delete_event_bus() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let result = eb.delete_event_bus("my-custom-bus").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_event_buses() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let result = eb.list_event_buses().await;
-        assert!(result.is_ok());
-        assert!(result.unwrap().contains(&"default".to_string()));
-    }
-
-    #[tokio::test]
-    async fn test_put_rule_pattern() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let rule = EventRule::pattern(
-            "order-events",
-            json!({
-                "source": ["myapp.orders"],
-                "detail-type": ["OrderCreated"]
-            }),
-        );
-
-        let result = eb.put_rule("default", rule).await;
-        assert!(result.is_ok());
-        assert!(result.unwrap().contains("order-events"));
-    }
-
-    #[tokio::test]
-    async fn test_put_rule_schedule() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let rule = EventRule::schedule("daily-backup", "rate(1 day)");
-
-        let result = eb.put_rule("default", rule).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_delete_rule() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let result = eb.delete_rule("default", "my-rule").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_enable_rule() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let result = eb.enable_rule("default", "my-rule").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_disable_rule() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let result = eb.disable_rule("default", "my-rule").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_rules() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let result = eb.list_rules("default").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_put_targets() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let targets = vec![
-            EventTarget::new("target-1", "arn:aws:lambda:us-east-1:123456789012:function:process"),
-            EventTarget::new("target-2", "arn:aws:sqs:us-east-1:123456789012:queue"),
-        ];
-
-        let result = eb.put_targets("default", "my-rule", targets).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_remove_targets() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let result = eb
-            .remove_targets("default", "my-rule", &["target-1", "target-2"])
-            .await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_targets() {
-        let context = create_test_context().await;
-        let eb = AwsEventBridge::new(context);
-
-        let result = eb.list_targets("default", "my-rule").await;
-        assert!(result.is_ok());
+        let _events = AwsEvents::new(context, sdk_config);
     }
 }

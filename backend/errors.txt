@@ -1,0 +1,2301 @@
+warning: unused import: `PaginationToken`
+ --> crates\cloudkit\src\api\object_storage.rs:3:78
+  |
+3 | use crate::common::{BucketMetadata, CloudResult, ListResult, ObjectMetadata, PaginationToken};
+  |                                                                              ^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `OperationOutcome`
+ --> crates\cloudkit\src\core\executor.rs:4:54
+  |
+4 | use crate::spi::{MetricsCollector, OperationMetrics, OperationOutcome, RetryDecision, RetryPolicy};
+  |                                                      ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `CloudResult` and `Region`
+ --> crates\cloudkit\src\facade\cloudkit.rs:3:34
+  |
+3 | use crate::common::{CloudConfig, CloudResult, Region};
+  |                                  ^^^^^^^^^^^  ^^^^^^
+
+warning: unused import: `CloudContext`
+ --> crates\cloudkit\src\facade\cloudkit.rs:4:19
+  |
+4 | use crate::core::{CloudContext, CloudContextBuilder, ProviderType};
+  |                   ^^^^^^^^^^^^
+
+warning: variable `last_error` is assigned to, but never used
+  --> crates\cloudkit\src\core\executor.rs:45:17
+   |
+45 |         let mut last_error: Option<CloudError> = None;
+   |                 ^^^^^^^^^^
+   |
+   = note: consider using `_last_error` instead
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: value assigned to `last_error` is never read
+  --> crates\cloudkit\src\core\executor.rs:69:29
+   |
+69 | ...                   last_error = Some(err);
+   |                       ^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:65:5
+   |
+65 |     Creating,
+   |     ^^^^^^^^
+   |
+note: the lint level is defined here
+  --> crates\cloudkit\src\lib.rs:44:9
+   |
+44 | #![warn(missing_docs)]
+   |         ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:67:5
+   |
+67 |     Enabled,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:68:5
+   |
+68 |     Disabled,
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:69:5
+   |
+69 |     PendingDeletion,
+   |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:70:5
+   |
+70 |     PendingImport,
+   |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\encryption.rs:71:5
+   |
+71 |     Unavailable,
+   |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:167:5
+    |
+167 |     RsassaPssSha256,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:168:5
+    |
+168 |     RsassaPssSha384,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:169:5
+    |
+169 |     RsassaPssSha512,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:170:5
+    |
+170 |     RsassaPkcs1V15Sha256,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:171:5
+    |
+171 |     RsassaPkcs1V15Sha384,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:172:5
+    |
+172 |     RsassaPkcs1V15Sha512,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:173:5
+    |
+173 |     EcdsaSha256,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:174:5
+    |
+174 |     EcdsaSha384,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\encryption.rs:175:5
+    |
+175 |     EcdsaSha512,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\events.rs:133:5
+    |
+133 |     Enabled,
+    |     ^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\events.rs:134:5
+    |
+134 |     Disabled,
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:66:5
+   |
+66 |     Unconfirmed,
+   |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:67:5
+   |
+67 |     Confirmed,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:68:5
+   |
+68 |     Archived,
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:69:5
+   |
+69 |     Compromised,
+   |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:70:5
+   |
+70 |     Unknown,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:71:5
+   |
+71 |     ResetRequired,
+   |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\identity.rs:72:5
+   |
+72 |     ForceChangePassword,
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:119:5
+    |
+119 |     SmsMfa,
+    |     ^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:120:5
+    |
+120 |     SoftwareTokenMfa,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:121:5
+    |
+121 |     NewPasswordRequired,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:122:5
+    |
+122 |     MfaSetup,
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:123:5
+    |
+123 |     SelectMfaType,
+    |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\identity.rs:124:5
+    |
+124 |     Custom(String),
+    |     ^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:61:5
+   |
+61 |     None,
+   |     ^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:62:5
+   |
+62 |     Seconds,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:63:5
+   |
+63 |     Milliseconds,
+   |     ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:64:5
+   |
+64 |     Microseconds,
+   |     ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:65:5
+   |
+65 |     Bytes,
+   |     ^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:66:5
+   |
+66 |     Kilobytes,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:67:5
+   |
+67 |     Megabytes,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:68:5
+   |
+68 |     Gigabytes,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:69:5
+   |
+69 |     Count,
+   |     ^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:70:5
+   |
+70 |     Percent,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:71:5
+   |
+71 |     BytesPerSecond,
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\monitoring.rs:72:5
+   |
+72 |     CountPerSecond,
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:115:5
+    |
+115 |     Trace,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:116:5
+    |
+116 |     Debug,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:118:5
+    |
+118 |     Info,
+    |     ^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:119:5
+    |
+119 |     Warn,
+    |     ^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:120:5
+    |
+120 |     Error,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:121:5
+    |
+121 |     Fatal,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:145:5
+    |
+145 |     Average,
+    |     ^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:146:5
+    |
+146 |     Sum,
+    |     ^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:147:5
+    |
+147 |     Minimum,
+    |     ^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:148:5
+    |
+148 |     Maximum,
+    |     ^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:149:5
+    |
+149 |     SampleCount,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:175:5
+    |
+175 |     Ok,
+    |     ^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:176:5
+    |
+176 |     Alarm,
+    |     ^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:177:5
+    |
+177 |     InsufficientData,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:206:5
+    |
+206 |     GreaterThan,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:207:5
+    |
+207 |     GreaterThanOrEqual,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:208:5
+    |
+208 |     LessThan,
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+   --> crates\cloudkit\src\api\monitoring.rs:209:5
+    |
+209 |     LessThanOrEqual,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:67:5
+   |
+67 |     Running,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:68:5
+   |
+68 |     Succeeded,
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:69:5
+   |
+69 |     Failed,
+   |     ^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:70:5
+   |
+70 |     TimedOut,
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:71:5
+   |
+71 |     Aborted,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates\cloudkit\src\api\workflow.rs:72:5
+   |
+72 |     PendingRedrive,
+   |     ^^^^^^^^^^^^^^
+
+warning: `cloudkit` (lib) generated 72 warnings (run `cargo fix --lib -p cloudkit` to apply 4 suggestions)
+    Checking cloudkit-aws v0.1.0 (C:\phd-systems\swe-lab\cloud\backend\crates\cloudkit-aws)
+error[E0433]: failed to resolve: could not find `AwsEvents` in `eventbridge`
+   --> crates\cloudkit-aws\src\builder.rs:153:29
+    |
+153 |         super::eventbridge::AwsEvents::new(self.context.clone(), self.sdk_config.clone())
+    |                             ^^^^^^^^^ could not find `AwsEvents` in `eventbridge`
+
+error[E0407]: method `build_condition_expression` is not a member of trait `KeyValueStore`
+   --> crates\cloudkit-aws\src\dynamodb.rs:179:5
+    |
+179 | /     fn build_condition_expression(&self, condition: Condition) -> (String, HashMap<String, aws_sdk_dynamodb::types::AttributeValue>) {
+180 | |         let mut values = HashMap::new();
+181 | |         let expr = match condition {
+182 | |             Condition::Eq(k, v) => {
+...   |
+251 | |         (expr, values)
+252 | |     }
+    | |_____^ not a member of trait `KeyValueStore`
+
+error[E0412]: cannot find type `AwsEvents` in module `super::eventbridge`
+   --> crates\cloudkit-aws\src\builder.rs:152:49
+    |
+152 |     pub fn events(&self) -> super::eventbridge::AwsEvents {
+    |                                                 ^^^^^^^^^ not found in `super::eventbridge`
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\cloudwatch.rs:44:38
+   |
+44 |         req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\cloudwatch.rs:54:13
+   |
+54 |         Err(CloudError::ServiceError("get_metric_data not implemented".to_string()))
+   |             ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\cloudwatch.rs:63:49
+   |
+63 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                                 ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\cloudwatch.rs:75:38
+   |
+75 |         req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\cloudwatch.rs:84:26
+   |
+84 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\cloudwatch.rs:93:26
+   |
+93 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\cloudwatch.rs:103:17
+    |
+103 |             Err(CloudError::NotFound {
+    |                 ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\cloudwatch.rs:132:26
+    |
+132 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\cloudwatch.rs:141:26
+    |
+141 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\cloudwatch.rs:151:26
+    |
+151 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\cloudwatch.rs:176:26
+    |
+176 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\cloudwatch.rs:188:13
+    |
+188 |         Err(CloudError::ServiceError("query_logs not implemented".to_string()))
+    |             ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\cloudwatch.rs:195:26
+    |
+195 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\cloudwatch.rs:205:26
+    |
+205 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\eventbridge.rs:47:26
+   |
+47 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\eventbridge.rs:72:26
+   |
+72 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\eventbridge.rs:82:26
+   |
+82 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+  --> crates\cloudkit-aws\src\eventbridge.rs:90:26
+   |
+90 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+   |
+help: consider importing this enum
+   |
+ 3 + use cloudkit::prelude::CloudError;
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\eventbridge.rs:113:49
+    |
+113 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                 ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\eventbridge.rs:123:26
+    |
+123 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\eventbridge.rs:133:26
+    |
+133 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\eventbridge.rs:143:26
+    |
+143 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\eventbridge.rs:152:26
+    |
+152 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\eventbridge.rs:190:26
+    |
+190 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\eventbridge.rs:206:26
+    |
+206 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+error[E0433]: failed to resolve: use of undeclared type `CloudError`
+   --> crates\cloudkit-aws\src\eventbridge.rs:220:26
+    |
+220 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                          ^^^^^^^^^^ use of undeclared type `CloudError`
+    |
+help: consider importing this enum
+    |
+  3 + use cloudkit::prelude::CloudError;
+    |
+
+warning: unused imports: `AuthProvider`, `MetricsCollector`, and `RetryPolicy`
+ --> crates\cloudkit-aws\src\builder.rs:5:21
+  |
+5 | use cloudkit::spi::{AuthProvider, MetricsCollector, RetryPolicy};
+  |                     ^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `chrono::Utc`
+ --> crates\cloudkit-aws\src\stepfunctions.rs:4:5
+  |
+4 | use chrono::Utc;
+  |     ^^^^^^^^^^^
+
+warning: unused import: `AuthError`
+ --> crates\cloudkit-aws\src\cognito.rs:8:24
+  |
+8 | use cloudkit::common::{AuthError, CloudError, CloudResult, Metadata};
+  |                        ^^^^^^^^^
+
+warning: use of deprecated function `aws_config::from_env`: Use the `aws_config::defaults` function. If you don't care about future default behavior changes, you can continue to use this function by enabling the `behavior-version-latest` feature. Doing so will make this deprecation notice go away.
+  --> crates\cloudkit-aws\src\builder.rs:57:38
+   |
+57 |         let mut loader = aws_config::from_env();
+   |                                      ^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated unit variant `aws_sdk_kms::types::CustomerMasterKeySpec::SymmetricDefault`: This enum has been deprecated. Instead, use the KeySpec enum.
+  --> crates\cloudkit-aws\src\kms.rs:41:100
+   |
+41 |             cloudkit::api::KeySpec::SymmetricDefault => aws_sdk_kms::types::CustomerMasterKeySpec::SymmetricDefault,
+   |                                                                                                    ^^^^^^^^^^^^^^^^
+
+warning: use of deprecated unit variant `aws_sdk_kms::types::CustomerMasterKeySpec::Rsa2048`: This enum has been deprecated. Instead, use the KeySpec enum.
+  --> crates\cloudkit-aws\src\kms.rs:42:91
+   |
+42 |             cloudkit::api::KeySpec::Rsa2048 => aws_sdk_kms::types::CustomerMasterKeySpec::Rsa2048,
+   |                                                                                           ^^^^^^^
+
+warning: use of deprecated unit variant `aws_sdk_kms::types::CustomerMasterKeySpec::Rsa3072`: This enum has been deprecated. Instead, use the KeySpec enum.
+  --> crates\cloudkit-aws\src\kms.rs:43:91
+   |
+43 |             cloudkit::api::KeySpec::Rsa3072 => aws_sdk_kms::types::CustomerMasterKeySpec::Rsa3072,
+   |                                                                                           ^^^^^^^
+
+warning: use of deprecated unit variant `aws_sdk_kms::types::CustomerMasterKeySpec::Rsa4096`: This enum has been deprecated. Instead, use the KeySpec enum.
+  --> crates\cloudkit-aws\src\kms.rs:44:91
+   |
+44 |             cloudkit::api::KeySpec::Rsa4096 => aws_sdk_kms::types::CustomerMasterKeySpec::Rsa4096,
+   |                                                                                           ^^^^^^^
+
+warning: use of deprecated unit variant `aws_sdk_kms::types::CustomerMasterKeySpec::EccNistP256`: This enum has been deprecated. Instead, use the KeySpec enum.
+  --> crates\cloudkit-aws\src\kms.rs:45:95
+   |
+45 |             cloudkit::api::KeySpec::EccNistP256 => aws_sdk_kms::types::CustomerMasterKeySpec::EccNistP256,
+   |                                                                                               ^^^^^^^^^^^
+
+warning: use of deprecated unit variant `aws_sdk_kms::types::CustomerMasterKeySpec::EccNistP384`: This enum has been deprecated. Instead, use the KeySpec enum.
+  --> crates\cloudkit-aws\src\kms.rs:46:95
+   |
+46 |             cloudkit::api::KeySpec::EccNistP384 => aws_sdk_kms::types::CustomerMasterKeySpec::EccNistP384,
+   |                                                                                               ^^^^^^^^^^^
+
+warning: use of deprecated unit variant `aws_sdk_kms::types::CustomerMasterKeySpec::EccNistP521`: This enum has been deprecated. Instead, use the KeySpec enum.
+  --> crates\cloudkit-aws\src\kms.rs:47:95
+   |
+47 |             cloudkit::api::KeySpec::EccNistP521 => aws_sdk_kms::types::CustomerMasterKeySpec::EccNistP521,
+   |                                                                                               ^^^^^^^^^^^
+
+warning: use of deprecated unit variant `aws_sdk_kms::types::CustomerMasterKeySpec::EccSecgP256K1`: This enum has been deprecated. Instead, use the KeySpec enum.
+  --> crates\cloudkit-aws\src\kms.rs:48:97
+   |
+48 |             cloudkit::api::KeySpec::EccSecgP256K1 => aws_sdk_kms::types::CustomerMasterKeySpec::EccSecgP256K1,
+   |                                                                                                 ^^^^^^^^^^^^^
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\s3.rs:28:38
+   |
+28 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no function or associated item named `new` found for struct `BucketMetadata` in the current scope
+  --> crates\cloudkit-aws\src\s3.rs:31:29
+   |
+31 |             BucketMetadata::new(
+   |                             ^^^ function or associated item not found in `BucketMetadata`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\s3.rs:43:38
+   |
+43 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\s3.rs:52:38
+   |
+52 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\s3.rs:91:50
+   |
+91 |         req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                                  ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:128:29
+    |
+128 |                 CloudError::ServiceError(e.to_string())
+    |                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:132:70
+    |
+132 |         let data = resp.body.collect().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:149:33
+    |
+149 |                     CloudError::ServiceError(e.to_string())
+    |                                 ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0063]: missing field `storage_class` in initializer of `ObjectMetadata`
+   --> crates\cloudkit-aws\src\s3.rs:153:12
+    |
+153 |         Ok(ObjectMetadata {
+    |            ^^^^^^^^^^^^^^ missing `storage_class`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:169:38
+    |
+169 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:187:38
+    |
+187 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:204:38
+    |
+204 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:240:61
+    |
+240 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0063]: missing field `storage_class` in initializer of `ObjectMetadata`
+   --> crates\cloudkit-aws\src\s3.rs:243:13
+    |
+243 |             ObjectMetadata {
+    |             ^^^^^^^^^^^^^^ missing `storage_class`
+
+error[E0599]: no function or associated item named `new` found for struct `PaginationToken` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:255:69
+    |
+255 |             resp.next_continuation_token().map(|t| PaginationToken::new(t)).unwrap_or(PaginationToken::none())
+    |                                                                     ^^^ function or associated item not found in `PaginationToken`
+    |
+note: if you're trying to build a new `PaginationToken` consider using one of the following associated functions:
+      PaginationToken::none
+      PaginationToken::some
+   --> C:\phd-systems\swe-lab\cloud\backend\crates\cloudkit\src\common\types.rs:120:5
+    |
+120 |     pub fn none() -> Self {
+    |     ^^^^^^^^^^^^^^^^^^^^^
+...
+125 |     pub fn some(token: impl Into<String>) -> Self {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:268:38
+    |
+268 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:275:38
+    |
+275 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:289:38
+    |
+289 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\s3.rs:296:38
+    |
+296 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\dynamodb.rs:93:61
+   |
+93 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\dynamodb.rs:99:83
+   |
+99 |             let result = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+   |                                                                                   ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+   |
+help: there is a variant with a similar name
+   |
+99 -             let result = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+99 +             let result = serde_json::from_value(json_val).map_err(|e| CloudError::Serialization(e.to_string()))?;
+   |
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:123:76
+    |
+123 |         let json_item = serde_json::to_value(item).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                            ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+123 -         let json_item = serde_json::to_value(item).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+123 +         let json_item = serde_json::to_value(item).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:136:54
+    |
+136 |         put_req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:146:38
+    |
+146 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no method named `build_condition_expression` found for reference `&DynamoDbStore` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:156:35
+    |
+156 |         let (expr, values) = self.build_condition_expression(condition);
+    |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ method not found in `&DynamoDbStore`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:173:37
+    |
+173 |                     Err(CloudError::ServiceError(e.to_string()))
+    |                                     ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `Eq` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:182:24
+    |
+182 |             Condition::Eq(k, v) => {
+    |                        ^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no variant or associated item named `NotEq` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:186:24
+    |
+186 |             Condition::NotEq(k, v) => {
+    |                        ^^^^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no variant or associated item named `Gt` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:190:24
+    |
+190 |             Condition::Gt(k, v) => {
+    |                        ^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no variant or associated item named `GtEq` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:194:24
+    |
+194 |             Condition::GtEq(k, v) => {
+    |                        ^^^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no variant or associated item named `Lt` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:198:24
+    |
+198 |             Condition::Lt(k, v) => {
+    |                        ^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no variant or associated item named `LtEq` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:202:24
+    |
+202 |             Condition::LtEq(k, v) => {
+    |                        ^^^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0023]: this pattern has 2 fields, but the corresponding tuple variant has 1 field
+   --> crates\cloudkit-aws\src\dynamodb.rs:206:28
+    |
+206 |             Condition::And(c1, c2) => {
+    |                            ^^  ^^ expected 1 field, found 2
+    |
+   ::: C:\phd-systems\swe-lab\cloud\backend\crates\cloudkit\src\api\kv_store.rs:24:9
+    |
+ 24 |     And(Vec<Condition>),
+    |         -------------- tuple variant has 1 field
+
+error[E0023]: this pattern has 2 fields, but the corresponding tuple variant has 1 field
+   --> crates\cloudkit-aws\src\dynamodb.rs:214:27
+    |
+214 |             Condition::Or(c1, c2) => {
+    |                           ^^  ^^ expected 1 field, found 2
+    |
+   ::: C:\phd-systems\swe-lab\cloud\backend\crates\cloudkit\src\api\kv_store.rs:26:8
+    |
+ 26 |     Or(Vec<Condition>),
+    |        -------------- tuple variant has 1 field
+
+error[E0599]: no variant or associated item named `Not` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:221:24
+    |
+221 |             Condition::Not(c) => {
+    |                        ^^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no variant or associated item named `In` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:228:24
+    |
+228 |             Condition::In(k, vals) => {
+    |                        ^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no variant or associated item named `Between` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:237:24
+    |
+237 |             Condition::Between(k, v1, v2) => {
+    |                        ^^^^^^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no variant or associated item named `BeginsWith` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:242:24
+    |
+242 |             Condition::BeginsWith(k, v) => {
+    |                        ^^^^^^^^^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no variant or associated item named `Contains` found for enum `cloudkit::api::Condition` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:246:24
+    |
+246 |             Condition::Contains(k, v) => {
+    |                        ^^^^^^^^ variant or associated item not found in `cloudkit::api::Condition`
+
+error[E0599]: no method named `build_condition_expression` found for reference `&DynamoDbStore` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:207:37
+    |
+207 |                 let (e1, v1) = self.build_condition_expression(*c1);
+    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ method not found in `&DynamoDbStore`
+
+error[E0599]: no method named `build_condition_expression` found for reference `&DynamoDbStore` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:208:37
+    |
+208 |                 let (e2, v2) = self.build_condition_expression(*c2);
+    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ method not found in `&DynamoDbStore`
+
+error[E0599]: no method named `build_condition_expression` found for reference `&DynamoDbStore` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:215:37
+    |
+215 |                 let (e1, v1) = self.build_condition_expression(*c1);
+    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ method not found in `&DynamoDbStore`
+
+error[E0599]: no method named `build_condition_expression` found for reference `&DynamoDbStore` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:216:37
+    |
+216 |                 let (e2, v2) = self.build_condition_expression(*c2);
+    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ method not found in `&DynamoDbStore`
+
+error[E0599]: no method named `build_condition_expression` found for reference `&DynamoDbStore` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:222:35
+    |
+222 |                 let (e, v) = self.build_condition_expression(*c);
+    |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ method not found in `&DynamoDbStore`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:261:38
+    |
+261 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:282:50
+    |
+282 |         req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                  ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:305:61
+    |
+305 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:313:87
+    |
+313 |                 let result = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                                       ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+313 -                 let result = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+313 +                 let result = serde_json::from_value(json_val).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no function or associated item named `new` found for struct `PaginationToken` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:325:62
+    |
+325 |         Ok(ListResult::new(items, token.map(PaginationToken::new).unwrap_or(PaginationToken::none())))
+    |                                                              ^^^ function or associated item not found in `PaginationToken`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:347:38
+    |
+347 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:356:88
+    |
+356 |                     let val = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                                        ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+356 -                     let val = serde_json::from_value(json_val).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+356 +                     let val = serde_json::from_value(json_val).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:372:80
+    |
+372 |             let json_item = serde_json::to_value(item).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                                ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+372 -             let json_item = serde_json::to_value(item).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+372 +             let json_item = serde_json::to_value(item).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\dynamodb.rs:393:38
+    |
+393 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\sqs.rs:29:38
+   |
+29 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\sqs.rs:39:38
+   |
+39 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\sqs.rs:48:38
+   |
+48 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\sqs.rs:60:38
+   |
+60 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:101:38
+    |
+101 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:125:38
+    |
+125 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+warning: use of deprecated method `aws_sdk_sqs::operation::receive_message::builders::ReceiveMessageFluentBuilder::set_attribute_names`: AttributeNames has been replaced by MessageSystemAttributeNames
+   --> crates\cloudkit-aws\src\sqs.rs:138:14
+    |
+138 |             .set_attribute_names(Some(vec![
+    |              ^^^^^^^^^^^^^^^^^^^
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:156:38
+    |
+156 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `InvalidArgument` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:192:80
+    |
+192 |         let handle = message.receipt_handle.as_ref().ok_or_else(|| CloudError::InvalidArgument("Message missing receipt handle".into()))?;
+    |                                                                                ^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:198:38
+    |
+198 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:219:38
+    |
+219 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `InvalidArgument` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:230:80
+    |
+230 |         let handle = message.receipt_handle.as_ref().ok_or_else(|| CloudError::InvalidArgument("Message missing receipt handle".into()))?;
+    |                                                                                ^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:237:38
+    |
+237 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:247:38
+    |
+247 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sqs.rs:262:38
+    |
+262 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\sns.rs:30:38
+   |
+30 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\sns.rs:40:38
+   |
+40 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\sns.rs:48:38
+   |
+48 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\sns.rs:78:38
+   |
+78 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\sns.rs:97:61
+   |
+97 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sns.rs:109:42
+    |
+109 |                 .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                          ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sns.rs:120:38
+    |
+120 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sns.rs:128:38
+    |
+128 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sns.rs:156:61
+    |
+156 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\sns.rs:177:72
+    |
+177 |         let json = serde_json::to_vec(message).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+    |                                                                        ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+    |
+help: there is a variant with a similar name
+    |
+177 -         let json = serde_json::to_vec(message).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+177 +         let json = serde_json::to_vec(message).map_err(|e| CloudError::Serialization(e.to_string()))?;
+    |
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\lambda.rs:55:61
+   |
+55 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\lambda.rs:70:81
+   |
+70 |         let payload_bytes = serde_json::to_vec(payload).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+   |                                                                                 ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+   |
+help: there is a variant with a similar name
+   |
+70 -         let payload_bytes = serde_json::to_vec(payload).map_err(|e| CloudError::SerializationError(e.to_string()))?;
+70 +         let payload_bytes = serde_json::to_vec(payload).map_err(|e| CloudError::Serialization(e.to_string()))?;
+   |
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\lambda.rs:74:36
+   |
+74 |             return Err(CloudError::ServiceError(result.function_error.unwrap_or_else(|| "Unknown Lambda error".to_string())));
+   |                                    ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `SerializationError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\lambda.rs:77:64
+   |
+77 |         result.parse_payload::<R>()?.ok_or_else(|| CloudError::SerializationError("Empty response from Lambda".to_string()))
+   |                                                                ^^^^^^^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+   |
+help: there is a variant with a similar name
+   |
+77 -         result.parse_payload::<R>()?.ok_or_else(|| CloudError::SerializationError("Empty response from Lambda".to_string()))
+77 +         result.parse_payload::<R>()?.ok_or_else(|| CloudError::Serialization("Empty response from Lambda".to_string()))
+   |
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\lambda.rs:93:38
+   |
+93 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `FailedEntry` has no field named `id`
+  --> crates\cloudkit-aws\src\eventbridge.rs:53:21
+   |
+53 |                     id: entry.event_id().unwrap_or_default().to_string(),
+   |                     ^^ `FailedEntry` does not have this field
+   |
+   = note: available fields are: `event_id`
+
+error[E0609]: no field `pattern` on type `EventRule`
+   --> crates\cloudkit-aws\src\eventbridge.rs:100:37
+    |
+100 |         if let Some(pattern) = rule.pattern {
+    |                                     ^^^^^^^ unknown field
+    |
+    = note: available fields are: `name`, `description`, `event_pattern`, `schedule_expression`, `state`, `arn`
+
+error[E0560]: struct `EventRule` has no field named `pattern`
+   --> crates\cloudkit-aws\src\eventbridge.rs:158:17
+    |
+158 |                 pattern: r.event_pattern().and_then(|p| serde_json::from_str(p).ok()),
+    |                 ^^^^^^^ `EventRule` does not have this field
+    |
+    = note: available fields are: `event_pattern`, `arn`
+
+error[E0609]: no field `input` on type `EventTarget`
+   --> crates\cloudkit-aws\src\eventbridge.rs:180:30
+    |
+180 |                 .set_input(t.input.map(|i| i.to_string()))
+    |                              ^^^^^ unknown field
+    |
+    = note: available fields are: `id`, `arn`, `input_template`, `input_paths`
+
+error[E0308]: mismatched types
+   --> crates\cloudkit-aws\src\eventbridge.rs:187:31
+    |
+177 |               aws_targets.push(aws_sdk_eventbridge::types::Target::builder()
+    |  _____________-----------______-
+    | |             |
+    | |             ... which causes `aws_targets` to have type `Vec<Result<Target, aws_sdk_secretsmanager::error::BuildError>>`
+178 | |                 .id(t.id)
+179 | |                 .arn(t.arn)
+180 | |                 .set_input(t.input.map(|i| i.to_string()))
+181 | |                 .build());
+    | |________________________- this argument has type `Result<Target, aws_sdk_secretsmanager::error::BuildError>`...
+...
+187 |               .set_targets(Some(aws_targets))
+    |                            ---- ^^^^^^^^^^^ expected `Vec<Target>`, found `Vec<Result<Target, BuildError>>`
+    |                            |
+    |                            arguments to this enum variant are incorrect
+    |
+    = note: expected struct `Vec<Target>`
+               found struct `Vec<Result<Target, aws_sdk_secretsmanager::error::BuildError>>`
+help: the type constructed contains `Vec<Result<Target, aws_sdk_secretsmanager::error::BuildError>>` due to the type of the argument passed
+   --> crates\cloudkit-aws\src\eventbridge.rs:187:26
+    |
+187 |             .set_targets(Some(aws_targets))
+    |                          ^^^^^-----------^
+    |                               |
+    |                               this argument influences the type of `Some`
+note: tuple variant defined here
+   --> /rustc/ed61e7d7e242494fb7057f2657300d9e77bb4fcb\library\core\src\option.rs:602:5
+help: consider using `Result::expect` to unwrap the `Result<Target, aws_sdk_secretsmanager::error::BuildError>` value, panicking if the value is a `Result::Err`
+    |
+181 |                 .build().expect("REASON"));
+    |                         +++++++++++++++++
+
+error[E0560]: struct `EventTarget` has no field named `input`
+   --> crates\cloudkit-aws\src\eventbridge.rs:226:17
+    |
+226 |                 input: t.input().and_then(|i| serde_json::from_str(i).ok()),
+    |                 ^^^^^ `EventTarget` does not have this field
+    |
+    = note: available fields are: `input_template`, `input_paths`
+
+error[E0560]: struct `EventTarget` has no field named `input_path`
+   --> crates\cloudkit-aws\src\eventbridge.rs:227:17
+    |
+227 |                 input_path: t.input_path().map(|s| s.to_string()),
+    |                 ^^^^^^^^^^ unknown field
+    |
+help: a field with a similar name exists
+    |
+227 |                 input_paths: t.input_path().map(|s| s.to_string()),
+    |                           +
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:37:38
+   |
+37 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:52:38
+   |
+52 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:61:38
+   |
+61 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:70:38
+   |
+70 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0063]: missing fields `arn`, `created_at`, `role_arn` and 2 other fields in initializer of `WorkflowDefinition`
+  --> crates\cloudkit-aws\src\stepfunctions.rs:72:12
+   |
+72 |         Ok(WorkflowDefinition {
+   |            ^^^^^^^^^^^^^^^^^^ missing `arn`, `created_at`, `role_arn` and 2 other fields
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\stepfunctions.rs:83:38
+   |
+83 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0063]: missing fields `arn`, `created_at`, `role_arn` and 2 other fields in initializer of `WorkflowDefinition`
+  --> crates\cloudkit-aws\src\stepfunctions.rs:86:13
+   |
+86 |             WorkflowDefinition {
+   |             ^^^^^^^^^^^^^^^^^^ missing `arn`, `created_at`, `role_arn` and 2 other fields
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:108:61
+    |
+108 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:139:50
+    |
+139 |         req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                  ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:148:38
+    |
+148 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:188:61
+    |
+188 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:220:38
+    |
+220 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:242:38
+    |
+242 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:258:38
+    |
+258 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\stepfunctions.rs:267:38
+    |
+267 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0308]: mismatched types
+   --> crates\cloudkit-aws\src\cognito.rs:39:39
+    |
+ 39 |               req = req.user_attributes(aws_sdk_cognitoidentityprovider::types::AttributeType::builder()
+    |  _______________________---------------_^
+    | |                       |
+    | |                       arguments to this method are incorrect
+ 40 | |                 .name("email")
+ 41 | |                 .value(e)
+ 42 | |                 .build());
+    | |________________________^ expected `AttributeType`, found `Result<AttributeType, BuildError>`
+    |
+    = note: expected struct `AttributeType`
+                 found enum `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>`
+note: method defined here
+   --> C:\Users\elvis\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aws-sdk-cognitoidentityprovider-1.105.0\src\operation\admin_create_user\builders.rs:203:12
+    |
+203 |     pub fn user_attributes(mut self, input: crate::types::AttributeType) -> Self {
+    |            ^^^^^^^^^^^^^^^
+help: consider using `Result::expect` to unwrap the `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>` value, panicking if the value is a `Result::Err`
+    |
+ 42 |                 .build().expect("REASON"));
+    |                         +++++++++++++++++
+
+error[E0308]: mismatched types
+   --> crates\cloudkit-aws\src\cognito.rs:44:43
+    |
+ 44 |                   req = req.user_attributes(aws_sdk_cognitoidentityprovider::types::AttributeType::builder()
+    |  ___________________________---------------_^
+    | |                           |
+    | |                           arguments to this method are incorrect
+ 45 | |                     .name("email_verified")
+ 46 | |                     .value("true")
+ 47 | |                     .build());
+    | |____________________________^ expected `AttributeType`, found `Result<AttributeType, BuildError>`
+    |
+    = note: expected struct `AttributeType`
+                 found enum `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>`
+note: method defined here
+   --> C:\Users\elvis\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aws-sdk-cognitoidentityprovider-1.105.0\src\operation\admin_create_user\builders.rs:203:12
+    |
+203 |     pub fn user_attributes(mut self, input: crate::types::AttributeType) -> Self {
+    |            ^^^^^^^^^^^^^^^
+help: consider using `Result::expect` to unwrap the `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>` value, panicking if the value is a `Result::Err`
+    |
+ 47 |                     .build().expect("REASON"));
+    |                             +++++++++++++++++
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\cognito.rs:51:61
+   |
+51 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `phone_number_verified`
+  --> crates\cloudkit-aws\src\cognito.rs:60:13
+   |
+60 | ...   phone_number_verified: user.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+   |       ^^^^^^^^^^^^^^^^^^^^^ unknown field
+   |
+help: a field with a similar name exists
+   |
+60 -             phone_number_verified: user.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+60 +             phone_verified: user.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+   |
+
+error[E0599]: no variant or associated item named `Active` found for enum `UserStatus` in the current scope
+  --> crates\cloudkit-aws\src\cognito.rs:62:98
+   |
+62 |                 aws_sdk_cognitoidentityprovider::types::UserStatusType::Confirmed => UserStatus::Active,
+   |                                                                                                  ^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0599]: no variant or associated item named `Inactive` found for enum `UserStatus` in the current scope
+  --> crates\cloudkit-aws\src\cognito.rs:63:34
+   |
+63 |                 _ => UserStatus::Inactive,
+   |                                  ^^^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0308]: mismatched types
+  --> crates\cloudkit-aws\src\cognito.rs:65:25
+   |
+65 |             created_at: chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_create_date().unwrap().secs(), 0).unwrap_or_default(),
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<DateTime<Utc>>`, found `DateTime<Utc>`
+   |
+   = note: expected enum `std::option::Option<chrono::DateTime<_>>`
+            found struct `chrono::DateTime<_>`
+help: try wrapping the expression in `Some`
+   |
+65 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_create_date().unwrap().secs(), 0).unwrap_or_default()),
+   |                         +++++                                                                                                               +
+
+error[E0560]: struct `cloudkit::api::User` has no field named `last_modified`
+  --> crates\cloudkit-aws\src\cognito.rs:66:13
+   |
+66 | ...   last_modified: chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_last_modified_date().unwrap().secs(), 0).unwrap_or_default(),
+   |       ^^^^^^^^^^^^^ `cloudkit::api::User` does not have this field
+   |
+   = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `metadata`
+  --> crates\cloudkit-aws\src\cognito.rs:67:13
+   |
+67 |             metadata: Metadata::new(),
+   |             ^^^^^^^^ `cloudkit::api::User` does not have this field
+   |
+   = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `groups`
+  --> crates\cloudkit-aws\src\cognito.rs:68:13
+   |
+68 |             groups: Vec::new(),
+   |             ^^^^^^ `cloudkit::api::User` does not have this field
+   |
+   = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\cognito.rs:78:38
+   |
+78 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `phone_number_verified`
+  --> crates\cloudkit-aws\src\cognito.rs:86:13
+   |
+86 | ...   phone_number_verified: resp.user_attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some(...
+   |       ^^^^^^^^^^^^^^^^^^^^^ unknown field
+   |
+help: a field with a similar name exists
+   |
+86 -             phone_number_verified: resp.user_attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+86 +             phone_verified: resp.user_attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+   |
+
+error[E0599]: no variant or associated item named `Active` found for enum `UserStatus` in the current scope
+  --> crates\cloudkit-aws\src\cognito.rs:88:98
+   |
+88 |                 aws_sdk_cognitoidentityprovider::types::UserStatusType::Confirmed => UserStatus::Active,
+   |                                                                                                  ^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0599]: no variant or associated item named `Inactive` found for enum `UserStatus` in the current scope
+  --> crates\cloudkit-aws\src\cognito.rs:89:34
+   |
+89 |                 _ => UserStatus::Inactive,
+   |                                  ^^^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0308]: mismatched types
+  --> crates\cloudkit-aws\src\cognito.rs:91:25
+   |
+91 |             created_at: chrono::DateTime::<chrono::Utc>::from_timestamp(resp.user_create_date().unwrap().secs(), 0).unwrap_or_default(),
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<DateTime<Utc>>`, found `DateTime<Utc>`
+   |
+   = note: expected enum `std::option::Option<chrono::DateTime<_>>`
+            found struct `chrono::DateTime<_>`
+help: try wrapping the expression in `Some`
+   |
+91 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(resp.user_create_date().unwrap().secs(), 0).unwrap_or_default()),
+   |                         +++++                                                                                                               +
+
+error[E0560]: struct `cloudkit::api::User` has no field named `last_modified`
+  --> crates\cloudkit-aws\src\cognito.rs:92:13
+   |
+92 | ...   last_modified: chrono::DateTime::<chrono::Utc>::from_timestamp(resp.user_last_modified_date().unwrap().secs(), 0).unwrap_or_default(),
+   |       ^^^^^^^^^^^^^ `cloudkit::api::User` does not have this field
+   |
+   = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `metadata`
+  --> crates\cloudkit-aws\src\cognito.rs:93:13
+   |
+93 |             metadata: Metadata::new(),
+   |             ^^^^^^^^ `cloudkit::api::User` does not have this field
+   |
+   = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `groups`
+  --> crates\cloudkit-aws\src\cognito.rs:94:13
+   |
+94 |             groups: Vec::new(),
+   |             ^^^^^^ `cloudkit::api::User` does not have this field
+   |
+   = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0308]: mismatched types
+   --> crates\cloudkit-aws\src\cognito.rs:110:39
+    |
+101 |               aws_attrs.push(aws_sdk_cognitoidentityprovider::types::AttributeType::builder()
+    |  _____________---------______-
+    | |             |
+    | |             ... which causes `aws_attrs` to have type `Vec<Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>>`
+102 | |                 .name(k)
+103 | |                 .value(v)
+104 | |                 .build());
+    | |________________________- this argument has type `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>`...
+...
+110 |               .set_user_attributes(Some(aws_attrs))
+    |                                    ---- ^^^^^^^^^ expected `Vec<AttributeType>`, found `Vec<Result<AttributeType, BuildError>>`
+    |                                    |
+    |                                    arguments to this enum variant are incorrect
+    |
+    = note: expected struct `Vec<AttributeType>`
+               found struct `Vec<Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>>`
+help: the type constructed contains `Vec<Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>>` due to the type of the argument passed
+   --> crates\cloudkit-aws\src\cognito.rs:110:34
+    |
+110 |             .set_user_attributes(Some(aws_attrs))
+    |                                  ^^^^^---------^
+    |                                       |
+    |                                       this argument influences the type of `Some`
+note: tuple variant defined here
+   --> /rustc/ed61e7d7e242494fb7057f2657300d9e77bb4fcb\library\core\src\option.rs:602:5
+help: consider using `Result::expect` to unwrap the `Result<AttributeType, aws_sdk_secretsmanager::error::BuildError>` value, panicking if the value is a `Result::Err`
+    |
+104 |                 .build().expect("REASON"));
+    |                         +++++++++++++++++
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:113:38
+    |
+113 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:124:38
+    |
+124 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:134:38
+    |
+134 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:144:38
+    |
+144 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:155:61
+    |
+155 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `phone_number_verified`
+   --> crates\cloudkit-aws\src\cognito.rs:164:17
+    |
+164 | ...   phone_number_verified: u.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+    |       ^^^^^^^^^^^^^^^^^^^^^ unknown field
+    |
+help: a field with a similar name exists
+    |
+164 -                 phone_number_verified: u.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+164 +                 phone_verified: u.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+    |
+
+error[E0599]: no variant or associated item named `Active` found for enum `UserStatus` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:166:102
+    |
+166 |                     aws_sdk_cognitoidentityprovider::types::UserStatusType::Confirmed => UserStatus::Active,
+    |                                                                                                      ^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0599]: no variant or associated item named `Inactive` found for enum `UserStatus` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:167:38
+    |
+167 |                     _ => UserStatus::Inactive,
+    |                                      ^^^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0308]: mismatched types
+   --> crates\cloudkit-aws\src\cognito.rs:169:29
+    |
+169 |                 created_at: chrono::DateTime::<chrono::Utc>::from_timestamp(u.user_create_date().unwrap().secs(), 0).unwrap_or_default(),
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<DateTime<Utc>>`, found `DateTime<Utc>`
+    |
+    = note: expected enum `std::option::Option<chrono::DateTime<_>>`
+             found struct `chrono::DateTime<_>`
+help: try wrapping the expression in `Some`
+    |
+169 |                 created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(u.user_create_date().unwrap().secs(), 0).unwrap_or_default()),
+    |                             +++++                                                                                                            +
+
+error[E0560]: struct `cloudkit::api::User` has no field named `last_modified`
+   --> crates\cloudkit-aws\src\cognito.rs:170:17
+    |
+170 | ...   last_modified: chrono::DateTime::<chrono::Utc>::from_timestamp(u.user_last_modified_date().unwrap().secs(), 0).unwrap_or_default(),
+    |       ^^^^^^^^^^^^^ `cloudkit::api::User` does not have this field
+    |
+    = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `metadata`
+   --> crates\cloudkit-aws\src\cognito.rs:171:17
+    |
+171 |                 metadata: Metadata::new(),
+    |                 ^^^^^^^^ `cloudkit::api::User` does not have this field
+    |
+    = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `groups`
+   --> crates\cloudkit-aws\src\cognito.rs:172:17
+    |
+172 |                 groups: Vec::new(),
+    |                 ^^^^^^ `cloudkit::api::User` does not have this field
+    |
+    = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:183:38
+    |
+183 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `phone_number_verified`
+   --> crates\cloudkit-aws\src\cognito.rs:192:17
+    |
+192 | ...   phone_number_verified: u.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+    |       ^^^^^^^^^^^^^^^^^^^^^ unknown field
+    |
+help: a field with a similar name exists
+    |
+192 -                 phone_number_verified: u.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+192 +                 phone_verified: u.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+    |
+
+error[E0599]: no variant or associated item named `Active` found for enum `UserStatus` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:194:102
+    |
+194 |                     aws_sdk_cognitoidentityprovider::types::UserStatusType::Confirmed => UserStatus::Active,
+    |                                                                                                      ^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0599]: no variant or associated item named `Inactive` found for enum `UserStatus` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:195:38
+    |
+195 |                     _ => UserStatus::Inactive,
+    |                                      ^^^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0308]: mismatched types
+   --> crates\cloudkit-aws\src\cognito.rs:197:29
+    |
+197 |                 created_at: chrono::DateTime::<chrono::Utc>::from_timestamp(u.user_create_date().unwrap().secs(), 0).unwrap_or_default(),
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<DateTime<Utc>>`, found `DateTime<Utc>`
+    |
+    = note: expected enum `std::option::Option<chrono::DateTime<_>>`
+             found struct `chrono::DateTime<_>`
+help: try wrapping the expression in `Some`
+    |
+197 |                 created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(u.user_create_date().unwrap().secs(), 0).unwrap_or_default()),
+    |                             +++++                                                                                                            +
+
+error[E0560]: struct `cloudkit::api::User` has no field named `last_modified`
+   --> crates\cloudkit-aws\src\cognito.rs:198:17
+    |
+198 | ...   last_modified: chrono::DateTime::<chrono::Utc>::from_timestamp(u.user_last_modified_date().unwrap().secs(), 0).unwrap_or_default(),
+    |       ^^^^^^^^^^^^^ `cloudkit::api::User` does not have this field
+    |
+    = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `metadata`
+   --> crates\cloudkit-aws\src\cognito.rs:199:17
+    |
+199 |                 metadata: Metadata::new(),
+    |                 ^^^^^^^^ `cloudkit::api::User` does not have this field
+    |
+    = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `groups`
+   --> crates\cloudkit-aws\src\cognito.rs:200:17
+    |
+200 |                 groups: Vec::new(),
+    |                 ^^^^^^ `cloudkit::api::User` does not have this field
+    |
+    = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:218:38
+    |
+218 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `AuthChallenge` has no field named `challenge_type`
+   --> crates\cloudkit-aws\src\cognito.rs:222:17
+    |
+222 |                 challenge_type: ChallengeType::Custom, // Map challenge_name
+    |                 ^^^^^^^^^^^^^^ unknown field
+    |
+help: a field with a similar name exists
+    |
+222 -                 challenge_type: ChallengeType::Custom, // Map challenge_name
+222 +                 challenge_name: ChallengeType::Custom, // Map challenge_name
+    |
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:252:38
+    |
+252 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:254:25
+    |
+254 |         Err(CloudError::ServiceError("not fully implemented".to_string()))
+    |                         ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:265:38
+    |
+265 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:288:38
+    |
+288 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:305:38
+    |
+305 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:321:38
+    |
+321 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:334:61
+    |
+334 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:352:38
+    |
+352 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:361:38
+    |
+361 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:381:38
+    |
+381 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:392:38
+    |
+392 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:402:38
+    |
+402 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:421:38
+    |
+421 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `phone_number_verified`
+   --> crates\cloudkit-aws\src\cognito.rs:430:17
+    |
+430 | ...   phone_number_verified: u.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+    |       ^^^^^^^^^^^^^^^^^^^^^ unknown field
+    |
+help: a field with a similar name exists
+    |
+430 -                 phone_number_verified: u.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+430 +                 phone_verified: u.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+    |
+
+error[E0599]: no variant or associated item named `Active` found for enum `UserStatus` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:432:102
+    |
+432 |                     aws_sdk_cognitoidentityprovider::types::UserStatusType::Confirmed => UserStatus::Active,
+    |                                                                                                      ^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0599]: no variant or associated item named `Inactive` found for enum `UserStatus` in the current scope
+   --> crates\cloudkit-aws\src\cognito.rs:433:38
+    |
+433 |                     _ => UserStatus::Inactive,
+    |                                      ^^^^^^^^ variant or associated item not found in `UserStatus`
+
+error[E0308]: mismatched types
+   --> crates\cloudkit-aws\src\cognito.rs:435:29
+    |
+435 |                 created_at: chrono::DateTime::<chrono::Utc>::from_timestamp(u.user_create_date().unwrap().secs(), 0).unwrap_or_default(),
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<DateTime<Utc>>`, found `DateTime<Utc>`
+    |
+    = note: expected enum `std::option::Option<chrono::DateTime<_>>`
+             found struct `chrono::DateTime<_>`
+help: try wrapping the expression in `Some`
+    |
+435 |                 created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(u.user_create_date().unwrap().secs(), 0).unwrap_or_default()),
+    |                             +++++                                                                                                            +
+
+error[E0560]: struct `cloudkit::api::User` has no field named `last_modified`
+   --> crates\cloudkit-aws\src\cognito.rs:436:17
+    |
+436 | ...   last_modified: chrono::DateTime::<chrono::Utc>::from_timestamp(u.user_last_modified_date().unwrap().secs(), 0).unwrap_or_default(),
+    |       ^^^^^^^^^^^^^ `cloudkit::api::User` does not have this field
+    |
+    = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `metadata`
+   --> crates\cloudkit-aws\src\cognito.rs:437:17
+    |
+437 |                 metadata: Metadata::new(),
+    |                 ^^^^^^^^ `cloudkit::api::User` does not have this field
+    |
+    = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+error[E0560]: struct `cloudkit::api::User` has no field named `groups`
+   --> crates\cloudkit-aws\src\cognito.rs:438:17
+    |
+438 |                 groups: Vec::new(),
+    |                 ^^^^^^ `cloudkit::api::User` does not have this field
+    |
+    = note: available fields are: `phone_verified`, `enabled`, `updated_at`, `attributes`
+
+warning: use of deprecated method `aws_sdk_kms::operation::create_key::builders::CreateKeyFluentBuilder::set_customer_master_key_spec`: This parameter has been deprecated. Instead, use the KeySpec parameter.
+  --> crates\cloudkit-aws\src\kms.rs:40:19
+   |
+40 |         req = req.set_customer_master_key_spec(Some(match options.key_spec {
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0599]: no variant or associated item named `EccSecgP256K1` found for enum `cloudkit::api::KeySpec` in the current scope
+  --> crates\cloudkit-aws\src\kms.rs:48:37
+   |
+48 |             cloudkit::api::KeySpec::EccSecgP256K1 => aws_sdk_kms::types::CustomerMasterKeySpec::EccSecgP256K1,
+   |                                     ^^^^^^^^^^^^^ variant or associated item not found in `cloudkit::api::KeySpec`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\kms.rs:55:61
+   |
+55 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `cloudkit::api::KeyMetadata` has no field named `id`
+  --> crates\cloudkit-aws\src\kms.rs:59:13
+   |
+59 |             id: metadata.key_id().to_string(),
+   |             ^^ `cloudkit::api::KeyMetadata` does not have this field
+   |
+   = note: available fields are: `key_id`, `state`, `deletion_date`, `tags`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\kms.rs:75:38
+   |
+75 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `cloudkit::api::KeyMetadata` has no field named `id`
+  --> crates\cloudkit-aws\src\kms.rs:79:13
+   |
+79 |             id: metadata.key_id().to_string(),
+   |             ^^ `cloudkit::api::KeyMetadata` does not have this field
+   |
+   = note: available fields are: `key_id`, `state`, `deletion_date`, `tags`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+  --> crates\cloudkit-aws\src\kms.rs:94:38
+   |
+94 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+   |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:110:38
+    |
+110 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:119:38
+    |
+119 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:133:38
+    |
+133 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:143:38
+    |
+143 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:153:38
+    |
+153 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:173:61
+    |
+173 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:196:61
+    |
+196 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0560]: struct `DecryptResult` has no field named `algorithm`
+   --> crates\cloudkit-aws\src\kms.rs:201:13
+    |
+201 |             algorithm: resp.encryption_algorithm().map(|a| a.as_str().to_string()),
+    |             ^^^^^^^^^ `DecryptResult` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:228:61
+    |
+228 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:252:61
+    |
+252 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:276:61
+    |
+276 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:303:61
+    |
+303 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:332:61
+    |
+332 |         let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                                             ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0277]: a value of type `Vec<aws_sdk_kms::types::Tag>` cannot be built from an iterator over elements of type `Result<aws_sdk_kms::types::Tag, aws_sdk_secretsmanager::error::BuildError>`
+   --> crates\cloudkit-aws\src\kms.rs:340:14
+    |
+340 |             .collect();
+    |              ^^^^^^^ value of type `Vec<aws_sdk_kms::types::Tag>` cannot be built from `std::iter::Iterator<Item=Result<aws_sdk_kms::types::Tag, aws_sdk_secretsmanager::error::BuildError>>`
+    |
+    = help: the trait `FromIterator<Result<aws_sdk_kms::types::Tag, aws_sdk_secretsmanager::error::BuildError>>` is not implemented for `Vec<aws_sdk_kms::types::Tag>`
+            but trait `FromIterator<aws_sdk_kms::types::Tag>` is implemented for it
+    = help: for that trait implementation, expected `aws_sdk_kms::types::Tag`, found `Result<aws_sdk_kms::types::Tag, aws_sdk_secretsmanager::error::BuildError>`
+note: the method call chain might not have had the expected associated types
+   --> crates\cloudkit-aws\src\kms.rs:339:14
+    |
+337 |     async fn tag_key(&self, key_id: &str, tags: Metadata) -> CloudResult<()> {
+    |                                           ---- this expression has type `HashMap<String, String>`
+338 |         let aws_tags: Vec<aws_sdk_kms::types::Tag> = tags.into_iter()
+    |                                                           ----------- `Iterator::Item` is `(String, String)` here
+339 |             .map(|(k, v)| aws_sdk_kms::types::Tag::builder().tag_key(k).tag_value(v).build())
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `Iterator::Item` changed to `Result<Tag, BuildError>` here
+note: required by a bound in `collect`
+   --> /rustc/ed61e7d7e242494fb7057f2657300d9e77bb4fcb\library\core\src\iter\traits\iterator.rs:2014:5
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:347:38
+    |
+347 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:359:38
+    |
+359 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0599]: no variant or associated item named `ServiceError` found for enum `CloudError` in the current scope
+   --> crates\cloudkit-aws\src\kms.rs:368:38
+    |
+368 |             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+    |                                      ^^^^^^^^^^^^ variant or associated item not found in `CloudError`
+
+error[E0308]: mismatched types
+  --> crates\cloudkit-aws\src\kms.rs:66:25
+   |
+66 |             created_at: chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().unwrap().secs(), 0).unwrap_or_default(),
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<DateTime<Utc>>`, found `DateTime<Utc>`
+   |
+   = note: expected enum `std::option::Option<chrono::DateTime<_>>`
+            found struct `chrono::DateTime<_>`
+help: try wrapping the expression in `Some`
+   |
+66 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().unwrap().secs(), 0).unwrap_or_default()),
+   |                         +++++                                                                                                                +
+
+error[E0308]: mismatched types
+  --> crates\cloudkit-aws\src\kms.rs:86:25
+   |
+86 |             created_at: chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().unwrap().secs(), 0).unwrap_or_default(),
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<DateTime<Utc>>`, found `DateTime<Utc>`
+   |
+   = note: expected enum `std::option::Option<chrono::DateTime<_>>`
+            found struct `chrono::DateTime<_>`
+help: try wrapping the expression in `Some`
+   |
+86 |             created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().unwrap().secs(), 0).unwrap_or_default()),
+   |                         +++++                                                                                                                +
+
+Some errors have detailed explanations: E0023, E0063, E0277, E0308, E0407, E0412, E0433, E0560, E0599...
+For more information about an error, try `rustc --explain E0023`.
+warning: `cloudkit-aws` (lib) generated 14 warnings
+error: could not compile `cloudkit-aws` (lib) due to 219 previous errors; 14 warnings emitted

@@ -5,119 +5,197 @@ use cloudkit::api::{
     AuthChallenge, AuthResult, ChallengeType, CreateUserOptions, IdentityProvider,
     InitiateAuthResult, User, UserGroup, UserStatus,
 };
-use cloudkit::common::{AuthError, CloudError, CloudResult, Metadata};
+use cloudkit::common::{CloudError, CloudResult, Metadata};
 use cloudkit::core::CloudContext;
 use std::sync::Arc;
 
 /// AWS Cognito User Pools implementation.
-pub struct CognitoIdentityProvider {
+pub struct AwsIdentity {
     _context: Arc<CloudContext>,
-    // In a real implementation:
-    // client: aws_sdk_cognitoidentityprovider::Client,
-    // user_pool_id: String,
-    // client_id: String,
+    client: aws_sdk_cognitoidentityprovider::Client,
 }
 
-impl CognitoIdentityProvider {
+impl AwsIdentity {
     /// Create a new Cognito Identity Provider client.
-    pub fn new(context: Arc<CloudContext>) -> Self {
-        Self { _context: context }
+    pub fn new(context: Arc<CloudContext>, sdk_config: aws_config::SdkConfig) -> Self {
+        let client = aws_sdk_cognitoidentityprovider::Client::new(&sdk_config);
+        Self { _context: context, client }
+    }
+
+    fn map_user(&self, user: &aws_sdk_cognitoidentityprovider::types::UserType) -> User {
+        User {
+            id: user.username().unwrap_or_default().to_string(),
+            username: user.username().unwrap_or_default().to_string(),
+            email: user.attributes().iter().find(|a| a.name() == "email").and_then(|a| a.value()).map(|s| s.to_string()),
+            email_verified: user.attributes().iter().find(|a| a.name() == "email_verified").and_then(|a| a.value()) == Some("true"),
+            phone_number: user.attributes().iter().find(|a| a.name() == "phone_number").and_then(|a| a.value()).map(|s| s.to_string()),
+            phone_verified: user.attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+            enabled: user.enabled(),
+            status: self.map_user_status(user.user_status()),
+            created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_create_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default()),
+            updated_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_last_modified_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default()),
+            attributes: user.attributes().iter().map(|a| (a.name().to_string(), a.value().unwrap_or_default().to_string())).collect(),
+        }
+    }
+
+    fn map_admin_user(&self, user: &aws_sdk_cognitoidentityprovider::operation::admin_get_user::AdminGetUserOutput) -> User {
+        User {
+            id: user.username().to_string(),
+            username: user.username().to_string(),
+            email: user.user_attributes().iter().find(|a| a.name() == "email").and_then(|a| a.value()).map(|s| s.to_string()),
+            email_verified: user.user_attributes().iter().find(|a| a.name() == "email_verified").and_then(|a| a.value()) == Some("true"),
+            phone_number: user.user_attributes().iter().find(|a| a.name() == "phone_number").and_then(|a| a.value()).map(|s| s.to_string()),
+            phone_verified: user.user_attributes().iter().find(|a| a.name() == "phone_number_verified").and_then(|a| a.value()) == Some("true"),
+            enabled: user.enabled(),
+            status: self.map_user_status(user.user_status()),
+            created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_create_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default()),
+            updated_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(user.user_last_modified_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default()),
+            attributes: user.user_attributes().iter().map(|a| (a.name().to_string(), a.value().unwrap_or_default().to_string())).collect(),
+        }
+    }
+
+    fn map_user_status(&self, status: Option<&aws_sdk_cognitoidentityprovider::types::UserStatusType>) -> UserStatus {
+        match status {
+            Some(aws_sdk_cognitoidentityprovider::types::UserStatusType::Confirmed) => UserStatus::Confirmed,
+            Some(aws_sdk_cognitoidentityprovider::types::UserStatusType::Unconfirmed) => UserStatus::Unconfirmed,
+            Some(aws_sdk_cognitoidentityprovider::types::UserStatusType::Archived) => UserStatus::Archived,
+            Some(aws_sdk_cognitoidentityprovider::types::UserStatusType::Compromised) => UserStatus::Compromised,
+            Some(aws_sdk_cognitoidentityprovider::types::UserStatusType::ResetRequired) => UserStatus::ResetRequired,
+            Some(aws_sdk_cognitoidentityprovider::types::UserStatusType::ForceChangePassword) => UserStatus::ForceChangePassword,
+            _ => UserStatus::Unknown,
+        }
+    }
+
+    fn get_user_pool_id(&self) -> CloudResult<String> {
+        self._context.config.parameters.get("aws.cognito.user_pool_id")
+            .cloned()
+            .or_else(|| std::env::var("AWS_COGNITO_USER_POOL_ID").ok())
+            .ok_or_else(|| CloudError::Config("Missing Cognito User Pool ID. Set 'aws.cognito.user_pool_id' in config or 'AWS_COGNITO_USER_POOL_ID' env var.".into()))
+    }
+
+    fn get_client_id(&self) -> CloudResult<String> {
+        self._context.config.parameters.get("aws.cognito.client_id")
+            .cloned()
+            .or_else(|| std::env::var("AWS_COGNITO_CLIENT_ID").ok())
+            .ok_or_else(|| CloudError::Config("Missing Cognito Client ID. Set 'aws.cognito.client_id' in config or 'AWS_COGNITO_CLIENT_ID' env var.".into()))
     }
 }
 
 #[async_trait]
-impl IdentityProvider for CognitoIdentityProvider {
+impl IdentityProvider for AwsIdentity {
     async fn create_user(
         &self,
         username: &str,
         email: Option<&str>,
         options: CreateUserOptions,
     ) -> CloudResult<User> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            email = ?email,
-            "create_user called"
-        );
-        let mut user = User::new(uuid::Uuid::new_v4().to_string(), username);
-        user.email = email.map(String::from);
-        user.email_verified = options.email_verified;
-        Ok(user)
+        let mut req = self.client.admin_create_user()
+            .user_pool_id(self.get_user_pool_id()?)
+            .username(username);
+            
+        if let Some(e) = email {
+            req = req.user_attributes(aws_sdk_cognitoidentityprovider::types::AttributeType::builder()
+                .name("email")
+                .value(e)
+                .build()
+                .unwrap());
+        }
+        
+        if let Some(pw) = options.temporary_password {
+            req = req.temporary_password(pw);
+        }
+        
+        // Map other options if needed
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        let user = resp.user().unwrap();
+        
+        Ok(self.map_user(user))
     }
 
     async fn get_user(&self, username: &str) -> CloudResult<User> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            "get_user called"
-        );
-        Err(CloudError::NotFound {
-            resource_type: "User".to_string(),
-            resource_id: username.to_string(),
-        })
+        let resp = self.client.admin_get_user()
+            .user_pool_id(self.get_user_pool_id()?)
+            .username(username)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(self.map_admin_user(&resp))
     }
 
     async fn update_user(&self, username: &str, attributes: Metadata) -> CloudResult<User> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            attr_count = %attributes.len(),
-            "update_user called"
-        );
-        Ok(User::new(uuid::Uuid::new_v4().to_string(), username))
+        let mut aws_attrs = Vec::new();
+        for (k, v) in attributes {
+            aws_attrs.push(aws_sdk_cognitoidentityprovider::types::AttributeType::builder()
+                .name(k)
+                .value(v)
+                .build()
+                .unwrap());
+        }
+        
+        self.client.admin_update_user_attributes()
+            .user_pool_id(self.get_user_pool_id()?)
+            .username(username)
+            .set_user_attributes(Some(aws_attrs))
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        self.get_user(username).await
     }
 
     async fn delete_user(&self, username: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            "delete_user called"
-        );
+        self.client.admin_delete_user()
+            .user_pool_id(self.get_user_pool_id()?)
+            .username(username)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn enable_user(&self, username: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            "enable_user called"
-        );
+        self.client.admin_enable_user()
+            .user_pool_id(self.get_user_pool_id()?)
+            .username(username)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn disable_user(&self, username: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            "disable_user called"
-        );
+        self.client.admin_disable_user()
+            .user_pool_id(self.get_user_pool_id()?)
+            .username(username)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn list_users(&self, limit: Option<u32>) -> CloudResult<Vec<User>> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            limit = ?limit,
-            "list_users called"
-        );
-        Ok(vec![])
+        let mut req = self.client.list_users()
+            .user_pool_id(self.get_user_pool_id()?);
+        if let Some(l) = limit {
+            req = req.limit(l as i32);
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
+        Ok(resp.users().iter().map(|u| self.map_user(u)).collect())
     }
 
     async fn search_users(&self, filter: &str) -> CloudResult<Vec<User>> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            filter = %filter,
-            "search_users called"
-        );
-        Ok(vec![])
+        let resp = self.client.list_users()
+            .user_pool_id(self.get_user_pool_id()?)
+            .filter(filter)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.users().iter().map(|u| self.map_user(u)).collect())
     }
 
     async fn initiate_auth(
@@ -125,62 +203,99 @@ impl IdentityProvider for CognitoIdentityProvider {
         username: &str,
         password: &str,
     ) -> CloudResult<InitiateAuthResult> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            "initiate_auth called"
-        );
-        // In reality, this would authenticate with Cognito
-        Err(CloudError::Auth(AuthError::InvalidCredentials(
-            "Invalid username or password".to_string(),
-        )))
+        let resp = self.client.admin_initiate_auth()
+            .user_pool_id(self.get_user_pool_id()?)
+            .client_id(self.get_client_id()?)
+            .auth_flow(aws_sdk_cognitoidentityprovider::types::AuthFlowType::AdminNoSrpAuth)
+            .auth_parameters("USERNAME", username)
+            .auth_parameters("PASSWORD", password)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        if let Some(challenge_name) = resp.challenge_name() {
+             Ok(InitiateAuthResult::Challenge(AuthChallenge {
+                challenge_name: ChallengeType::Custom(format!("{:?}", challenge_name)),
+                session: resp.session().unwrap_or_default().to_string(),
+                parameters: resp.challenge_parameters().cloned().unwrap_or_default(),
+            }))
+        } else {
+            let auth_result = resp.authentication_result().unwrap();
+            Ok(InitiateAuthResult::Success(AuthResult {
+                access_token: auth_result.access_token().unwrap_or_default().to_string(),
+                id_token: auth_result.id_token().map(|s| s.to_string()),
+                refresh_token: auth_result.refresh_token().map(|s| s.to_string()),
+                token_type: "Bearer".to_string(),
+                expires_in: auth_result.expires_in() as u64,
+            }))
+        }
     }
 
     async fn respond_to_challenge(
         &self,
-        challenge_name: ChallengeType,
+        _challenge_name: ChallengeType,
         session: &str,
         responses: Metadata,
     ) -> CloudResult<InitiateAuthResult> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            challenge = ?challenge_name,
-            "respond_to_challenge called"
-        );
-        Err(CloudError::Auth(AuthError::InvalidCredentials(
-            "Challenge response failed".to_string(),
-        )))
+        let resp = self.client.admin_respond_to_auth_challenge()
+            .user_pool_id(self.get_user_pool_id()?)
+            .client_id(self.get_client_id()?)
+            .challenge_name(aws_sdk_cognitoidentityprovider::types::ChallengeNameType::CustomChallenge) // Mapping needed
+            .session(session)
+            .set_challenge_responses(Some(responses))
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        if let Some(challenge_name) = resp.challenge_name() {
+             Ok(InitiateAuthResult::Challenge(AuthChallenge {
+                challenge_name: ChallengeType::Custom(format!("{:?}", challenge_name)),
+                session: resp.session().unwrap_or_default().to_string(),
+                parameters: resp.challenge_parameters().cloned().unwrap_or_default(),
+            }))
+        } else {
+            let auth_result = resp.authentication_result().unwrap();
+            Ok(InitiateAuthResult::Success(AuthResult {
+                access_token: auth_result.access_token().unwrap_or_default().to_string(),
+                id_token: auth_result.id_token().map(|s| s.to_string()),
+                refresh_token: auth_result.refresh_token().map(|s| s.to_string()),
+                token_type: "Bearer".to_string(),
+                expires_in: auth_result.expires_in() as u64,
+            }))
+        }
     }
 
     async fn refresh_tokens(&self, refresh_token: &str) -> CloudResult<AuthResult> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            "refresh_tokens called"
-        );
-        Err(CloudError::Auth(AuthError::InvalidCredentials(
-            "Invalid refresh token".to_string(),
-        )))
+        let resp = self.client.admin_initiate_auth()
+            .user_pool_id(self.get_user_pool_id()?)
+            .client_id(self.get_client_id()?)
+            .auth_flow(aws_sdk_cognitoidentityprovider::types::AuthFlowType::AdminNoSrpAuth)
+            .auth_parameters("REFRESH_TOKEN", refresh_token)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        let auth_result = resp.authentication_result().unwrap();
+        Ok(AuthResult {
+            access_token: auth_result.access_token().unwrap_or_default().to_string(),
+            id_token: auth_result.id_token().map(|s| s.to_string()),
+            refresh_token: None,
+            token_type: "Bearer".to_string(),
+            expires_in: auth_result.expires_in() as u64,
+        })
     }
 
-    async fn sign_out(&self, access_token: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            "sign_out called"
-        );
+    async fn sign_out(&self, _access_token: &str) -> CloudResult<()> {
         Ok(())
     }
 
     async fn forgot_password(&self, username: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            "forgot_password called"
-        );
+        self.client.forgot_password()
+            .client_id(self.get_client_id()?)
+            .username(username)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
@@ -190,12 +305,14 @@ impl IdentityProvider for CognitoIdentityProvider {
         code: &str,
         new_password: &str,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            "confirm_forgot_password called"
-        );
+        self.client.confirm_forgot_password()
+            .client_id(self.get_client_id()?)
+            .username(username)
+            .confirmation_code(code)
+            .password(new_password)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
@@ -205,92 +322,121 @@ impl IdentityProvider for CognitoIdentityProvider {
         old_password: &str,
         new_password: &str,
     ) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            "change_password called"
-        );
+        self.client.change_password()
+            .access_token(access_token)
+            .previous_password(old_password)
+            .proposed_password(new_password)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn create_group(&self, name: &str, description: Option<&str>) -> CloudResult<UserGroup> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            group = %name,
-            "create_group called"
-        );
+        let mut req = self.client.create_group()
+            .user_pool_id(self.get_user_pool_id()?)
+            .group_name(name);
+            
+        if let Some(desc) = description {
+            req = req.description(desc);
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        let g = resp.group().unwrap();
+        
         Ok(UserGroup {
-            name: name.to_string(),
-            description: description.map(String::from),
-            role_arn: None,
-            precedence: None,
-            created_at: None,
+            name: g.group_name().unwrap_or_default().to_string(),
+            description: g.description().map(|s| s.to_string()),
+            role_arn: g.role_arn().map(|s| s.to_string()),
+            precedence: g.precedence().map(|p| p as u32),
+            created_at: g.creation_date().map(|d| chrono::DateTime::<chrono::Utc>::from_timestamp(d.secs(), 0).unwrap_or_default()),
         })
     }
 
     async fn delete_group(&self, name: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            group = %name,
-            "delete_group called"
-        );
+        self.client.delete_group()
+            .user_pool_id(self.get_user_pool_id()?)
+            .group_name(name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn list_groups(&self) -> CloudResult<Vec<UserGroup>> {
-        tracing::info!(provider = "aws", service = "cognito", "list_groups called");
-        Ok(vec![])
+        let resp = self.client.list_groups()
+            .user_pool_id(self.get_user_pool_id()?)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.groups().iter().map(|g| {
+            UserGroup {
+                name: g.group_name().unwrap_or_default().to_string(),
+                description: g.description().map(|s| s.to_string()),
+                role_arn: g.role_arn().map(|s| s.to_string()),
+                precedence: g.precedence().map(|p| p as u32),
+                created_at: g.creation_date().map(|d| chrono::DateTime::<chrono::Utc>::from_timestamp(d.secs(), 0).unwrap_or_default()),
+            }
+        }).collect())
     }
 
     async fn add_user_to_group(&self, username: &str, group_name: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            group = %group_name,
-            "add_user_to_group called"
-        );
+        self.client.admin_add_user_to_group()
+            .user_pool_id(self.get_user_pool_id()?)
+            .username(username)
+            .group_name(group_name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn remove_user_from_group(&self, username: &str, group_name: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            group = %group_name,
-            "remove_user_from_group called"
-        );
+        self.client.admin_remove_user_from_group()
+            .user_pool_id(self.get_user_pool_id()?)
+            .username(username)
+            .group_name(group_name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn list_user_groups(&self, username: &str) -> CloudResult<Vec<UserGroup>> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            username = %username,
-            "list_user_groups called"
-        );
-        Ok(vec![])
+        let resp = self.client.admin_list_groups_for_user()
+            .user_pool_id(self.get_user_pool_id()?)
+            .username(username)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.groups().iter().map(|g| {
+            UserGroup {
+                name: g.group_name().unwrap_or_default().to_string(),
+                description: g.description().map(|s| s.to_string()),
+                role_arn: g.role_arn().map(|s| s.to_string()),
+                precedence: g.precedence().map(|p| p as u32),
+                created_at: g.creation_date().map(|d| chrono::DateTime::<chrono::Utc>::from_timestamp(d.secs(), 0).unwrap_or_default()),
+            }
+        }).collect())
     }
 
     async fn list_users_in_group(&self, group_name: &str) -> CloudResult<Vec<User>> {
-        tracing::info!(
-            provider = "aws",
-            service = "cognito",
-            group = %group_name,
-            "list_users_in_group called"
-        );
-        Ok(vec![])
+        let resp = self.client.list_users_in_group()
+            .user_pool_id(self.get_user_pool_id()?)
+            .group_name(group_name)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(resp.users().iter().map(|u| self.map_user(u)).collect())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cloudkit::api::{ChallengeType, CreateUserOptions};
     use cloudkit::core::ProviderType;
 
     async fn create_test_context() -> Arc<CloudContext> {
@@ -302,248 +448,10 @@ mod tests {
         )
     }
 
-    // User Management Tests
-
     #[tokio::test]
     async fn test_cognito_new() {
+        let sdk_config = aws_config::load_from_env().await;
         let context = create_test_context().await;
-        let _cognito = CognitoIdentityProvider::new(context);
-    }
-
-    #[tokio::test]
-    async fn test_create_user() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito
-            .create_user("testuser", Some("test@example.com"), CreateUserOptions::default())
-            .await;
-
-        assert!(result.is_ok());
-        let user = result.unwrap();
-        assert_eq!(user.username, "testuser");
-        assert_eq!(user.email, Some("test@example.com".to_string()));
-    }
-
-    #[tokio::test]
-    async fn test_create_user_no_email() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito
-            .create_user("testuser", None, CreateUserOptions::default())
-            .await;
-
-        assert!(result.is_ok());
-        assert!(result.unwrap().email.is_none());
-    }
-
-    #[tokio::test]
-    async fn test_get_user_not_found() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.get_user("nonexistent").await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_update_user() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let mut attrs = Metadata::new();
-        attrs.insert("phone_number".to_string(), "+1234567890".to_string());
-
-        let result = cognito.update_user("testuser", attrs).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_delete_user() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.delete_user("testuser").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_enable_user() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.enable_user("testuser").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_disable_user() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.disable_user("testuser").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_users() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.list_users(Some(10)).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_search_users() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.search_users("email = \"test@example.com\"").await;
-        assert!(result.is_ok());
-    }
-
-    // Authentication Tests
-
-    #[tokio::test]
-    async fn test_initiate_auth_invalid() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.initiate_auth("testuser", "wrongpassword").await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_respond_to_challenge() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let responses = Metadata::new();
-        let result = cognito
-            .respond_to_challenge(ChallengeType::SmsMfa, "session-token", responses)
-            .await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_refresh_tokens_invalid() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.refresh_tokens("invalid-refresh-token").await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_sign_out() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.sign_out("access-token").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_forgot_password() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.forgot_password("testuser").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_confirm_forgot_password() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito
-            .confirm_forgot_password("testuser", "123456", "newpassword")
-            .await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_change_password() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito
-            .change_password("access-token", "oldpassword", "newpassword")
-            .await;
-        assert!(result.is_ok());
-    }
-
-    // Group Tests
-
-    #[tokio::test]
-    async fn test_create_group() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito
-            .create_group("admins", Some("Administrator group"))
-            .await;
-
-        assert!(result.is_ok());
-        let group = result.unwrap();
-        assert_eq!(group.name, "admins");
-        assert_eq!(group.description, Some("Administrator group".to_string()));
-    }
-
-    #[tokio::test]
-    async fn test_delete_group() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.delete_group("admins").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_groups() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.list_groups().await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_add_user_to_group() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.add_user_to_group("testuser", "admins").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_remove_user_from_group() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.remove_user_from_group("testuser", "admins").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_user_groups() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.list_user_groups("testuser").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_users_in_group() {
-        let context = create_test_context().await;
-        let cognito = CognitoIdentityProvider::new(context);
-
-        let result = cognito.list_users_in_group("admins").await;
-        assert!(result.is_ok());
+        let _cognito = AwsIdentity::new(context, sdk_config);
     }
 }

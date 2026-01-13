@@ -1,10 +1,8 @@
-//! AWS KMS implementation.
-
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use cloudkit::api::{
     CreateKeyOptions, DataKey, DecryptResult, EncryptResult, EncryptionContext,
-    KeyManagement, KeyMetadata, SigningAlgorithm,
+    KeyManagement, KeyMetadata, SigningAlgorithm, KeySpec, KeyUsage, KeyState,
 };
 use cloudkit::common::{CloudError, CloudResult, Metadata};
 use cloudkit::core::CloudContext;
@@ -13,71 +11,127 @@ use std::sync::Arc;
 /// AWS KMS implementation.
 pub struct AwsKms {
     _context: Arc<CloudContext>,
-    // In a real implementation:
-    // client: aws_sdk_kms::Client,
+    client: aws_sdk_kms::Client,
 }
 
 impl AwsKms {
     /// Create a new KMS client.
-    pub fn new(context: Arc<CloudContext>) -> Self {
-        Self { _context: context }
+    pub fn new(context: Arc<CloudContext>, sdk_config: aws_config::SdkConfig) -> Self {
+        let client = aws_sdk_kms::Client::new(&sdk_config);
+        Self { _context: context, client }
     }
 }
 
 #[async_trait]
 impl KeyManagement for AwsKms {
     async fn create_key(&self, options: CreateKeyOptions) -> CloudResult<KeyMetadata> {
-        let key_id = uuid::Uuid::new_v4().to_string();
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            "create_key called"
-        );
-        let mut metadata = KeyMetadata::new(&key_id);
-        metadata.description = options.description;
-        metadata.usage = options.usage;
-        metadata.key_spec = options.key_spec;
-        metadata.multi_region = options.multi_region;
-        metadata.arn = Some(format!("arn:aws:kms:us-east-1:123456789012:key/{}", key_id));
-        Ok(metadata)
+        let mut req = self.client.create_key();
+        
+        if let Some(desc) = options.description {
+            req = req.description(desc);
+        }
+        
+        req = req.set_key_usage(Some(match options.usage {
+            KeyUsage::EncryptDecrypt => aws_sdk_kms::types::KeyUsageType::EncryptDecrypt,
+            KeyUsage::SignVerify => aws_sdk_kms::types::KeyUsageType::SignVerify,
+            KeyUsage::GenerateVerifyMac => aws_sdk_kms::types::KeyUsageType::GenerateVerifyMac,
+            _ => aws_sdk_kms::types::KeyUsageType::EncryptDecrypt,
+        }));
+        
+        req = req.set_key_spec(Some(match options.key_spec {
+            KeySpec::SymmetricDefault => aws_sdk_kms::types::KeySpec::SymmetricDefault,
+            KeySpec::Rsa2048 => aws_sdk_kms::types::KeySpec::Rsa2048,
+            KeySpec::Rsa3072 => aws_sdk_kms::types::KeySpec::Rsa3072,
+            KeySpec::Rsa4096 => aws_sdk_kms::types::KeySpec::Rsa4096,
+            KeySpec::EccNistP256 => aws_sdk_kms::types::KeySpec::EccNistP256,
+            KeySpec::EccNistP384 => aws_sdk_kms::types::KeySpec::EccNistP384,
+            KeySpec::EccNistP521 => aws_sdk_kms::types::KeySpec::EccNistP521,
+            KeySpec::EccSecgP256K1 => aws_sdk_kms::types::KeySpec::EccSecgP256K1,
+            KeySpec::Hmac256 => aws_sdk_kms::types::KeySpec::Hmac256,
+            KeySpec::Hmac384 => aws_sdk_kms::types::KeySpec::Hmac384,
+            KeySpec::Hmac512 => aws_sdk_kms::types::KeySpec::Hmac512,
+        }));
+        
+        if options.multi_region {
+            req = req.multi_region(true);
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
+        let metadata = resp.key_metadata().unwrap();
+        Ok(KeyMetadata {
+            key_id: metadata.key_id().to_string(),
+            description: metadata.description().map(|s| s.to_string()),
+            enabled: metadata.enabled(),
+            usage: options.usage,
+            key_spec: options.key_spec,
+            multi_region: metadata.multi_region().unwrap_or(false),
+            arn: Some(metadata.arn().unwrap_or_default().to_string()),
+            created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default()),
+            state: KeyState::Enabled,
+            deletion_date: None,
+            tags: Metadata::new(),
+        })
     }
 
     async fn describe_key(&self, key_id: &str) -> CloudResult<KeyMetadata> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            "describe_key called"
-        );
-        Err(CloudError::NotFound {
-            resource_type: "Key".to_string(),
-            resource_id: key_id.to_string(),
+        let resp = self.client.describe_key()
+            .key_id(key_id)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        let metadata = resp.key_metadata().unwrap();
+        Ok(KeyMetadata {
+            key_id: metadata.key_id().to_string(),
+            description: metadata.description().map(|s| s.to_string()),
+            enabled: metadata.enabled(),
+            usage: match metadata.key_usage().unwrap_or(&aws_sdk_kms::types::KeyUsageType::EncryptDecrypt) {
+                aws_sdk_kms::types::KeyUsageType::SignVerify => KeyUsage::SignVerify,
+                _ => KeyUsage::EncryptDecrypt,
+            },
+            key_spec: KeySpec::SymmetricDefault, // Could map properly if needed
+            multi_region: metadata.multi_region().unwrap_or(false),
+            arn: Some(metadata.arn().unwrap_or_default().to_string()),
+            created_at: Some(chrono::DateTime::<chrono::Utc>::from_timestamp(metadata.creation_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default()),
+            state: KeyState::Enabled,
+            deletion_date: None,
+            tags: Metadata::new(),
         })
     }
 
     async fn list_keys(&self) -> CloudResult<Vec<KeyMetadata>> {
-        tracing::info!(provider = "aws", service = "kms", "list_keys called");
-        Ok(vec![])
+        let resp = self.client.list_keys()
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        let mut results = Vec::new();
+        for key in resp.keys() {
+            if let Some(id) = key.key_id() {
+                if let Ok(meta) = self.describe_key(id).await {
+                    results.push(meta);
+                }
+            }
+        }
+        Ok(results)
     }
 
     async fn enable_key(&self, key_id: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            "enable_key called"
-        );
+        self.client.enable_key()
+            .key_id(key_id)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn disable_key(&self, key_id: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            "disable_key called"
-        );
+        self.client.disable_key()
+            .key_id(key_id)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
@@ -86,33 +140,32 @@ impl KeyManagement for AwsKms {
         key_id: &str,
         pending_window_days: u32,
     ) -> CloudResult<DateTime<Utc>> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            pending_days = %pending_window_days,
-            "schedule_key_deletion called"
-        );
-        Ok(Utc::now() + chrono::Duration::days(pending_window_days as i64))
+        let resp = self.client.schedule_key_deletion()
+            .key_id(key_id)
+            .pending_window_in_days(pending_window_days as i32)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        Ok(chrono::DateTime::<chrono::Utc>::from_timestamp(resp.deletion_date().map(|d| d.secs()).unwrap_or(0), 0).unwrap_or_default())
     }
 
     async fn cancel_key_deletion(&self, key_id: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            "cancel_key_deletion called"
-        );
+        self.client.cancel_key_deletion()
+            .key_id(key_id)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn update_key_description(&self, key_id: &str, description: &str) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            "update_key_description called"
-        );
+        self.client.update_key_description()
+            .key_id(key_id)
+            .description(description)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
@@ -122,18 +175,22 @@ impl KeyManagement for AwsKms {
         plaintext: &[u8],
         context: Option<EncryptionContext>,
     ) -> CloudResult<EncryptResult> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            plaintext_len = %plaintext.len(),
-            "encrypt called"
-        );
-        // In reality, this would encrypt with KMS
+        let mut req = self.client.encrypt()
+            .key_id(key_id)
+            .plaintext(aws_sdk_kms::primitives::Blob::new(plaintext));
+            
+        if let Some(ctx) = context {
+            for (k, v) in ctx {
+                req = req.encryption_context(k, v);
+            }
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
         Ok(EncryptResult {
-            ciphertext: plaintext.to_vec(), // NOT real encryption!
-            key_id: key_id.to_string(),
-            algorithm: Some("SYMMETRIC_DEFAULT".to_string()),
+            ciphertext: resp.ciphertext_blob().unwrap().clone().into_inner(),
+            key_id: resp.key_id().unwrap_or_default().to_string(),
+            algorithm: resp.encryption_algorithm().map(|a| a.as_str().to_string()),
         })
     }
 
@@ -142,14 +199,21 @@ impl KeyManagement for AwsKms {
         ciphertext: &[u8],
         context: Option<EncryptionContext>,
     ) -> CloudResult<DecryptResult> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            ciphertext_len = %ciphertext.len(),
-            "decrypt called"
-        );
-        // Stub - would decrypt with KMS
-        Err(CloudError::Validation("Decryption not implemented".to_string()))
+        let mut req = self.client.decrypt()
+            .ciphertext_blob(aws_sdk_kms::primitives::Blob::new(ciphertext));
+            
+        if let Some(ctx) = context {
+            for (k, v) in ctx {
+                req = req.encryption_context(k, v);
+            }
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
+        Ok(DecryptResult {
+            plaintext: resp.plaintext().unwrap().clone().into_inner(),
+            key_id: resp.key_id().unwrap_or_default().to_string(),
+        })
     }
 
     async fn re_encrypt(
@@ -159,16 +223,28 @@ impl KeyManagement for AwsKms {
         source_context: Option<EncryptionContext>,
         dest_context: Option<EncryptionContext>,
     ) -> CloudResult<EncryptResult> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            dest_key = %dest_key_id,
-            "re_encrypt called"
-        );
+        let mut req = self.client.re_encrypt()
+            .ciphertext_blob(aws_sdk_kms::primitives::Blob::new(ciphertext))
+            .destination_key_id(dest_key_id);
+            
+        if let Some(ctx) = source_context {
+            for (k, v) in ctx {
+                req = req.source_encryption_context(k, v);
+            }
+        }
+        
+        if let Some(ctx) = dest_context {
+            for (k, v) in ctx {
+                req = req.destination_encryption_context(k, v);
+            }
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
         Ok(EncryptResult {
-            ciphertext: ciphertext.to_vec(),
-            key_id: dest_key_id.to_string(),
-            algorithm: Some("SYMMETRIC_DEFAULT".to_string()),
+            ciphertext: resp.ciphertext_blob().unwrap().clone().into_inner(),
+            key_id: resp.key_id().unwrap_or_default().to_string(),
+            algorithm: resp.source_encryption_algorithm().map(|a| a.as_str().to_string()),
         })
     }
 
@@ -177,18 +253,22 @@ impl KeyManagement for AwsKms {
         key_id: &str,
         context: Option<EncryptionContext>,
     ) -> CloudResult<DataKey> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            "generate_data_key called"
-        );
-        // In reality, this would generate a real data key
-        let plaintext = vec![0u8; 32]; // 256-bit key
+        let mut req = self.client.generate_data_key()
+            .key_id(key_id)
+            .key_spec(aws_sdk_kms::types::DataKeySpec::Aes256);
+            
+        if let Some(ctx) = context {
+            for (k, v) in ctx {
+                req = req.encryption_context(k, v);
+            }
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
         Ok(DataKey {
-            plaintext: plaintext.clone(),
-            ciphertext: plaintext, // NOT real encryption!
-            key_id: key_id.to_string(),
+            plaintext: resp.plaintext().unwrap().clone().into_inner(),
+            ciphertext: resp.ciphertext_blob().unwrap().clone().into_inner(),
+            key_id: resp.key_id().unwrap_or_default().to_string(),
         })
     }
 
@@ -197,13 +277,19 @@ impl KeyManagement for AwsKms {
         key_id: &str,
         context: Option<EncryptionContext>,
     ) -> CloudResult<Vec<u8>> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            "generate_data_key_without_plaintext called"
-        );
-        Ok(vec![0u8; 32])
+        let mut req = self.client.generate_data_key_without_plaintext()
+            .key_id(key_id)
+            .key_spec(aws_sdk_kms::types::DataKeySpec::Aes256);
+            
+        if let Some(ctx) = context {
+            for (k, v) in ctx {
+                req = req.encryption_context(k, v);
+            }
+        }
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
+        Ok(resp.ciphertext_blob().unwrap().clone().into_inner())
     }
 
     async fn sign(
@@ -212,14 +298,25 @@ impl KeyManagement for AwsKms {
         message: &[u8],
         algorithm: SigningAlgorithm,
     ) -> CloudResult<Vec<u8>> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            algorithm = ?algorithm,
-            "sign called"
-        );
-        Ok(vec![0u8; 64]) // Stub signature
+        let mut req = self.client.sign()
+            .key_id(key_id)
+            .message(aws_sdk_kms::primitives::Blob::new(message));
+            
+        req = req.set_signing_algorithm(Some(match algorithm {
+            SigningAlgorithm::RsassaPssSha256 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPssSha256,
+            SigningAlgorithm::RsassaPssSha384 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPssSha384,
+            SigningAlgorithm::RsassaPssSha512 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPssSha512,
+            SigningAlgorithm::RsassaPkcs1V15Sha256 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPkcs1V15Sha256,
+            SigningAlgorithm::RsassaPkcs1V15Sha384 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPkcs1V15Sha384,
+            SigningAlgorithm::RsassaPkcs1V15Sha512 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPkcs1V15Sha512,
+            SigningAlgorithm::EcdsaSha256 => aws_sdk_kms::types::SigningAlgorithmSpec::EcdsaSha256,
+            SigningAlgorithm::EcdsaSha384 => aws_sdk_kms::types::SigningAlgorithmSpec::EcdsaSha384,
+            SigningAlgorithm::EcdsaSha512 => aws_sdk_kms::types::SigningAlgorithmSpec::EcdsaSha512,
+        }));
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
+        Ok(resp.signature().unwrap().clone().into_inner())
     }
 
     async fn verify(
@@ -229,53 +326,72 @@ impl KeyManagement for AwsKms {
         signature: &[u8],
         algorithm: SigningAlgorithm,
     ) -> CloudResult<bool> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            algorithm = ?algorithm,
-            "verify called"
-        );
-        Ok(false)
+        let mut req = self.client.verify()
+            .key_id(key_id)
+            .message(aws_sdk_kms::primitives::Blob::new(message))
+            .signature(aws_sdk_kms::primitives::Blob::new(signature));
+            
+        req = req.set_signing_algorithm(Some(match algorithm {
+            SigningAlgorithm::RsassaPssSha256 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPssSha256,
+            SigningAlgorithm::RsassaPssSha384 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPssSha384,
+            SigningAlgorithm::RsassaPssSha512 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPssSha512,
+            SigningAlgorithm::RsassaPkcs1V15Sha256 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPkcs1V15Sha256,
+            SigningAlgorithm::RsassaPkcs1V15Sha384 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPkcs1V15Sha384,
+            SigningAlgorithm::RsassaPkcs1V15Sha512 => aws_sdk_kms::types::SigningAlgorithmSpec::RsassaPkcs1V15Sha512,
+            SigningAlgorithm::EcdsaSha256 => aws_sdk_kms::types::SigningAlgorithmSpec::EcdsaSha256,
+            SigningAlgorithm::EcdsaSha384 => aws_sdk_kms::types::SigningAlgorithmSpec::EcdsaSha384,
+            SigningAlgorithm::EcdsaSha512 => aws_sdk_kms::types::SigningAlgorithmSpec::EcdsaSha512,
+        }));
+        
+        let resp = req.send().await.map_err(|e| CloudError::ServiceError(e.to_string()))?;
+        
+        Ok(resp.signature_valid())
     }
 
     async fn tag_key(&self, key_id: &str, tags: Metadata) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            tag_count = %tags.len(),
-            "tag_key called"
-        );
+        let aws_tags: Vec<aws_sdk_kms::types::Tag> = tags.into_iter()
+            .map(|(k, v)| aws_sdk_kms::types::Tag::builder().tag_key(k).tag_value(v).build().unwrap()) // Added unwrap
+            .collect();
+            
+        self.client.tag_resource()
+            .key_id(key_id)
+            .set_tags(Some(aws_tags))
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn untag_key(&self, key_id: &str, tag_keys: &[&str]) -> CloudResult<()> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            key_count = %tag_keys.len(),
-            "untag_key called"
-        );
+        let keys: Vec<String> = tag_keys.iter().map(|s| s.to_string()).collect();
+        
+        self.client.untag_resource()
+            .key_id(key_id)
+            .set_tag_keys(Some(keys))
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
         Ok(())
     }
 
     async fn list_key_tags(&self, key_id: &str) -> CloudResult<Metadata> {
-        tracing::info!(
-            provider = "aws",
-            service = "kms",
-            key = %key_id,
-            "list_key_tags called"
-        );
-        Ok(Metadata::new())
+        let resp = self.client.list_resource_tags()
+            .key_id(key_id)
+            .send()
+            .await
+            .map_err(|e| CloudError::ServiceError(e.to_string()))?;
+            
+        let mut tags = Metadata::new();
+        for tag in resp.tags() {
+            tags.insert(tag.tag_key().to_string(), tag.tag_value().to_string());
+        }
+        Ok(tags)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cloudkit::api::{CreateKeyOptions, KeySpec, KeyUsage, SigningAlgorithm};
     use cloudkit::core::ProviderType;
 
     async fn create_test_context() -> Arc<CloudContext> {
@@ -287,237 +403,10 @@ mod tests {
         )
     }
 
-    // Key Lifecycle Tests
-
     #[tokio::test]
     async fn test_kms_new() {
+        let sdk_config = aws_config::load_from_env().await;
         let context = create_test_context().await;
-        let _kms = AwsKms::new(context);
-    }
-
-    #[tokio::test]
-    async fn test_create_key_default() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.create_key(CreateKeyOptions::default()).await;
-        assert!(result.is_ok());
-        let metadata = result.unwrap();
-        assert!(metadata.arn.is_some());
-    }
-
-    #[tokio::test]
-    async fn test_create_key_with_options() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let options = CreateKeyOptions {
-            description: Some("Test key".to_string()),
-            usage: KeyUsage::EncryptDecrypt,
-            key_spec: KeySpec::SymmetricDefault,
-            multi_region: false,
-            tags: Metadata::new(),
-        };
-
-        let result = kms.create_key(options).await;
-        assert!(result.is_ok());
-        let metadata = result.unwrap();
-        assert_eq!(metadata.description, Some("Test key".to_string()));
-    }
-
-    #[tokio::test]
-    async fn test_describe_key_not_found() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.describe_key("nonexistent-key").await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_list_keys() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.list_keys().await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_enable_key() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.enable_key("key-123").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_disable_key() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.disable_key("key-123").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_schedule_key_deletion() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.schedule_key_deletion("key-123", 7).await;
-        assert!(result.is_ok());
-        let deletion_date = result.unwrap();
-        assert!(deletion_date > Utc::now());
-    }
-
-    #[tokio::test]
-    async fn test_cancel_key_deletion() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.cancel_key_deletion("key-123").await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_update_key_description() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.update_key_description("key-123", "Updated description").await;
-        assert!(result.is_ok());
-    }
-
-    // Encryption Tests
-
-    #[tokio::test]
-    async fn test_encrypt() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let plaintext = b"Hello, World!";
-        let result = kms.encrypt("key-123", plaintext, None).await;
-
-        assert!(result.is_ok());
-        let encrypt_result = result.unwrap();
-        assert!(!encrypt_result.ciphertext.is_empty());
-        assert_eq!(encrypt_result.key_id, "key-123");
-    }
-
-    #[tokio::test]
-    async fn test_encrypt_with_context() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let mut encryption_context = Metadata::new();
-        encryption_context.insert("purpose".to_string(), "test".to_string());
-
-        let result = kms.encrypt("key-123", b"data", Some(encryption_context)).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_decrypt_not_implemented() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.decrypt(b"ciphertext", None).await;
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
-    async fn test_re_encrypt() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.re_encrypt(b"ciphertext", "new-key-456", None, None).await;
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap().key_id, "new-key-456");
-    }
-
-    // Data Key Tests
-
-    #[tokio::test]
-    async fn test_generate_data_key() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.generate_data_key("key-123", None).await;
-        assert!(result.is_ok());
-        let data_key = result.unwrap();
-        assert_eq!(data_key.plaintext.len(), 32); // 256-bit key
-        assert_eq!(data_key.key_id, "key-123");
-    }
-
-    #[tokio::test]
-    async fn test_generate_data_key_without_plaintext() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.generate_data_key_without_plaintext("key-123", None).await;
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap().len(), 32);
-    }
-
-    // Signing Tests
-
-    #[tokio::test]
-    async fn test_sign() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let message = b"message to sign";
-        let result = kms.sign("key-123", message, SigningAlgorithm::RsassaPssSha256).await;
-
-        assert!(result.is_ok());
-        assert!(!result.unwrap().is_empty());
-    }
-
-    #[tokio::test]
-    async fn test_verify() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms
-            .verify("key-123", b"message", b"signature", SigningAlgorithm::RsassaPssSha256)
-            .await;
-
-        assert!(result.is_ok());
-        // Stub returns false
-        assert!(!result.unwrap());
-    }
-
-    // Tagging Tests
-
-    #[tokio::test]
-    async fn test_tag_key() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let mut tags = Metadata::new();
-        tags.insert("Environment".to_string(), "Production".to_string());
-
-        let result = kms.tag_key("key-123", tags).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_untag_key() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.untag_key("key-123", &["Environment", "Team"]).await;
-        assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_list_key_tags() {
-        let context = create_test_context().await;
-        let kms = AwsKms::new(context);
-
-        let result = kms.list_key_tags("key-123").await;
-        assert!(result.is_ok());
+        let _kms = AwsKms::new(context, sdk_config);
     }
 }

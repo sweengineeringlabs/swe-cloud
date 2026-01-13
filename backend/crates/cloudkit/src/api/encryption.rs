@@ -103,6 +103,8 @@ pub enum KeySpec {
     EccNistP384,
     /// Elliptic curve P-521.
     EccNistP521,
+    /// SECG P-256 k1 (Bitcoin/Ethereum curve).
+    EccSecgP256K1,
     /// HMAC-256.
     Hmac256,
     /// HMAC-384.

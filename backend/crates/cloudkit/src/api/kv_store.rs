@@ -18,11 +18,25 @@ pub enum Condition {
     NotEquals(String, serde_json::Value),
     /// Attribute less than value
     LessThan(String, serde_json::Value),
+    /// Attribute less than or equal to value
+    LessThanOrEqual(String, serde_json::Value),
     /// Attribute greater than value
     GreaterThan(String, serde_json::Value),
-    /// AND of conditions
+    /// Attribute greater than or equal to value
+    GreaterThanOrEqual(String, serde_json::Value),
+    /// Attribute is in a list of values
+    In(String, Vec<serde_json::Value>),
+    /// Attribute is between two values
+    Between(String, serde_json::Value, serde_json::Value),
+    /// Attribute begins with prefix
+    BeginsWith(String, String),
+    /// Attribute contains substring
+    Contains(String, String),
+    /// Logical NOT of a condition
+    Not(Box<Condition>),
+    /// Logical AND of multiple conditions
     And(Vec<Condition>),
-    /// OR of conditions
+    /// Logical OR of multiple conditions
     Or(Vec<Condition>),
 }
 

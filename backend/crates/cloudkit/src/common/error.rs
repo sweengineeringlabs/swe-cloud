@@ -64,6 +64,8 @@ pub enum CloudError {
     Serialization(String),
     /// IO error
     Io(std::io::Error),
+    /// Service-specific error
+    ServiceError(String),
 }
 
 impl std::error::Error for CloudError {
@@ -111,6 +113,7 @@ impl fmt::Display for CloudError {
             CloudError::Config(msg) => write!(f, "Configuration error: {}", msg),
             CloudError::Serialization(msg) => write!(f, "Serialization error: {}", msg),
             CloudError::Io(e) => write!(f, "IO error: {}", e),
+            CloudError::ServiceError(msg) => write!(f, "Service error: {}", msg),
         }
     }
 }
