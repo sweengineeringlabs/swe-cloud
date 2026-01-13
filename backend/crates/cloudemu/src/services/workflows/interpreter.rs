@@ -266,3 +266,90 @@ fn json_path_get<'a>(value: &'a Value, path: &str) -> Option<&'a Value> {
     
     Some(current)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_pass_state() {
+        let def = json!({
+            "StartAt": "Pass",
+            "States": {
+                "Pass": {
+                    "Type": "Pass",
+                    "Result": {"foo": "bar"},
+                    "End": true
+                }
+            }
+        }).to_string();
+        
+        let output = StateMachineExecutor::execute(&def, "{}").unwrap();
+        assert_eq!(output, r#"{"foo":"bar"}"#);
+    }
+
+    #[test]
+    fn test_choice_state() {
+        let def = json!({
+            "StartAt": "Choice",
+            "States": {
+                "Choice": {
+                    "Type": "Choice",
+                    "Choices": [
+                        {
+                            "Variable": "$.val",
+                            "NumericEquals": 1,
+                            "Next": "One"
+                        }
+                    ],
+                    "Default": "Two"
+                },
+                "One": {
+                    "Type": "Pass",
+                    "Result": "1",
+                    "End": true
+                },
+                "Two": {
+                    "Type": "Pass",
+                    "Result": "2",
+                    "End": true
+                }
+            }
+        }).to_string();
+        
+        // Test case 1
+        let output = StateMachineExecutor::execute(&def, r#"{"val": 1}"#).unwrap();
+        assert_eq!(output, "\"1\"");
+        
+        // Test case 2
+        let output = StateMachineExecutor::execute(&def, r#"{"val": 2}"#).unwrap();
+        assert_eq!(output, "\"2\"");
+    }
+
+    #[test]
+    fn test_map_state() {
+        let def = json!({
+            "StartAt": "Map",
+            "States": {
+                "Map": {
+                    "Type": "Map",
+                    "Iterator": {
+                        "StartAt": "Pass",
+                        "States": {
+                            "Pass": {
+                                "Type": "Pass",
+                                "End": true
+                            }
+                        }
+                    },
+                    "End": true
+                }
+            }
+        }).to_string();
+        
+        // Process array [1, 2, 3] -> each item runs pass -> [1, 2, 3]
+        let output = StateMachineExecutor::execute(&def, "[1, 2, 3]").unwrap();
+        assert_eq!(output, "[1,2,3]");
+    }
+}
+
