@@ -25,8 +25,8 @@ stepfunctions = []
 full = ["s3", "dynamodb", "sqs", "sns", "lambda", "secretsmanager", "eventbridge", "kms", "cloudwatch", "cognito", "stepfunctions"]
 
 [dependencies]
-control-plane = { path = "../control-plane" }
-data-plane = { path = "../data-plane" }
+control-plane = { path = "control-plane" }
+data-plane = { path = "data-plane" }
 
 tokio = { version = "1.42", features = ["full"] }
 tracing = "0.1"
