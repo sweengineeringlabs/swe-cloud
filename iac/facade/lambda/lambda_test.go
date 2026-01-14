@@ -27,4 +27,5 @@ func TestLambdaFacadeAws(t *testing.T) {
 	planString := terraform.InitAndPlan(t, terraformOptions)
 	
 	assert.True(t, strings.Contains(planString, "module.aws_lambda[0].aws_lambda_function.this"), "Plan should create an AWS Lambda function")
+	assert.True(t, strings.Contains(planString, "function_name = \"test-function\""), "Plan should have the correct function name")
 }
