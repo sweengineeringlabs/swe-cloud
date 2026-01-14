@@ -45,10 +45,11 @@ func TestStorageFacadeAws(t *testing.T) {
 	
 	// Check that we are creating the correct resource
 	assert.True(t, strings.Contains(planString, "module.aws_storage[0].aws_s3_bucket.this"), "Plan should create an AWS S3 bucket")
+	assert.True(t, strings.Contains(planString, "bucket = \"unit-test-bucket\""), "Plan should have the correct bucket name")
 	assert.True(t, strings.Contains(planString, "1 to add"), "Plan should propose adding 1 resource")
 }
 
-// TestStorageFacadeAzure verifies provider switching works
+// TestStorageFacadeAzure verifies provider switching works and attributes are set
 func TestStorageFacadeAzure(t *testing.T) {
 	t.Parallel()
 
@@ -70,9 +71,10 @@ func TestStorageFacadeAzure(t *testing.T) {
 
 	// Validate Azure switching logic
 	assert.True(t, strings.Contains(planString, "module.azure_storage[0].azurerm_storage_account.this"), "Plan should create an Azure Storage Account")
+	assert.True(t, strings.Contains(planString, "name = \"unittestbucket\""), "Plan should have the correct storage account name")
 }
 
-// TestStorageFacadeGcp verifies GCP storage provider
+// TestStorageFacadeGcp verifies GCP storage provider and attributes
 func TestStorageFacadeGcp(t *testing.T) {
 	t.Parallel()
 
@@ -93,4 +95,25 @@ func TestStorageFacadeGcp(t *testing.T) {
 	planString := terraform.InitAndPlan(t, terraformOptions)
 
 	assert.True(t, strings.Contains(planString, "module.gcp_storage[0].google_storage_bucket.this"), "Plan should create a GCP Storage Bucket")
+	assert.True(t, strings.Contains(planString, "name = \"unit-test-bucket\""), "Plan should have the correct bucket name")
+}
+
+// TestStorageFacadeInvalidName verifies that invalid bucket names are caught
+func TestStorageFacadeInvalidName(t *testing.T) {
+	t.Parallel()
+
+	// Use an invalid name (contains spaces and uppercase)
+	terraformOptions := &terraform.Options{
+		TerraformDir: ".",
+		Vars: map[string]interface{}{
+			"provider":      "aws",
+			"project_name":  "testproject",
+			"environment":   "test",
+			"bucket_name":   "INVALID BUCKET NAME",
+		},
+	}
+
+	// We expect the plan to fail due to variable validation
+	_, err := terraform.InitAndPlanE(t, terraformOptions)
+	assert.Error(t, err, "Plan should fail with an invalid bucket name")
 }
