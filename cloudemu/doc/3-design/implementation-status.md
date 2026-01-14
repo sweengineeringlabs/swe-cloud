@@ -249,9 +249,9 @@ test result: ok. 2 passed; 0 failed; 0 ignored
 | AWS Adapter | 2 | 2 |
 | Azure Provider | 2 | 2 |
 | GCP Provider | 2 | 2 |
-| Server Build | ✅ | - |
+| Server Integration | ✅ | 1 |
 
-**Total Tests Passing**: 11 / 11
+**Total Tests Passing**: 12 / 12
 
 ---
 
