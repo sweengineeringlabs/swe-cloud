@@ -7,34 +7,42 @@ We use **Terratest** (Go) to perform "Unit Tests" on our Terraform modules. Thes
 - Terraform >= 1.0
 
 ## Directory Structure
-Tests are located in `iac/test/`.
+Tests are co-located with the modules they verify. A root `go.mod` in `iac/` manages dependencies.
+
 ```
-iac/test/
-├── go.mod                # Go dependencies
-├── go.sum                # Checksums
-└── storage_facade_test.go # Test logic
+iac/
+├── go.mod                # Root Go dependencies
+├── facade/
+│   └── storage/
+│       ├── main.tf
+│       └── storage_test.go # Co-located test
 ```
 
 ## Running Tests
 
-To run all unit tests:
+To run all unit tests from the root:
 ```bash
-cd iac/test
-go test -v
+cd iac
+go test -v ./...
 ```
 
-This will:
-1.  Initialize Terraform for the targeted modules.
-2.  Run `terraform plan` with specific variables.
-3.  Assert that the Plan output contains expected resources (e.g., "1 to add").
+This will recursively find and execute all `*_test.go` files in the repository.
 
 ## Writing New Tests
-Create a new `*_test.go` file. Use the pattern:
+Create a new `*_test.go` file next to your module. Use `TerraformDir: "."`.
 
 ```go
-func TestNewModule(t *testing.T) {
+package mymodule_test
+
+import (
+    "testing"
+    "github.com/gruntwork-io/terratest/modules/terraform"
+    "github.com/stretchr/testify/assert"
+)
+
+func TestMyModule(t *testing.T) {
     opts := &terraform.Options{
-        TerraformDir: "../path/to/module",
+        TerraformDir: ".",
         Vars: map[string]interface{}{...},
     }
     plan := terraform.InitAndPlan(t, opts)

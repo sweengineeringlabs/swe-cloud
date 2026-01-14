@@ -1,7 +1,6 @@
-package test
+package storage_test
 
 import (
-	"log"
 	"testing"
 	"strings"
 
@@ -15,8 +14,9 @@ func TestStorageFacadeAws(t *testing.T) {
 
 	// 1. Configure Terraform options
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		// Path to the Terraform module we want to test
-		TerraformDir: "../facade/storage",
+		// Path to the Terraform module we want to test.
+        // Since the test is now colocated, we use the current directory.
+		TerraformDir: ".",
 
 		// Variables to pass to our module using -var options
 		Vars: map[string]interface{}{
@@ -53,7 +53,7 @@ func TestStorageFacadeAzure(t *testing.T) {
 	t.Parallel()
 
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		TerraformDir: "../facade/storage",
+		TerraformDir: ".",
 		Vars: map[string]interface{}{
 			"provider":      "azure",
 			"project_name":  "testproject",
