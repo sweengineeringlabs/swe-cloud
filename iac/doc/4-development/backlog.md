@@ -31,7 +31,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | **iam/** | ✅ | P2 | - | IAM module complete |
 | **messaging/** | ✅ | P2 | - | SQS, SNS modules complete |
 | **lambda/** | ✅ | P3 | - | Lambda function module complete |
-| **monitoring/** | ❌ | P3 | 2 hours | CloudWatch, alarms |
+| **monitoring/** | ✅ | P3 | - | CloudWatch, alarms complete |
 
 ### Azure Core Modules (`iac_core/azure/src/`)
 
@@ -42,6 +42,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | **database/** | ✅ | P2 | - | SQL Database module complete |
 | **networking/** | ✅ | P2 | - | VNet module complete |
 | **iam/** | ✅ | P3 | - | Managed identities, RBAC complete |
+| **monitoring/** | ✅ | P3 | - | Azure Monitor, Log Analytics complete |
 
 ### GCP Core Modules (`iac_core/gcp/src/`)
 
@@ -52,6 +53,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | **database/** | ✅ | P2 | - | Cloud SQL module complete |
 | **networking/** | ✅ | P2 | - | VPC module complete |
 | **iam/** | ✅ | P3 | - | Service accounts, IAM bindings complete |
+| **monitoring/** | ✅ | P3 | - | Cloud Monitoring alert policies complete |
 
 ---
 
