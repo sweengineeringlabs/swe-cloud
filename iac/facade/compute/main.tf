@@ -61,35 +61,58 @@ locals {
 }
 
 # ============================================================================
-# CORE ORCHESTRATION
+# PROVIDER-SPECIFIC MODULE ROUTING
 # ============================================================================
 
-module "compute_core" {
-  source = "../../core/compute"
+# Route to AWS compute module
+module "aws_compute" {
+  count  = var.provider == "aws" ? 1 : 0
+  source = "../../iac_core/aws/src/compute"
+  
+  ami           = lookup(var.provider_config, "ami", "ami-0c55b159cbfafe1f0")
+  instance_type = local.compute_instance_types[var.provider][var.instance_size]
+  ssh_key_name  = var.ssh_public_key != null ? "compute-key" : null
+  tags          = local.common_tags
+}
 
-  # API contract inputs
-  instance_name        = var.instance_name
-  instance_size        = var.instance_size
-  provider             = var.provider
-  ssh_public_key       = var.ssh_public_key
-  admin_username       = var.admin_username
-  allow_public_access  = var.allow_public_access
-  enable_monitoring    = var.enable_monitoring
-  enable_backup        = var.enable_backup
+# Route to Azure compute module  
+module "azure_compute" {
+  count  = var.provider == "azure" ? 1 : 0
+  source = "../../iac_core/azure/src/compute"
   
-  # Network configuration
-  network_id           = var.network_id
-  subnet_id            = var.subnet_id
-  security_group_ids   = var.security_group_ids
+  # Azure-specific variables would go here
+  # vm_size = local.compute_instance_types[var.provider][var.instance_size]
+  # tags    = local.common_tags
+}
+
+# Route to GCP compute module
+module "gcp_compute" {
+  count  = var.provider == "gcp" ? 1 : 0
+  source = "../../iac_core/gcp/src/compute"
   
-  # Advanced options
-  user_data            = var.user_data
-  instance_tags        = var.instance_tags
-  provider_config      = var.provider_config
+  # GCP-specific variables would go here
+  # machine_type = local.compute_instance_types[var.provider][var.instance_size]
+  # labels       = local.common_tags
+}
+
+# Aggregated outputs (select based on provider)
+locals {
+  instance_id = (
+    var.provider == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].instance_id : null) :
+    var.provider == "azure" ? (length(module.azure_compute) > 0 ? "azure-instance" : null) :
+    var.provider == "gcp" ? (length(module.gcp_compute) > 0 ? "gcp-instance" : null) :
+    null
+  )
   
-  # From common layer
-  compute_instance_types = local.compute_instance_types
-  common_tags            = local.common_tags
+  public_ip = (
+    var.provider == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].public_ip : null) :
+    null
+  )
+  
+  private_ip = (
+    var.provider == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].private_ip : null) :
+    null
+  )
 }
 
 # ============================================================================
@@ -100,28 +123,20 @@ output "instance" {
   description = "Complete instance details"
   value = {
     # Identification
-    id   = module.compute_core.instance_id
-    arn  = module.compute_core.instance_arn
+    id   = local.instance_id
     name = var.instance_name
     
     # Specifications
-    type            = module.compute_core.instance_type
-    size            = module.compute_core.instance_size
-    provider        = var.provider
+    type     = local.compute_instance_types[var.provider][var.instance_size]
+    size     = var.instance_size
+    provider = var.provider
     
     # Network
-    public_ip       = module.compute_core.public_ip
-    private_ip      = module.compute_core.private_ip
-    
-    # Connection
-    ssh_connection  = module.compute_core.ssh_connection
-    
-    # State
-    state           = module.compute_core.state
-    zone            = module.compute_core.availability_zone
+    public_ip  = local.public_ip
+    private_ip = local.private_ip
     
     # Metadata
-    tags            = module.compute_core.tags
+    tags = local.common_tags
   }
   sensitive = true
 }
@@ -129,22 +144,22 @@ output "instance" {
 # Convenience outputs
 output "instance_id" {
   description = "Instance ID for reference in other resources"
-  value       = module.compute_core.instance_id
+  value       = local.instance_id
 }
 
 output "public_ip" {
   description = "Public IP address (null if public access disabled)"
-  value       = module.compute_core.public_ip
+  value       = local.public_ip
 }
 
 output "private_ip" {
   description = "Private IP address"
-  value       = module.compute_core.private_ip
+  value       = local.private_ip
 }
 
 output "ssh_connection" {
   description = "SSH connection command"
-  value       = module.compute_core.ssh_connection
+  value       = local.public_ip != null ? "ssh user@${local.public_ip}" : null
   sensitive   = true
 }
 

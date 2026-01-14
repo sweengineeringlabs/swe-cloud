@@ -52,40 +52,59 @@ locals {
 }
 
 # ============================================================================
-# CORE ORCHESTRATION
+# PROVIDER-SPECIFIC MODULE ROUTING
 # ============================================================================
 
-module "storage_core" {
-  source = "../../core/storage"
+# Route to AWS storage module
+module "aws_storage" {
+  count  = var.provider == "aws" ? 1 : 0
+  source = "../../iac_core/aws/src/storage"
+  
+  bucket_name         = var.bucket_name
+  versioning_enabled  = var.versioning_enabled
+  encryption_enabled  = var.encryption_enabled
+  encryption_key_id   = var.encryption_key_id
+  public_access_block = var.public_access_block
+  tags                = local.common_tags
+}
 
-  # API contract inputs
-  bucket_name          = var.bucket_name
-  provider             = var.provider
-  storage_class        = var.storage_class
-  versioning_enabled   = var.versioning_enabled
-  encryption_enabled   = var.encryption_enabled
-  encryption_key_id    = var.encryption_key_id
-  public_access_block  = var.public_access_block
+# Route to Azure storage module  
+module "azure_storage" {
+  count  = var.provider == "azure" ? 1 : 0
+  source = "../../iac_core/azure/src/storage"
   
-  # Logging
-  enable_logging       = var.enable_logging
-  log_bucket_name      = var.log_bucket_name
+  # Azure-specific variables would go here
+}
+
+# Route to GCP storage module
+module "gcp_storage" {
+  count  = var.provider == "gcp" ? 1 : 0
+  source = "../../iac_core/gcp/src/storage"
   
-  # Rules
-  cors_rules           = var.cors_rules
-  lifecycle_rules      = var.lifecycle_rules
+  # GCP-specific variables would go here
+}
+
+# Aggregated outputs (select based on provider)
+locals {
+  bucket_id = (
+    var.provider == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_id : null) :
+    null
+  )
   
-  # Replication
-  replication_enabled     = var.replication_enabled
-  replication_destination = var.replication_destination
+  bucket_arn = (
+    var.provider == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_arn : null) :
+    null
+  )
   
-  # Tags
-  bucket_tags          = var.bucket_tags
-  provider_config      = var.provider_config
+  bucket_url = (
+    var.provider == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_domain_name : null) :
+    null
+  )
   
-  # From common layer
-  storage_class_mapping = local.storage_class_mapping
-  common_tags           = local.common_tags
+  bucket_region = (
+    var.provider == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].region : null) :
+    null
+  )
 }
 
 # ============================================================================
@@ -96,41 +115,41 @@ output "bucket" {
   description = "Complete bucket details"
   value = {
     # Identification
-    id     = module.storage_core.bucket_id
-    arn    = module.storage_core.bucket_arn
-    name   = var.bucket_name
+    id   = local.bucket_id
+    arn  = local.bucket_arn
+    name = var.bucket_name
     
     # Access
-    url    = module.storage_core.bucket_url
-    region = module.storage_core.bucket_region
+    url    = local.bucket_url
+    region = local.bucket_region
     
     # Configuration
-    storage_class       = module.storage_core.storage_class
-    versioning_enabled  = module.storage_core.versioning_enabled
-    encryption_enabled  = module.storage_core.encryption_enabled
+    storage_class      = var.storage_class
+    versioning_enabled = var.versioning_enabled
+    encryption_enabled = var.encryption_enabled
     
     # Provider
     provider = var.provider
     
     # Metadata
-    tags = module.storage_core.tags
+    tags = local.common_tags
   }
 }
 
 # Convenience outputs
 output "bucket_id" {
   description = "Bucket ID for reference in other resources"
-  value       = module.storage_core.bucket_id
+  value       = local.bucket_id
 }
 
 output "bucket_url" {
   description = "Bucket access URL"
-  value       = module.storage_core.bucket_url
+  value       = local.bucket_url
 }
 
 output "bucket_arn" {
   description = "Bucket ARN/Resource ID"
-  value       = module.storage_core.bucket_arn
+  value       = local.bucket_arn
 }
 
 # ============================================================================
