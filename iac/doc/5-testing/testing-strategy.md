@@ -33,10 +33,18 @@ We utilize a single, dynamic PowerShell script located at `iac/scripts/validate_
 
 ## 2. Unit Testing (Planning)
 
-Unit testing in Terraform largely revolves around the `terraform plan` command. This simulates the execution of the code against the current state of the cloud provider to verify *what would happen*.
+Unit testing utilizes **Terratest** (Go) to run `terraform plan` against our modules, asserting that the logic produces the expected resource changes without applying them.
 
 - **Goal**: Verify that the calculated changes match expectations (e.g., "I expect 1 resource to be added").
-- **Tools**: `terraform plan`, Open Policy Agent (OPA) for policy checks (optional).
+- **Tools**: `terratest` (Go), `terraform plan`.
+- **Strategy**: Tests are **co-located** with the modules they verify (e.g., `iac/facade/storage/storage_test.go`).
+- **Guide**: See [Unit Testing Guide](./unit-testing-guide.md) for implementation details.
+
+### Running Tests
+From the root `iac/` directory:
+```bash
+go test -v ./...
+```
 
 ## 3. Integration Testing (Applying)
 
