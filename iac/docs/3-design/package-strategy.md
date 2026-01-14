@@ -1,0 +1,402 @@
+# ADR: Package by Provider (Vertical Slicing)
+
+**Status:** Accepted  
+**Date:** 2026-01-14  
+**Deciders:** Infrastructure Team  
+**Context:** IAC Multi-Cloud Terraform Organization
+
+---
+
+## Context and Problem Statement
+
+When organizing multi-cloud infrastructure code with multiple providers (AWS, Azure, GCP) and multiple resource types (compute, storage, database, networking), we must decide:
+
+**Should we organize Terraform modules by provider (vertical slicing) or by resource type (horizontal slicing)?**
+
+### Two Approaches
+
+**Option A: Package by Resource Type (Horizontal Slicing)**
+```
+iac/core/
+├── compute/
+│   └── main.tf    # Routes to aws/compute, azure/compute, gcp/compute
+├── storage/
+│   └── main.tf    # Routes to aws/storage, azure/storage, gcp/storage
+└── database/
+    └── main.tf    # Routes to aws/database, azure/database, gcp/database
+
+iac/providers/
+├── aws/
+│   ├── compute/
+│   ├── storage/
+│   └── database/
+├── azure/
+│   ├── compute/
+│   ├── storage/
+│   └── database/
+└── gcp/
+    ├── compute/
+    ├── storage/
+    └── database/
+```
+
+**Option B: Package by Provider (Vertical Slicing)** ✅
+```
+iac/core/
+├── aws/
+│   └── main.tf    # EC2, S3, RDS, VPC, etc.
+├── azure/
+│   └── main.tf    # VM, Blob, SQL, VNet, etc.
+└── gcp/
+    └── main.tf    # Compute, GCS, CloudSQL, VPC, etc.
+```
+
+---
+
+## Decision Drivers
+
+1. **CloudKit Alignment** - Match SDK organization for consistency
+2. **Team Organization** - Infrastructure teams by cloud provider
+3. **Code Cohesion** - Related resources should be together
+4. **Provider State** - Terraform provider configuration
+5. **Navigation** - Ease of finding infrastructure code
+6. **Change Patterns** - How infrastructure changes happen
+7. **Dependency Management** - Provider-specific dependencies
+8. **Mental Model** - Consistent thinking across SDK and IaC
+
+---
+
+## Considered Options
+
+### Option A: Package by Resource Type (Horizontal Slicing)
+
+**Pros:**
+- ✅ Easy to see all compute configurations across providers
+- ✅ Resource-specific logic centralized
+- ✅ Facilitates resource-type abstractions
+
+**Cons:**
+- ❌ Provider-specific code scattered across directories
+- ❌ Each provider change touches multiple directories
+- ❌ Difficult to manage provider state
+- ❌ Team boundaries unclear
+- ❌ Adding new provider touches many files
+- ❌ Different pattern than CloudKit SDK
+- ❌ Multiple provider blocks per resource type
+
+### Option B: Package by Provider (Vertical Slicing) ✅
+
+**Pros:**
+- ✅ Matches CloudKit SDK organization
+- ✅ High cohesion: all AWS resources together
+- ✅ Clear team ownership: AWS team owns `core/aws/`
+- ✅ Single provider block per provider module
+- ✅ Easy navigation: "Need AWS?" → `core/aws/`
+- ✅ Adding provider = one new directory
+- ✅ Provider-specific optimizations isolated
+- ✅ Shared locals/data sources within provider
+- ✅ Consistent mental model with SDK
+
+**Cons:**
+- ❌ Harder to see all compute implementations at once
+- ❌ Cross-provider abstractions require facade layer
+
+---
+
+## Decision Outcome
+
+**Chosen option: Package by Provider (Option B)** ✅
+
+### Rationale
+
+1. **Cloud SDK Consistency**
+   - CloudKit SDK uses provider grouping
+   - Same mental model across SDK and IaC
+   - Developers switch seamlessly between code and infrastructure
+
+2. **Team Boundaries**
+   - Real-world teams: AWS team, Azure team, GCP team
+   - Each team owns their provider's infrastructure
+   - Reduces coordination overhead
+
+3. **Provider Cohesion**
+   - AWS resources often reference each other
+   - VPC → Subnets → Instances → Security Groups
+   - Easier when all in same file/module
+
+4. **Terraform Provider Management**
+   ```hcl
+   # core/aws/main.tf - Single provider block
+   provider "aws" {
+     region = var.aws_region
+     default_tags { tags = local.aws_tags }
+   }
+   
+   # All AWS resources use this provider
+   resource "aws_instance" "compute" { ... }
+   resource "aws_s3_bucket" "storage" { ... }
+   resource "aws_db_instance" "database" { ... }
+   ```
+
+5. **Change Patterns**
+   - 90% of infrastructure changes affect single provider
+   - AWS API changes affect one directory
+   - Adding new AWS service only touches `core/aws/`
+
+6. **Mental Model Alignment**
+   ```
+   CloudKit Code:  cloudkit_core/aws/s3.rs
+   IAC Code:       iac/core/aws/main.tf (S3 bucket)
+   ↑ Same navigation pattern!
+   ```
+
+---
+
+## Implementation
+
+### Directory Structure
+```
+iac/core/
+├── aws/
+│   ├── main.tf        # All AWS resources
+│   ├── variables.tf   # AWS configuration
+│   └── outputs.tf     # AWS outputs
+├── azure/
+│   ├── main.tf
+│   ├── variables.tf
+│   └── outputs.tf
+└── gcp/
+    ├── main.tf
+    ├── variables.tf
+    └── outputs.tf
+```
+
+### Provider Module Pattern
+```hcl
+# core/aws/main.tf
+terraform {
+  required_providers {
+    aws = { source = "hashicorp/aws", version = "~> 5.0" }
+  }
+}
+
+provider "aws" {
+  region = var.aws_region
+  default_tags { tags = var.common_tags }
+}
+
+# COMPUTE
+resource "aws_instance" "compute" {
+  count = var.compute_config != null ? 1 : 0
+  # ...
+}
+
+# STORAGE
+resource "aws_s3_bucket" "storage" {
+  count = var.storage_config != null ? 1 : 0
+  # ...
+}
+
+# DATABASE
+resource "aws_db_instance" "database" {
+  count = var.database_config != null ? 1 : 0
+  # ...
+}
+
+# NETWORKING
+resource "aws_vpc" "network" {
+  count = var.network_config != null ? 1 : 0
+  # ...
+}
+
+# Outputs grouped by resource type
+output "compute" {
+  value = var.compute_config != null ? {
+    instance_id = aws_instance.compute[0].id
+    public_ip   = aws_instance.compute[0].public_ip
+  } : null
+}
+
+output "storage" {
+  value = var.storage_config != null ? {
+    bucket_id  = aws_s3_bucket.storage[0].id
+    bucket_arn = aws_s3_bucket.storage[0].arn
+  } : null
+}
+```
+
+### Usage from Facade
+```hcl
+# facade/main.tf
+module "aws" {
+  source = "../../core/aws"
+  
+  compute_config = {
+    ami           = "ami-xxxxx"
+    instance_type = "t3.medium"
+    tags          = local.tags
+  }
+  
+  storage_config = {
+    bucket_name = "my-bucket"
+    tags        = local.tags
+  }
+}
+
+output "instance_ip" {
+  value = module.aws.compute.public_ip
+}
+```
+
+### Team Ownership
+```
+CODEOWNERS:
+/iac/core/aws/     @aws-infrastructure-team
+/iac/core/azure/   @azure-infrastructure-team
+/iac/core/gcp/     @gcp-infrastructure-team
+```
+
+---
+
+## Consequences
+
+### Positive
+
+1. **CloudKit Alignment**
+   - Developers learn one pattern, use everywhere
+   - Code reviews easier (same structure)
+   - Onboarding simplified
+
+2. **Provider Isolation**
+   - AWS state separate from Azure state
+   - Provider failures isolated
+   - Easier to troubleshoot
+
+3. **Team Efficiency**
+   - AWS team doesn't conflict with Azure team
+   - Clear ownership boundaries
+   - Parallel development
+
+4. **Infrastructure Cohesion**
+   ```hcl
+   # Easy to reference within provider
+   resource "aws_instance" "compute" {
+     vpc_id    = aws_vpc.network[0].id
+     subnet_id = aws_subnet.subnet[0].id
+   }
+   ```
+
+5. **Conditional Resources**
+   ```hcl
+   # Enable only what's needed
+   module "aws" {
+     compute_config = { ... }  # Create compute
+     # storage_config not set   # Skip storage
+   }
+   ```
+
+### Negative
+
+1. **Cross-Provider Abstractions Harder**
+   - **Solution:** Use facade layer for abstractions
+   - Facade provides unified interface, routes to providers
+
+2. **Resource Type Overview**
+   - **Solution:** Documentation shows all compute, storage, etc.
+   - Facade layer provides resource-type views
+
+### Mitigation Strategies
+
+**For Cross-Provider Abstractions:**
+```hcl
+# facade/compute/main.tf
+module "compute_core" {
+  source = "../../core/${var.provider}"
+  
+  compute_config = {
+    # Normalized configuration
+    instance_type = local.instance_types[var.provider][var.size]
+    # ...
+  }
+}
+```
+
+**For Shared Patterns:**
+```hcl
+# common/locals.tf
+locals {
+  # Shared across all providers
+  compute_instance_types = {
+    aws   = { medium = "t3.medium" }
+    azure = { medium = "Standard_B2s" }
+    gcp   = { medium = "e2-medium" }
+  }
+}
+```
+
+---
+
+## Comparison with CloudKit
+
+| Aspect | CloudKit (SDK) | IAC (Terraform) | Consistency |
+|--------|----------------|-----------------|-------------|
+| **Organization** | By Provider | By Provider | ✅ Match |
+| **AWS Location** | `cloudkit_core/aws/` | `iac/core/aws/` | ✅ Match |
+| **All Services** | `s3.rs`, `dynamodb.rs`, etc. | EC2, S3, RDS in `main.tf` | ✅ Match |
+| **Navigation** | "Want AWS?" → `aws/` | "Want AWS?" → `core/aws/` | ✅ Match |
+| **Team Ownership** | AWS team owns `aws/` | AWS team owns `core/aws/` | ✅ Match |
+| **Mental Model** | Provider-first | Provider-first | ✅ Match |
+
+**Result:** Perfect alignment! 🎯
+
+---
+
+## Related Decisions
+
+- [ADR: SEA Architecture](../ARCHITECTURE.md)
+- [ADR: Facade Layer Pattern](./facade-pattern.md)
+- [ADR: Size Normalization](./size-normalization.md)
+
+---
+
+## References
+
+- **CloudKit Package Strategy** - `cloudkit/docs/3-design/package-strategy.md`
+- **Domain-Driven Design** - Eric Evans
+- **Terraform Best Practices** - HashiCorp
+- **Conway's Law** - System design mirrors org structure
+- **Vertical Slice Architecture** - Jimmy Bogard
+
+---
+
+## Migration Path
+
+**From:** Resource-grouped (Horizontal)
+```
+core/compute/main.tf  → Routes to providers
+core/storage/main.tf  → Routes to providers
+providers/aws/...
+providers/azure/...
+```
+
+**To:** Provider-grouped (Vertical) ✅
+```  
+core/aws/main.tf      → All AWS resources
+core/azure/main.tf    → All Azure resources
+core/gcp/main.tf      → All GCP resources
+```
+
+**Steps:**
+1. ✅ Create `core/aws/main.tf` with all AWS resources
+2. ✅ Create `core/azure/main.tf` with all Azure resources
+3. ✅ Create `core/gcp/main.tf` with all GCP resources
+4. ✅ Update facade to route to provider modules
+5. ✅ Remove old resource-grouped orchestration
+6. ✅ Update documentation
+
+---
+
+**Decision:** Package by Provider (Vertical Slicing) ✅  
+**Aligns with:** CloudKit SDK, DDD, Conway's Law, Team Boundaries  
+**Result:** `iac/core/aws/`, `iac/core/azure/`, `iac/core/gcp/`  
+**Benefit:** Same mental model across codebase and infrastructure
