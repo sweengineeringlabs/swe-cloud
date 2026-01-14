@@ -105,6 +105,13 @@ impl CloudContextBuilder {
         self
     }
 
+    /// Set a custom endpoint (often used for emulation).
+    pub fn endpoint(mut self, endpoint: impl Into<String>) -> Self {
+        let config = self.config.get_or_insert_with(CloudConfig::default);
+        config.endpoint = Some(endpoint.into());
+        self
+    }
+
     /// Set the authentication provider.
     pub fn auth_provider<A: AuthProvider + 'static>(mut self, provider: A) -> Self {
         self.auth_provider = Some(Arc::new(provider));

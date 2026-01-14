@@ -28,6 +28,21 @@ async fn main() -> Result<(), CloudError> {
 }
 ```
 
+## Examples
+
+Check the [examples](./crates/cloudkit_facade/examples) directory for complete, runnable code:
+
+*   **Platform**
+    *   [Getting Started](./crates/cloudkit_facade/examples/01_aws_s3_getting_started.rs)
+    *   [Local Development (CloudEmu)](./crates/cloudkit_facade/examples/04_local_development.rs)
+    *   [Multi-Cloud Storage](./crates/cloudkit_facade/examples/03_multi_cloud_storage.rs)
+    *   [Error Handling](./crates/cloudkit_facade/examples/02_error_handling.rs)
+*   **Services**
+    *   [DynamoDB (Database)](./crates/cloudkit_facade/examples/07_database_dynamodb.rs)
+    *   [SQS (Messaging)](./crates/cloudkit_facade/examples/08_messaging_sqs.rs)
+    *   [SNS (PubSub)](./crates/cloudkit_facade/examples/09_pubsub_sns.rs)
+    *   [Lambda (Compute)](./crates/cloudkit_facade/examples/10_serverless_lambda.rs)
+
 ## Documentation
 
 Full documentation is available in the **[Documentation Hub](./docs/overview.md)**.

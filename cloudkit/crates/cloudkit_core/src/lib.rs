@@ -14,8 +14,35 @@
 //!
 //! ## Usage
 //!
-//! This crate is typically not used directly. Instead, use the `cloudkit` facade
-//! crate which re-exports everything from here.
+//! This crate is typically not used directly by end users. Instead, use the `cloudkit` facade
+//! crate for a simplified experience.
+//!
+//! ### Advanced Usage (Direct Builder)
+//!
+//! For advanced use cases (e.g., custom emulation, specific provider features), you can use
+//! the builders directly:
+//!
+//! ```rust,ignore
+//! use cloudkit_spi::{CloudConfig, Region};
+//! use cloudkit_core::aws::AwsBuilder; // Requires cloudkit-aws crate
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     // Connect to a local CloudEmu instance
+//!     let config = CloudConfig::builder()
+//!         .region(Region::aws_us_east_1())
+//!         .endpoint("http://localhost:4566")
+//!         .build()?;
+//!
+//!     // Use the provider-specific builder
+//!     let client = AwsBuilder::new()
+//!         .config(config)
+//!         .build()
+//!         .await?;
+//!
+//!     Ok(())
+//! }
+//! ```
 
 #![warn(missing_docs)]
 #![deny(unsafe_code)]

@@ -59,6 +59,25 @@ impl CloudKit {
         CloudContextBuilder::new(ProviderType::Azure)
     }
 
+    /// Create a CloudEmu context builder (local emulation).
+    ///
+    /// This configures the client to connect to a local CloudEmu instance.
+    /// Default emulation ports:
+    /// - AWS: 4566
+    /// - Azure: 4567
+    /// - GCP: 4568
+    pub fn cloudemu(provider: ProviderType) -> CloudContextBuilder {
+        let endpoint = match provider {
+            ProviderType::Aws => "http://localhost:4566",
+            ProviderType::Azure => "http://localhost:4567",
+            ProviderType::Gcp => "http://localhost:4568",
+            ProviderType::Oracle => "http://localhost:4569", // Not yet supported
+        };
+        
+        CloudContextBuilder::new(provider)
+            .endpoint(endpoint)
+    }
+
     /// Create a GCP context builder.
     ///
     /// For full GCP functionality, use `cloudkit-gcp` crate directly.

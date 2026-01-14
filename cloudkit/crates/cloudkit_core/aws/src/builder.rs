@@ -40,6 +40,13 @@ impl AwsBuilder {
         self
     }
 
+    /// Set a custom endpoint.
+    pub fn endpoint(mut self, endpoint: impl Into<String>) -> Self {
+        let config = self.config.get_or_insert_with(CloudConfig::default);
+        config.endpoint = Some(endpoint.into());
+        self
+    }
+
     /// Build the AWS client.
     pub async fn build(self) -> CloudResult<AwsClient> {
         let mut config = self.config.unwrap_or_default();

@@ -80,6 +80,31 @@ provider "aws" {
 }
 ```
 
+### CloudKit (Rust SDK)
+
+CloudKit includes built-in support for CloudEmu through the `.cloudemu()` builder method.
+
+```rust
+use cloudkit::CloudKit;
+use cloudkit_spi::ProviderType;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // 1. Facade: Automatically configures local endpoints (e.g., http://localhost:4566 for AWS)
+    let client = CloudKit::cloudemu(ProviderType::Aws)
+        .build()
+        .await?;
+
+    // 2. Direct Provider: Manually set the endpoint
+    let aws = cloudkit_aws::AwsBuilder::new()
+        .endpoint("http://localhost:4566")
+        .build()
+        .await?;
+
+    Ok(())
+}
+```
+
 ## 4. Data Persistence & Reset
 
 CloudEmu persists resource metadata and data to the `CLOUDEMU_DATA_DIR` (default: `.cloudemu`).
