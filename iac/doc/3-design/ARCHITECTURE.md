@@ -1,8 +1,41 @@
-# IAC (Infrastructure as Code) SEA Architecture
+# Multi-Cloud SEA Architecture
 
-## Overview
+**Audience**: Architects, Developers, DevOps Engineers, and Security Reviewers.
 
-This IAC follows the **Stratified Encapsulation Architecture (SEA)** pattern used in CloudKit, providing a unified interface for multi-cloud infrastructure provisioning across AWS, Azure, GCP, and Oracle Cloud.
+## WHAT: Stratified Encapsulation Architecture (SEA)
+
+This document defines the 5-layer architectural pattern used to provide a unified, provider-agnostic interface for infrastructure provisioning across AWS, Azure, and GCP. It strictly mirrors the patterns found in the CloudKit Rust SDK.
+
+**Scope**:
+- Layer definitions and responsibilities.
+- Resource orchestration and dependency flow.
+- Size and storage class normalization.
+- Provider selection logic.
+
+## WHY: Solving Multi-Cloud Complexity
+
+### Problems Addressed
+
+1. **Provider Lock-in**
+   - Impact: Code is tightly coupled to specific cloud provider APIs (e.g., direct use of `aws_instance`).
+   - Consequence: High migration costs and inability to use best-of-breed services from different clouds.
+
+2. **Logic Inconsistency**
+   - Impact: Different teams implementing the same resource (e.g., S3 bucket) with different tagging or security standards.
+   - Consequence: Security gaps and increased maintenance overhead.
+
+3. **Testing Fragility**
+   - Impact: Hard-to-test monolithic modules.
+   - Consequence: Untested infrastructure logic leading to production failures.
+
+### Benefits
+- **Unified Interface**: Deploy a "Compute" resource regardless of the underlying cloud.
+- **Strict Layering**: Clear separation between API contracts and provider implementations.
+- **High Testability**: Isolated layers enable granular Terratests and static validation.
+
+## HOW: The 5-Layer Implementation
+
+### SEA Layer Overview
 
 ## SEA Layers
 
@@ -317,22 +350,20 @@ iac/
     └── gcp/
 ```
 
-## Benefits of SEA for IAC
+## Summary
 
-1. **Modularity** - Clear boundaries between layers
-2. **Testability** - Test each layer independently
-3. **Extensibility** - Add providers without changing core
-4. **Maintainability** - Changes isolated to specific layers
-5. **Consistency** - Standardized patterns across resources
-6. **Provider Agnostic** - Switch providers with minimal changes
+The Multi-Cloud IAC Framework provides a robust, layer-separated approach to infrastructure management. By strictly adhering to the SEA pattern, it ensures that infrastructure logic remains portable, testable, and consistent across multiple cloud providers.
 
-## Next Steps
+**Key Takeaways**:
+1. **Contract First**: Always define `iac_api` before implementing provider logic.
+2. **Normalized Inputs**: Use `common` layer sizes and classes for consistency.
+3. **Decoupled Providers**: Keep `iac_core` implementations provider-specific within their own source directories.
 
-1. Create `common/` layer with shared definitions
-2. Implement `spi/` layer for provider setup
-3. Define `api/` contracts for each resource type
-4. Build `core/` orchestration modules
-5. Refactor `facade/` for unified interface
-6. Migrate existing modules to new structure
-7. Add comprehensive examples
-8. Implement testing framework
+---
+
+**Related Documentation**:
+- [Testing Strategy](../5-testing/testing-strategy.md) - How each layer is verified.
+- [Toolchain Specification](./toolchain.md) - Tools used in the development and testing process.
+
+**Last Updated**: 2026-01-14  
+**Version**: 1.0  
