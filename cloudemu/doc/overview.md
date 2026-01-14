@@ -1,52 +1,19 @@
 # CloudEmu Documentation Hub
 
-Welcome to the CloudEmu documentation. CloudEmu is a production-grade local AWS service emulator designed for development, testing, and offline workflows.
+Welcome to the CloudEmu documentation. CloudEmu is a production-grade local cloud emulator (AWS, Azure, GCP) designed for development, testing, and offline workflows.
 
-## WHAT: Local AWS Development Environment
+## WHAT: Local Cloud Development Environment
 
-CloudEmu provides a fast, accurate emulation of AWS services that runs entirely on your local machine. It supports Terraform, AWS SDKs, and the AWS CLI out of the box, allowing you to develop and test cloud infrastructure without incurring AWS costs or requiring internet connectivity.
+CloudEmu provides a fast, accurate emulation of AWS, Azure, and GCP services that runs entirely on your local machine.
 
-**Scope**:
-- Emulation of 11 core AWS services (S3, DynamoDB, SQS, SNS, Lambda, etc.).
-- Full compatibility with Terraform and AWS SDKs.
-- Persistent storage using SQLite (metadata) and filesystem (object blobs).
-- Production-like API responses for reliable testing.
-
-## WHY: Fast, Cost-Free Cloud Development
-
-### Problems Addressed
-
-1. **AWS Costs During Development**
-   - Impact: Running integration tests against real AWS incurs charges.
-   - Consequence: Developers hesitate to run comprehensive tests frequently.
-
-2. **Internet Dependency**
-   - Impact: Cloud development requires constant internet access.
-   - Consequence: Offline work or poor connectivity blocks development.
-
-3. **Slow Feedback Loops**
-   - Impact: Deploying to real AWS for each test cycle takes minutes.
-   - Consequence: Reduced developer productivity.
-
-### Benefits
-- **Zero AWS Costs**: Run unlimited tests locally without charges.
-- **Offline Development**: Work anywhere, even without internet.
-- **Instant Feedback**: Services start in milliseconds, not minutes.
-
-## Quick Navigation
-
-| Target Audience | Recommended Starting Point |
-| :--- | :--- |
-| **New Users** | [Quick Start](#quick-start) |
-| **Developers** | [Backlog](./4-development/backlog.md) |
-| **Architects** | [Architecture](./3-design/architecture.md) |
+...
 
 ## Quick Start
 
 ### 1. Start the Emulator
 
 ```bash
-cargo run -p cloudemu
+cargo run -p cloudemu-server
 ```
 
 ### 2. Configure Your Tools

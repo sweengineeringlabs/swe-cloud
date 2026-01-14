@@ -1,52 +1,61 @@
 # CloudEmu
 
-**Production-Grade Local Cloud Emulator for AWS Services**
+**Unified Multi-Cloud Emulator for Local Development (AWS, Azure, GCP)**
 
-CloudEmu is a fast, production-like AWS service emulator designed for local development and testing. It provides accurate AWS API responses and seamlessly integrates with Terraform, AWS SDKs, and the AWS CLI.
+CloudEmu is a fast, production-like local cloud emulator. It allows you to develop and test cloud applications locally by emulating APIs for AWS, Azure, and Google Cloud Platform (GCP).
 
 ## Quick Start
 
 ```bash
-# Start the emulator
-cargo run -p cloudemu
+# Start the unified multi-cloud server
+cargo run -p cloudemu-server
+```
 
-# Use with Terraform or AWS CLI
+The server will start listening on the following ports:
+- **AWS**: `http://localhost:4566` (e.g., S3, DynamoDB)
+- **Azure**: `http://localhost:4567` (e.g., Blob Storage)
+- **GCP**: `http://localhost:4568` (Connectivity Only)
+
+## Supported Clouds
+
+| Cloud Provider | Port | Status | Services Emulated |
+| :--- | :--- | :--- | :--- |
+| **AWS** | 4566 | ✅ Stable | S3, DynamoDB, SQS, SNS, Lambda, KMS, Secrets Manager, CloudWatch, EventBridge, Cognito, Step Functions |
+| **Azure** | 4567 | 🔄 Beta | Blob Storage (Basic emulation) |
+| **GCP** | 4568 | 🚧 Alpha | Connectivity Only (Skeleton) |
+
+## Usage Examples
+
+### AWS CLI
+```bash
 export AWS_ENDPOINT_URL=http://localhost:4566
 aws s3 mb s3://my-bucket
+aws s3 ls
+```
+
+### Azure (Blob Storage)
+Use with standard Azure connection strings or direct HTTP calls.
+
+```bash
+# Check service health / List containers
+curl "http://localhost:4567/devstoreaccount1/?comp=list"
 ```
 
 ## Features
 
-- 🎯 **Production-Like Behavior** - Accurate AWS API responses
-- 🏗️ **Terraform Compatible** - Deploy infrastructure locally
-- 💾 **Persistent Storage** - SQLite metadata + filesystem blobs
-- 🔄 **S3 Versioning** - Full version control workflow
-- 🚀 **Fast Startup** - Ready in milliseconds
-
-## Supported Services
-
-| Service | Implementation Status |
-| :--- | :--- |
-| **S3** | ✅ Full versioning, policies, metadata |
-| **DynamoDB** | ✅ Basic CRUD operations |
-| **SQS** | ✅ Message queues with visibility timeouts |
-| **SNS** | ✅ Topics and subscriptions |
-| **Lambda** | ✅ Function management (mock invocations) |
-| **Secrets Manager** | ✅ Secret storage and versioning |
-| **KMS** | ✅ Key management and encryption |
-| **EventBridge** | ✅ Event buses and rules |
-| **CloudWatch** | ✅ Metrics and log streams |
-| **Cognito** | ✅ User pools and authentication |
-| **Step Functions** | ✅ State machine tracking |
+- 🎯 **Multi-Cloud Support** - Orchestrates emulators for AWS, Azure, and GCP in a single process.
+- 🏗️ **Terraform Compatible** - Deploy infrastructure locally using standard providers.
+- 💾 **Persistent Storage** - Metadata and data persisted locally (default: `.cloudemu` directory).
+- 🚀 **Fast Startup** - Async Rust implementation for millisecond startup times.
 
 ## Documentation
 
 For comprehensive documentation, see the **[Documentation Hub](./doc/overview.md)**.
 
 ### Quick Links
-- [Getting Started](./doc/overview.md#quick-start)
 - [Architecture](./doc/3-design/architecture.md)
-- [Backlog](./doc/4-development/backlog.md)
+- [Implementation Status](./doc/3-design/implementation-status.md)
+- [Testing Strategy](./doc/5-testing/testing-strategy.md)
 
 ## Contributing
 
