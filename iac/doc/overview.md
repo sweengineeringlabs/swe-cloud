@@ -31,8 +31,15 @@ The following services are implemented as unified facades:
 - **[Lambda/Serverless](facade/lambda/doc/overview.md)**: AWS Lambda.
 - **[Messaging](facade/messaging/doc/overview.md)**: SQS, SNS.
 
+## Local Development & Testing
+
+- **[CloudEmu Integration](4-development/cloudemu-integration.md)**: Local cloud emulation for fast, cost-free testing.
+- **[Local Testing Example](../examples/local-cloudemu/)**: Complete example using CloudEmu for development.
+- **[Integration Tests](../test/integration/cloudemu_test.go)**: Automated Terratest suite.
+
 ## Project Planning
 
+- **[Integration Plan](2-planning/iac-cloudemu-integration-plan.md)**: IAC-CloudEmu integration roadmap.
 - **[Backlog](4-development/backlog.md)**: Current task list and roadmap.
 - **[Framework Backlog](docs/framework-backlog.md)**: Cross-cutting architectural improvements.
 

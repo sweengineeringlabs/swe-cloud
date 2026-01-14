@@ -48,12 +48,57 @@ Static analysis ensures that the code structure, syntax, and internal references
 2.  **Initialization**: It runs `terraform init -backend=false` for each module via Terratest.
 3.  **Validation**: It executes `terraform validate` to check for syntax errors.
 
-**Usage:**
 ```bash
 go test -v ./validation_test.go
 ```
 
+### Local Testing with CloudEmu
+
+**Purpose**: Enable fast, cost-free infrastructure testing locally without cloud API costs.
+
+**CloudEmu** is a local cloud emulator that provides AWS-compatible endpoints for rapid development:
+
+**How it works:**
+1. **Start CloudEmu Server**: Run `cloudemu-server` to provide local AWS endpoints on port 4566
+2. **Configure Terraform**: Point AWS provider to `http://localhost:4566`
+3. **Deploy Locally**: Run `terraform apply` against CloudEmu instead of real AWS
+4. **Run Tests**: Execute Terratest suite against local resources
+
+**Supported Services**:
+- ✅ S3 (Storage facade)
+- ✅ DynamoDB (Database facade)
+- ✅ SQS/SNS (Messaging facade)
+- ✅ Lambda (Lambda facade)
+- ✅ KMS, Secrets Manager
+
+**Usage:**
+```bash
+# Terminal 1: Start CloudEmu
+cd ../cloudemu
+cargo run --release -p cloudemu-server
+
+# Terminal 2: Deploy to CloudEmu
+cd iac/examples/local-cloudemu
+terraform init
+terraform apply -auto-approve
+
+# Terminal 3: Run integration tests
+cd iac/test/integration
+go test -v -timeout 10m ./...
+```
+
+**Benefits**:
+- **Speed**: 10-15 second deployments vs 5-10 minutes on AWS
+- **Cost**: $0 (unlimited testing)
+- **Offline**: Works without internet connectivity
+- **Deterministic**: Consistent local environment
+
+**Documentation**: See [CloudEmu Integration Guide](../4-development/cloudemu-integration.md)
+
+**Test Suite**: See `test/integration/cloudemu_test.go` for comprehensive integration tests
+
 ## CI/CD Pipeline Integration
+
 
 Detailed below is the recommended pipeline workflow:
 

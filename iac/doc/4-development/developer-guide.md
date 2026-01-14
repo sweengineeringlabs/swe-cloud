@@ -68,6 +68,42 @@ Create a `[service]_test.go` file in the facade directory. At minimum, it must a
 - **Tags**: Always include the `common_tags` local variable in resource definitions.
 - **Validation**: Every public variable MUST have a `validation` block with a clear `error_message`.
 
+### 4. Local Testing Workflow
+
+**Before deploying to cloud**:
+
+1. **Start CloudEmu**:
+   ```bash
+   cd ../cloudemu
+   cargo run --release -p cloudemu-server
+   ```
+
+2. **Test Your Module Locally**:
+   ```bash
+   cd iac/examples/local-cloudemu
+   # Modify main.tf to use your new module
+   terraform init
+   terraform apply -auto-approve
+   ```
+
+3. **Run Integration Tests**:
+   ```bash
+   cd test/integration
+   go test -v -timeout 10m ./...
+   ```
+
+4. **Verify Resources**:
+   ```bash
+   ../scripts/verify-cloudemu.sh
+   ```
+
+**Benefits**:
+- **Fast iteration**: <1 minute cycles vs 5-10 minutes
+- **Zero cost**: Unlimited testing without AWS charges
+- **Offline development**: No internet required
+
+**See**: [CloudEmu Integration Guide](cloudemu-integration.md) for complete documentation
+
 ---
 
 ## Summary
@@ -78,10 +114,12 @@ Contributing to the IAC framework requires a strict adherence to the SEA archite
 1. Check the [Architecture Hub](../3-design/architecture.md) before starting.
 2. Maintain 100% test coverage for the planning phase.
 3. Don't skip the `iac_api` contract definition.
+4. **Test locally with CloudEmu before pushing to cloud**.
 
 **Related Documentation**:
 - [Architecture Hub](../3-design/architecture.md)
 - [Testing Strategy](../5-testing/testing-strategy.md)
+- [CloudEmu Integration](cloudemu-integration.md)
 - [Contributing Guidelines](../../CONTRIBUTING.md)
 
 **Last Updated**: 2026-01-14  
