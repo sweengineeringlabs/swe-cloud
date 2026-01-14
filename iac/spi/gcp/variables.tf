@@ -1,0 +1,8 @@
+variable "project_id" { type = string }
+variable "region" { type = string; default = "us-central1" }
+variable "zone" { type = string; default = "us-central1-a" }
+
+variable "stack_name" {
+  description = "Name of the stack"
+  type        = string
+}

@@ -81,7 +81,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | **web-app** | ✅ | P0 | - | Updated to new structure |
 | **data-pipeline** | ✅ | P2 | - | Complete multi-cloud example |
 | **multi-region** | ❌ | P3 | 2 hours | Multi-region deployment example |
-| **multi-cloud** | ❌ | P3 | 3 hours | AWS + Azure + GCP in one setup |
+| **multi-cloud** | ✅ | P3 | - | AWS + Azure + GCP in one setup complete |
 
 ### Documentation
 
@@ -90,7 +90,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | PROGRESS.md | ✅ | P0 | - | Complete |
 | package-strategy.md ADR | ✅ | P0 | - | Complete and up-to-date |
 | Module README per resource | 🟡 | P1 | 3 hours | Basic structure in place |
-| Migration guide | ❌ | P2 | 2 hours | How to migrate from old structure |
+| Migration guide | ✅ | P2 | - | Complete |
 | Testing guide | ❌ | P2 | 2 hours | Terratest setup guide |
 | Contributing guide | ❌ | P3 | 1 hour | How to add new providers/modules |
 
@@ -117,8 +117,8 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | Provider | Status | Priority | Estimated Effort | Notes |
 |----------|--------|----------|------------------|-------|
 | AWS SPI | ✅ | P0 | - | Complete |
-| Azure SPI | ❌ | P1 | 2 hours | Azure backend needed |
-| GCP SPI | ❌ | P1 | 2 hours | GCS backend needed |
+| Azure SPI | ✅ | P1 | - | Azure backend & provider config complete |
+| GCP SPI | ✅ | P1 | - | GCS backend & provider config complete |
 | Oracle SPI | ❌ | P3 | 2 hours | OCI backend needed |
 
 ---
