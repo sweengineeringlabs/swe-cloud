@@ -33,7 +33,7 @@ locals {
 # Route to AWS S3
 module "aws_bucket" {
   count  = var.provider == "aws" ? 1 : 0
-  source = "../../providers/aws/storage"
+  source = "../aws/storage"
 
   bucket_name          = var.bucket_name
   storage_class        = local.provider_storage_class
@@ -60,7 +60,7 @@ module "aws_bucket" {
 # Route to Azure Blob Storage
 module "azure_bucket" {
   count  = var.provider == "azure" ? 1 : 0
-  source = "../../providers/azure/storage"
+  source = "../azure/storage"
 
   storage_account_name = var.bucket_name
   resource_group_name  = var.provider_config.resource_group_name
@@ -81,7 +81,7 @@ module "azure_bucket" {
 # Route to GCP Cloud Storage
 module "gcp_bucket" {
   count  = var.provider == "gcp" ? 1 : 0
-  source = "../../providers/gcp/storage"
+  source = "../gcp/storage"
 
   bucket_name  = var.bucket_name
   project_id   = var.provider_config.project_id

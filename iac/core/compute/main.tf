@@ -39,7 +39,7 @@ locals {
 # Route to AWS provider
 module "aws_instance" {
   count  = var.provider == "aws" ? 1 : 0
-  source = "../../providers/aws/compute"
+  source = "../aws/compute"
 
   instance_name        = var.instance_name
   instance_type        = local.instance_type
@@ -59,7 +59,7 @@ module "aws_instance" {
 # Route to Azure provider
 module "azure_instance" {
   count  = var.provider == "azure" ? 1 : 0
-  source = "../../providers/azure/compute"
+  source = "../azure/compute"
 
   instance_name       = var.instance_name
   vm_size             = local.instance_type
@@ -81,7 +81,7 @@ module "azure_instance" {
 # Route to GCP provider
 module "gcp_instance" {
   count  = var.provider == "gcp" ? 1 : 0
-  source = "../../providers/gcp/compute"
+  source = "../gcp/compute"
 
   instance_name  = var.instance_name
   machine_type   = local.instance_type
