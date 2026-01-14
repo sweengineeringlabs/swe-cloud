@@ -178,7 +178,7 @@ mod tests {
                 let count = call_count_clone.fetch_add(1, Ordering::SeqCst);
                 async move {
                     if count < 2 {
-                        Err(CloudError::Network(crate::common::NetworkError::Connection("test".to_string())))
+                        Err(CloudError::Network(cloudkit_spi::NetworkError::Connection("test".to_string())))
                     } else {
                         Ok::<_, CloudError>(42)
                     }
