@@ -11,7 +11,7 @@ members = [
     "cloudkit/crates/cloudkit_core/aws",
     "cloudkit/crates/cloudkit_core/azure",
     "cloudkit/crates/cloudkit_core/gcp",
-    "cloudkit/crates/cloudkit_core/oracle",
+    "cloudkit/crates/cloudkit_core/oracle", "cloudemu/crates/cloudemu-server",
 ]
 
 
