@@ -31,6 +31,13 @@ We utilize a single, dynamic PowerShell script located at `iac/scripts/validate_
 ./iac/scripts/validate_all.ps1
 ```
 
+### Go Integration
+Static validation is also integrated into the Terratest suite via `iac/validation_test.go`. This allows running validation alongside unit tests:
+
+```bash
+go test -v iac/validation_test.go
+```
+
 ## 2. Unit Testing (Planning)
 
 Unit testing utilizes **Terratest** (Go) to run `terraform plan` against our modules, asserting that the logic produces the expected resource changes without applying them.

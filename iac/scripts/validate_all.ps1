@@ -2,7 +2,10 @@
 # Usage: ./validate_all.ps1
 
 $root = Get-Location
-$modules = Get-ChildItem -Path "iac" -Recurse -Filter "main.tf" | Select-Object -ExpandProperty DirectoryName | Get-Unique
+$searchPath = if (Test-Path "iac") { "iac" } else { "." }
+$modules = Get-ChildItem -Path $searchPath -Recurse -Filter "main.tf" | 
+Where-Object { $_.DirectoryName -notmatch "\\.terraform" } |
+Select-Object -ExpandProperty DirectoryName | Get-Unique
 
 $failed = @()
 $passed = 0
@@ -26,7 +29,8 @@ foreach ($module in $modules) {
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  -> Valid" -ForegroundColor Green
         $passed++
-    } else {
+    }
+    else {
         Write-Host "  -> Invalid" -ForegroundColor Red
         $failed += $module
     }
@@ -42,6 +46,7 @@ if ($failed.Count -gt 0) {
     Write-Host "`nFailed Modules:" -ForegroundColor Red
     $failed | ForEach-Object { Write-Host "- $_" }
     exit 1
-} else {
+}
+else {
     exit 0
 }
