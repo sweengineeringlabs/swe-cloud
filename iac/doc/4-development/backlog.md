@@ -29,8 +29,8 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | **database/** | ✅ | P1 | - | RDS instance module complete |
 | **networking/** | ✅ | P1 | - | VPC module complete |
 | **iam/** | ✅ | P2 | - | IAM module complete |
-| **messaging/** | ❌ | P2 | 2 hours | SQS, SNS modules |
-| **lambda/** | ❌ | P3 | 2 hours | Lambda function module |
+| **messaging/** | ✅ | P2 | - | SQS, SNS modules complete |
+| **lambda/** | ✅ | P3 | - | Lambda function module complete |
 | **monitoring/** | ❌ | P3 | 2 hours | CloudWatch, alarms |
 
 ### Azure Core Modules (`iac_core/azure/src/`)
