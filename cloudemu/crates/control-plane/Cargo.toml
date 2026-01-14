@@ -21,7 +21,10 @@ stepfunctions = []
 full = ["s3", "dynamodb", "sqs", "sns", "lambda", "secretsmanager", "eventbridge", "kms", "cloudwatch", "cognito", "stepfunctions"]
 
 [dependencies]
+cloudemu-core = { path = "../cloudemu-core" }
 data-plane = { workspace = true }
+
+async-trait = { workspace = true }
 
 tokio = { workspace = true }
 serde = { workspace = true }
