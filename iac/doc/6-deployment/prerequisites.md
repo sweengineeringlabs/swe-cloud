@@ -11,7 +11,6 @@ The framework requires the following base tools installed on your local machine 
 | **Terraform** | `1.0.0+` | Infrastructure Provisioning |
 | **Go** | `1.19+` | Running Terratests |
 | **Git** | `2.0+` | Version Control |
-| **PowerShell** | `7.0+` | Validation Scripts (`validate_all.ps1`) |
 
 ## 2. Cloud Provider CLI Tools
 

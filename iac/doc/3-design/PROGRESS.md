@@ -19,7 +19,7 @@
 | **Normalized Sizes** | 4 (small, medium, large, xlarge) |
 | **Storage Classes** | 4 (standard, infrequent, archive, cold) |
 | **Layers Implemented** | 5 (Common, SPI, API, Core, Facade) |
-| **Testing Coverage** | 100% Service Path (Terratest Plan) |
+| **Testing Coverage** | 100% Service Path (Go Terratest) |
 
 ---
 

@@ -69,9 +69,9 @@ output "ip" {
 We ensure production quality through two automated layers:
 
 ### 1. Static Validation
-Scans all modules for syntax and reference errors.
-```powershell
-./scripts/validate_all.ps1
+Scans all modules for syntax and reference errors using Go.
+```bash
+go test -v ./validation_test.go
 ```
 
 ### 2. Unit Testing (Terratest)

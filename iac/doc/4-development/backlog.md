@@ -129,7 +129,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 
 | Test Type | Status | Priority | Estimated Effort | Notes |
 |-----------|--------|----------|------------------|-------|
-| Validation tests | ✅ | P1 | - | `validate_all.ps1` script created |
+| Validation tests | ✅ | P1 | - | Integrated into Go Terratest suite (`validation_test.go`) |
 | Unit tests (Terratest) | ✅ | P2 | - | Terratests implemented for all facades (Compute, Storage, DB, Net, IAM, etc.) |
 | Integration tests | ✅ | P2 | - | Multi-cloud example satisfies integration flow |
 

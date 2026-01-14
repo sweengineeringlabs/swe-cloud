@@ -67,13 +67,13 @@ terraform apply
 
 ## 4. Post-Deployment Validation
 
-After deployment, you can verify your infrastructure using the included validation script:
+After deployment, you can verify your infrastructure using the included Go validation test:
 
-```powershell
-./scripts/validate_all.ps1
+```bash
+go test -v ./validation_test.go
 ```
 
-Or run the Terratest suite for the specific service:
+Or run the Terratest suite for a specific service:
 
 ```bash
 go test -v ./facade/storage/...
