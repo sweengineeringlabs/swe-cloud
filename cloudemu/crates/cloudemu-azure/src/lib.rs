@@ -15,6 +15,7 @@
 
 mod provider;
 mod storage;
+pub mod services;
 
 pub use provider::AzureProvider;
 pub use storage::AzureStorageEngine;
