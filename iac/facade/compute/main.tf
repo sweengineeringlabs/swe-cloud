@@ -9,15 +9,6 @@ terraform {
 # IMPORT COMMON LAYER
 # ============================================================================
 
-# Import common definitions
-data "terraform_remote_state" "common" {
-  backend = "local"
-  
-  config = {
-    path = "../../common/terraform.tfstate"
-  }
-}
-
 locals {
   # Import size mappings
   compute_instance_types = {

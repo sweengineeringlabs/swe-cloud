@@ -71,3 +71,26 @@ func TestStorageFacadeAzure(t *testing.T) {
 	// Validate Azure switching logic
 	assert.True(t, strings.Contains(planString, "module.azure_storage[0].azurerm_storage_account.this"), "Plan should create an Azure Storage Account")
 }
+
+// TestStorageFacadeGcp verifies GCP storage provider
+func TestStorageFacadeGcp(t *testing.T) {
+	t.Parallel()
+
+	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
+		TerraformDir: ".",
+		Vars: map[string]interface{}{
+			"provider":      "gcp",
+			"project_name":  "testproject",
+			"environment":   "test",
+			"bucket_name":   "unit-test-bucket",
+			"provider_config": map[string]interface{}{
+				"project_id": "test-project",
+				"location":   "US",
+			},
+		},
+	})
+
+	planString := terraform.InitAndPlan(t, terraformOptions)
+
+	assert.True(t, strings.Contains(planString, "module.gcp_storage[0].google_storage_bucket.this"), "Plan should create a GCP Storage Bucket")
+}

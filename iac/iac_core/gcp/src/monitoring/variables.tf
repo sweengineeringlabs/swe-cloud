@@ -8,6 +8,7 @@ variable "duration" { type = string; default = "60s" }
 variable "comparison" { type = string; default = "COMPARISON_GT" }
 variable "alignment_period" { type = string; default = "60s" }
 variable "per_series_aligner" { type = string; default = "ALIGN_MEAN" }
+variable "threshold_value" { type = number; default = 0.8 }
 
 variable "notification_channels" { type = list(string); default = [] }
 

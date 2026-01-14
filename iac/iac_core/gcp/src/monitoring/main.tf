@@ -24,6 +24,7 @@ resource "google_monitoring_alert_policy" "this" {
       filter     = var.filter
       duration   = var.duration
       comparison = var.comparison
+      threshold_value = var.threshold_value
       
       aggregations {
         alignment_period   = var.alignment_period

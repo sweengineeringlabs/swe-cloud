@@ -33,61 +33,41 @@ iac/
 │   ├── variables.tf          # Shared variable definitions
 │   ├── locals.tf             # Size mappings, conventions
 │   ├── tags.tf               # Tagging standards
-│   └── validation.tf         # Input validation rules
+│   └── README.md             # Layer documentation
 │
-├── spi/                      # Layer 2: SPI (Service Provider Interface)
+├── iac_spi/                   # Layer 2: SPI (Service Provider Interface)
 │   ├── aws/
 │   │   ├── provider.tf       # AWS provider configuration
 │   │   ├── backend.tf        # State backend
-│   │   └── versions.tf       # Required providers
+│   │   └── variables.tf      # AWS-specific variables
 │   ├── azure/
-│   ├── gcp/
-│   └── oracle/
+│   └── gcp/
 │
-├── api/                      # Layer 3: API (Resource Contracts)
+├── iac_api/                   # Layer 3: API (Resource Contracts)
 │   ├── compute/
-│   │   ├── interface.tf      # Output schema
+│   │   ├── outputs.tf        # Output schema
 │   │   └── variables.tf      # Input schema
 │   ├── storage/
 │   ├── database/
 │   ├── networking/
 │   └── iam/
 │
-├── core/                     # Layer 4: CORE (Orchestration)
-│   ├── compute/
-│   │   ├── main.tf           # Resource composition
-│   │   ├── lifecycle.tf      # Lifecycle rules
-│   │   └── dependencies.tf   # Inter-resource deps
-│   ├── storage/
-│   ├── database/
-│   ├── networking/
-│   └── iam/
+├── iac_core/                  # Layer 4: CORE (Orchestration)
+│   ├── aws/src/              # AWS internal implementations
+│   ├── azure/src/            # Azure internal implementations
+│   └── gcp/src/              # GCP internal implementations
 │
 ├── facade/                   # Layer 5: FACADE (Public Interface)
 │   ├── compute/
-│   │   ├── main.tf           # Provider routing
-│   │   ├── variables.tf      # Normalized inputs
-│   │   └── outputs.tf        # Unified outputs
 │   ├── storage/
 │   ├── database/
 │   ├── networking/
 │   └── iam/
-│
-├── providers/                # Provider Implementations
-│   ├── aws/
-│   │   ├── compute/          # AWS EC2
-│   │   ├── storage/          # AWS S3
-│   │   ├── database/         # AWS RDS
-│   │   ├── networking/       # AWS VPC
-│   │   └── iam/              # AWS IAM
-│   ├── azure/
-│   ├── gcp/
-│   └── oracle/
 │
 └── examples/                 # Usage examples
     ├── web-app/
     ├── data-pipeline/
-    └── microservices/
+    └── multi-cloud/
 ```
 
 ## Layer Details
