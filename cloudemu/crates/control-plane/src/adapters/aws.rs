@@ -4,26 +4,74 @@ use cloudemu_core::{
     CloudProvider, CloudProviderTrait, CloudResource, CloudResult, Request, Response,
     ResourceFilter, ServiceType, StorageEngine,
 };
+use axum::{
+    body::Body,
+    http::{Method, Request as HttpRequest},
+};
+use std::str::FromStr;
 use std::sync::Arc;
+use tower::ServiceExt; // for oneshot
+use http_body_util::BodyExt; // for collecting body
 
 /// AWS cloud provider implementation.
+#[derive(Clone)]
 pub struct AwsProvider {
-    _emulator: Arc<crate::Emulator>,
+    router: axum::Router,
 }
 
 impl AwsProvider {
     /// Create a new AWS provider with the given emulator.
     pub fn new(emulator: Arc<crate::Emulator>) -> Self {
-        Self { _emulator: emulator }
+        let router = crate::gateway::create_router(emulator);
+        Self { router }
     }
 }
 
 #[async_trait::async_trait]
 impl CloudProviderTrait for AwsProvider {
-    async fn handle_request(&self, _req: Request) -> CloudResult<Response> {
-        // For now, return a simple response
-        // This will be integrated with existing AWS handlers in the next step
-        Ok(Response::ok("AWS provider response"))
+    async fn handle_request(&self, req: Request) -> CloudResult<Response> {
+        // Convert cloudemu_core::Request to http::Request
+        let method = Method::from_str(&req.method)
+            .map_err(|e| cloudemu_core::CloudError::Validation(format!("Invalid method: {}", e)))?;
+
+        let mut builder = HttpRequest::builder()
+            .method(method)
+            .uri(&req.path);
+
+        for (k, v) in req.headers {
+            builder = builder.header(k, v);
+        }
+
+        let http_req = builder
+            .body(Body::from(req.body))
+            .map_err(|e| cloudemu_core::CloudError::Validation(format!("Invalid request: {}", e)))?;
+
+        // Dispatch to Axum router
+        // We clone the router because oneshot consumes the service, but Router is cheap to clone
+        let response = self.router.clone()
+            .oneshot(http_req)
+            .await
+            .map_err(|e| cloudemu_core::CloudError::Internal(format!("Router error: {}", e)))?;
+
+        // Convert http::Response to cloudemu_core::Response
+        let status = response.status().as_u16();
+        
+        let mut headers = std::collections::HashMap::new();
+        for (k, v) in response.headers() {
+            if let Ok(val) = v.to_str() {
+                headers.insert(k.to_string(), val.to_string());
+            }
+        }
+
+        let body_bytes = response.into_body().collect().await
+            .map_err(|e| cloudemu_core::CloudError::Internal(format!("Body error: {}", e)))?
+            .to_bytes();
+
+        Ok(Response {
+            status,
+            headers,
+            body: body_bytes.to_vec(),
+        })
     }
 
     fn supported_services(&self) -> Vec<ServiceType> {
@@ -119,12 +167,15 @@ mod tests {
 
         let req = Request {
             method: "GET".to_string(),
-            path: "/".to_string(),
+            path: "/health".to_string(), // Use health check which is registered in router
             headers: std::collections::HashMap::new(),
             body: vec![],
         };
 
         let response = provider.handle_request(req).await.unwrap();
         assert_eq!(response.status, 200);
+        
+        let body = String::from_utf8(response.body).unwrap();
+        assert!(body.contains("running"));
     }
 }
