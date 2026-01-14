@@ -114,11 +114,12 @@ test result: ok. 2 passed; 0 failed; 0 ignored
 - ✅ Created `cloudemu-azure` crate
 - ✅ Implemented `AzureProvider` stub
 - ✅ Implemented `AzureStorageEngine` stub
+- ✅ Implemented `BlobService` (Basic Emulation)
 - ✅ Added to workspace
-- ✅ Tests passing (2/2)
+- ✅ Tests passing (4/4)
 
 ### Next Steps
-- [ ] Implement Blob Storage handlers
+- [ ] Implement Blob persistence (connect to StorageEngine)
 - [ ] Implement Cosmos DB handlers
 - [ ] Implement Service Bus handlers
 

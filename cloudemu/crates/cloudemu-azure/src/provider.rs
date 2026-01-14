@@ -4,7 +4,7 @@ use crate::services::blob::BlobService;
 use cloudemu_core::{
     CloudProvider, CloudProviderTrait, CloudResult, Request, Response, ServiceType,
 };
-use std::sync::Arc;
+
 
 /// Azure cloud provider.
 pub struct AzureProvider {
