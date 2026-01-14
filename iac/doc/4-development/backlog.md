@@ -41,7 +41,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | **storage/** | ✅ | P1 | - | Blob storage module complete |
 | **database/** | ✅ | P2 | - | SQL Database module complete |
 | **networking/** | ✅ | P2 | - | VNet module complete |
-| **iam/** | ❌ | P3 | 2 hours | Managed identities, RBAC |
+| **iam/** | ✅ | P3 | - | Managed identities, RBAC complete |
 
 ### GCP Core Modules (`iac_core/gcp/src/`)
 
@@ -51,7 +51,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | **storage/** | ✅ | P1 | - | Cloud Storage module complete |
 | **database/** | ✅ | P2 | - | Cloud SQL module complete |
 | **networking/** | ✅ | P2 | - | VPC module complete |
-| **iam/** | ❌ | P3 | 2 hours | Service accounts, IAM bindings |
+| **iam/** | ✅ | P3 | - | Service accounts, IAM bindings complete |
 
 ---
 
@@ -104,7 +104,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | Storage API | ✅ | P0 | - | Complete |
 | Database API | ✅ | P1 | - | Complete |
 | Networking API | ✅ | P1 | - | Complete |
-| IAM API | 🟡 | P2 | 1 hour | Implementation driven, contract pending |
+| IAM API | ✅ | P2 | - | Complete |
 
 ---
 
