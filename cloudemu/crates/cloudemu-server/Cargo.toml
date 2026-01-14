@@ -24,3 +24,4 @@ http-body-util = "0.1"
 
 [dev-dependencies]
 reqwest = { workspace = true }
+async-trait = { workspace = true }
