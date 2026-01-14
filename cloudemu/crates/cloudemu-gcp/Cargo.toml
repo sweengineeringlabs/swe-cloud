@@ -1,0 +1,17 @@
+[package]
+name = "cloudemu-gcp"
+version = "0.2.0"
+edition = "2021"
+license = "MIT"
+description = "GCP provider for CloudEmu multi-cloud emulator"
+
+[dependencies]
+cloudemu-core = { path = "../cloudemu-core" }
+async-trait = "0.1"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+
+[dev-dependencies]
+tokio-test = "0.4"

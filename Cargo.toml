@@ -2,6 +2,8 @@
 resolver = "2"
 members = [
     "cloudemu/crates/cloudemu-core",
+    "cloudemu/crates/cloudemu-azure",
+    "cloudemu/crates/cloudemu-gcp",
     "cloudemu/crates/control-plane",
     "cloudemu/crates/data-plane",
     "cloudkit/crates/cloudkit_*",
