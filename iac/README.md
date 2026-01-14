@@ -34,6 +34,7 @@ The IAC is divided into five specialized layers, mirroring the CloudKit SDK:
 ## Key Documentation
 
 - **[Architecture Guide](./doc/3-design/ARCHITECTURE.md)**: Deep dive into SEA layers.
+- **[Toolchain & Logic](./doc/3-design/toolchain.md)**: Go and Terratest implementation details.
 - **[CloudKit Comparison](./doc/3-design/CLOUDKIT_IAC_COMPARISON.md)**: How we mirror the Rust SDK.
 - **[Testing Strategy](./doc/5-testing/testing-strategy.md)**: Details on Validation and Unit Testing.
 - **[Migration Guide](./doc/2-migration/migration-guide.md)**: Path from legacy to SEA structure.
