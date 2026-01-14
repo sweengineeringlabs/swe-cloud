@@ -1,5 +1,6 @@
 # Multi-Cloud Web Application Example
 # Demonstrates IAC SEA architecture with real deployments
+# Updated: 2026-01-14 - Now uses iac_core/{provider}/src/ structure
 
 terraform {
   required_version = ">= 1.0"
