@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "cloudemu/crates/cloudemu-core",
     "cloudemu/crates/control-plane",
     "cloudemu/crates/data-plane",
     "cloudkit/crates/cloudkit_*",
@@ -9,8 +10,6 @@ members = [
     "cloudkit/crates/cloudkit_core/azure",
     "cloudkit/crates/cloudkit_core/gcp",
     "cloudkit/crates/cloudkit_core/oracle",
-    "frontend",
-    "apps/*",
 ]
 
 
