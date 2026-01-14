@@ -67,7 +67,7 @@ struct CryptoKey {
 #[derive(Deserialize)]
 struct KeyVersionResponse {
     name: String,
-    state: String,
+    _state: String,
 }
 
 #[derive(Serialize)]
@@ -389,7 +389,7 @@ impl KeyManagement for GcpKms {
         &self,
         key_id: &str,
         message: &[u8],
-        algorithm: SigningAlgorithm,
+        _algorithm: SigningAlgorithm,
     ) -> CloudResult<Vec<u8>> {
         let token = self.token().await?;
         // 1. Get Key to find primary version and purpose
@@ -408,9 +408,9 @@ impl KeyManagement for GcpKms {
 
         let sig_bytes = if purpose == "ASYMMETRIC_SIGN" {
              let url = format!("https://cloudkms.googleapis.com/v1/{}:asymmetricSign", version_name);
-             let req_body = match algorithm {
+             let req_body = {
                  // Expanded match validation could go here
-                 _ => {
+                 
                      // Assume digest if possible, else raw?
                      // CloudKit 'message' is raw data usually.
                      // But for signing, we often hash first.
@@ -422,7 +422,7 @@ impl KeyManagement for GcpKms {
                          digest: Some(Digest { sha256: Some(BASE64_STANDARD.encode(message)), sha384: None, sha512: None }),
                          data: None
                      }
-                 }
+                 
              };
              let resp = self.client.post(&url).bearer_auth(&token).json(&req_body).send().await
                  .map_err(|e| CloudError::Provider { provider: "gcp".into(), code: "ReqwestError".into(), message: e.to_string() })?;
@@ -506,6 +506,7 @@ impl KeyManagement for GcpKms {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cloudkit_api::KeySpec;
     use cloudkit_spi::ProviderType;
 
     #[tokio::test]

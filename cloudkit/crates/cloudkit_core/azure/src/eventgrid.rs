@@ -181,7 +181,7 @@ impl EventBus for AzureEventGrid {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cloudkit_api::{Event, EventRule, EventTarget};
+    use cloudkit_api::{Event, EventRule};
     use cloudkit_spi::ProviderType;
     use serde_json::json;
 

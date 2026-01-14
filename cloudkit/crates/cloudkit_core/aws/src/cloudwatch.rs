@@ -51,7 +51,7 @@ impl MetricsService for CloudWatchMetrics {
         query: MetricQuery,
     ) -> CloudResult<MetricResult> {
         let start_time = query.start_time.unwrap_or_else(|| Utc::now() - chrono::Duration::hours(1));
-        let end_time = query.end_time.unwrap_or_else(|| Utc::now());
+        let end_time = query.end_time.unwrap_or_else(Utc::now);
 
         let mut dimensions = Vec::new();
         for (k, v) in query.dimensions {
@@ -93,7 +93,7 @@ impl MetricsService for CloudWatchMetrics {
             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
 
         let mut data_points = Vec::new();
-        if let Some(results) = resp.metric_data_results().get(0) {
+        if let Some(results) = resp.metric_data_results().first() {
             for (v, t) in results.values().iter().zip(results.timestamps().iter()) {
                 data_points.push(cloudkit_api::MetricDataPoint {
                     timestamp: chrono::DateTime::<chrono::Utc>::from_timestamp(t.secs(), 0).unwrap_or_default(),
@@ -167,7 +167,7 @@ impl MetricsService for CloudWatchMetrics {
             .await
             .map_err(|e| CloudError::ServiceError(e.to_string()))?;
             
-        if let Some(alarm) = resp.metric_alarms().get(0) {
+        if let Some(alarm) = resp.metric_alarms().first() {
             Ok(match alarm.state_value().unwrap() {
                 aws_sdk_cloudwatch::types::StateValue::Ok => AlarmState::Ok,
                 aws_sdk_cloudwatch::types::StateValue::Alarm => AlarmState::Alarm,
@@ -396,7 +396,7 @@ impl AwsMonitoring {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cloudkit_spi::api::{
+    use cloudkit_api::{
         AlarmConfig, ComparisonOperator, LogEvent, MetricDatum, MetricQuery, MetricStatistic,
         MetricUnit,
     };

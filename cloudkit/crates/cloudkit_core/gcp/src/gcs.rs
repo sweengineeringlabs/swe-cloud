@@ -353,7 +353,7 @@ mod tests {
     use cloudkit_spi::ProviderType;
 
     // Helper to generic test client if credentials exist
-    async fn create_client(context: Arc<CloudContext>) -> Option<Client> {
+    async fn create_client(_context: Arc<CloudContext>) -> Option<Client> {
         use google_cloud_storage::client::ClientConfig;
         match ClientConfig::default().with_auth().await {
             Ok(config) => Some(Client::new(config)),

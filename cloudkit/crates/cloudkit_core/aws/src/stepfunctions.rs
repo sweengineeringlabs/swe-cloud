@@ -182,12 +182,12 @@ impl WorkflowService for AwsWorkflow {
             execution_id: resp.execution_arn().to_string(),
             workflow_arn: resp.state_machine_arn().to_string(),
             name: Some(resp.name().unwrap_or_default().to_string()),
-            status: match resp.status() {
-                &aws_sdk_sfn::types::ExecutionStatus::Running => ExecutionStatus::Running,
-                &aws_sdk_sfn::types::ExecutionStatus::Succeeded => ExecutionStatus::Succeeded,
-                &aws_sdk_sfn::types::ExecutionStatus::Failed => ExecutionStatus::Failed,
-                &aws_sdk_sfn::types::ExecutionStatus::TimedOut => ExecutionStatus::TimedOut,
-                &aws_sdk_sfn::types::ExecutionStatus::Aborted => ExecutionStatus::Aborted,
+            status: match *resp.status() {
+                aws_sdk_sfn::types::ExecutionStatus::Running => ExecutionStatus::Running,
+                aws_sdk_sfn::types::ExecutionStatus::Succeeded => ExecutionStatus::Succeeded,
+                aws_sdk_sfn::types::ExecutionStatus::Failed => ExecutionStatus::Failed,
+                aws_sdk_sfn::types::ExecutionStatus::TimedOut => ExecutionStatus::TimedOut,
+                aws_sdk_sfn::types::ExecutionStatus::Aborted => ExecutionStatus::Aborted,
                 _ => ExecutionStatus::Running,
             },
             input: resp.input().and_then(|i| serde_json::from_str(i).ok()),
@@ -228,12 +228,12 @@ impl WorkflowService for AwsWorkflow {
                 execution_id: e.execution_arn().to_string(),
                 workflow_arn: workflow_arn.to_string(),
                 name: Some(e.name().to_string()),
-                status: match e.status() {
-                    &aws_sdk_sfn::types::ExecutionStatus::Running => ExecutionStatus::Running,
-                    &aws_sdk_sfn::types::ExecutionStatus::Succeeded => ExecutionStatus::Succeeded,
-                    &aws_sdk_sfn::types::ExecutionStatus::Failed => ExecutionStatus::Failed,
-                    &aws_sdk_sfn::types::ExecutionStatus::TimedOut => ExecutionStatus::TimedOut,
-                    &aws_sdk_sfn::types::ExecutionStatus::Aborted => ExecutionStatus::Aborted,
+                status: match *e.status() {
+                    aws_sdk_sfn::types::ExecutionStatus::Running => ExecutionStatus::Running,
+                    aws_sdk_sfn::types::ExecutionStatus::Succeeded => ExecutionStatus::Succeeded,
+                    aws_sdk_sfn::types::ExecutionStatus::Failed => ExecutionStatus::Failed,
+                    aws_sdk_sfn::types::ExecutionStatus::TimedOut => ExecutionStatus::TimedOut,
+                    aws_sdk_sfn::types::ExecutionStatus::Aborted => ExecutionStatus::Aborted,
                     _ => ExecutionStatus::Running,
                 },
                 input: None,
@@ -309,7 +309,6 @@ impl WorkflowService for AwsWorkflow {
 mod tests {
     use super::*;
     use cloudkit_spi::ProviderType;
-    use serde_json::json;
 
     async fn create_test_context() -> Arc<CloudContext> {
         Arc::new(

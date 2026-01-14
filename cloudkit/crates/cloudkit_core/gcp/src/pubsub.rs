@@ -11,18 +11,18 @@ use std::time::Duration;
 
 /// Google Cloud Pub/Sub implementation.
 pub struct GcpPubSub {
-    context: Arc<CloudContext>,
+    _context: Arc<CloudContext>,
     client: Client,
-    project_id: String,
+    _project_id: String,
 }
 
 impl GcpPubSub {
     /// Create a new Pub/Sub client.
     pub fn new(context: Arc<CloudContext>, client: Client, project_id: String) -> Self {
         Self {
-            context,
+            _context: context,
             client,
-            project_id,
+            _project_id: project_id,
         }
     }
 }
@@ -205,7 +205,7 @@ mod tests {
         let client = google_cloud_pubsub::client::Client::new(config)
             .await
             .unwrap();
-        let queue = GcpPubSub::new(context, client, "test-project".to_string());
+        let _queue = GcpPubSub::new(context, client, "test-project".to_string());
 
         // Queue/Topic operations
         // assert!(queue.create_queue("topic").await.is_ok());

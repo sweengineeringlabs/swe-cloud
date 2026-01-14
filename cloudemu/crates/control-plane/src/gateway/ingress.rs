@@ -47,10 +47,10 @@ pub async fn start(config: Config) -> Result<()> {
     info!("Ready for connections");
     
     let listener = TcpListener::bind(&addr).await
-        .map_err(|e| data_plane::error::EmulatorError::Io(e))?;
+        .map_err(data_plane::error::EmulatorError::Io)?;
         
     axum::serve(listener, app).await
-         .map_err(|e| data_plane::error::EmulatorError::Io(e))?;
+         .map_err(data_plane::error::EmulatorError::Io)?;
     
     Ok(())
 }

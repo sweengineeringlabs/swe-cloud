@@ -5,20 +5,15 @@ use async_trait::async_trait;
 use serde::{de::DeserializeOwned, Serialize};
 
 /// Invocation type.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum InvocationType {
     /// Synchronous invocation (wait for response)
+    #[default]
     RequestResponse,
     /// Asynchronous invocation (fire and forget)
     Event,
     /// Dry run (validate only)
     DryRun,
-}
-
-impl Default for InvocationType {
-    fn default() -> Self {
-        Self::RequestResponse
-    }
 }
 
 /// Function invocation options.

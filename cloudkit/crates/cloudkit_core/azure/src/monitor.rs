@@ -201,9 +201,8 @@ impl LoggingService for AzureLogAnalytics {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cloudkit_api::{AlarmConfig, ComparisonOperator, MetricQuery, MetricStatistic};
+
     use cloudkit_spi::ProviderType;
-    use std::collections::HashMap;
 
     async fn create_test_context() -> Arc<CloudContext> {
         Arc::new(

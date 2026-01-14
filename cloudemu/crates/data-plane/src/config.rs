@@ -43,10 +43,10 @@ impl Config {
         if let Ok(host) = std::env::var("CLOUDEMU_HOST") {
             config.host = host;
         }
-        if let Ok(port) = std::env::var("CLOUDEMU_PORT") {
-            if let Ok(p) = port.parse() {
-                config.port = p;
-            }
+        if let Ok(port) = std::env::var("CLOUDEMU_PORT")
+            && let Ok(p) = port.parse()
+        {
+            config.port = p;
         }
         if let Ok(dir) = std::env::var("CLOUDEMU_DATA_DIR") {
             config.data_dir = PathBuf::from(dir);

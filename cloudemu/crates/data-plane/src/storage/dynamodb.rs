@@ -129,7 +129,7 @@ mod tests {
         engine.create_table("users", "{}", "{}", "000000000000", "us-east-1").unwrap();
         
         // Put multiple items
-        let items = vec![
+        let items = [
             json!({"userId": {"S": "user1"}, "name": {"S": "Alice"}}),
             json!({"userId": {"S": "user1"}, "name": {"S": "Alice Updated"}}),
             json!({"userId": {"S": "user2"}, "name": {"S": "Bob"}}),

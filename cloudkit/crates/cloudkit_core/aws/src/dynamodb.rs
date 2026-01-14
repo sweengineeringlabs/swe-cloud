@@ -65,6 +65,7 @@ impl DynamoDbStore {
         }
     }
 
+    #[allow(clippy::only_used_in_recursion)]
     fn build_condition_expression(&self, condition: Condition) -> (String, HashMap<String, aws_sdk_dynamodb::types::AttributeValue>) {
         let mut values = HashMap::new();
         let expr = match condition {

@@ -231,7 +231,7 @@ impl EventBus for GcpEventarc {
 
         let body: ListChannelsResponse = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
         let buses = body.channels.unwrap_or_default().into_iter()
-            .map(|c| c.name.split('/').last().unwrap_or("unknown").to_string())
+            .map(|c| c.name.split('/').next_back().unwrap_or("unknown").to_string())
             .collect();
         Ok(buses)
     }
@@ -295,7 +295,7 @@ impl EventBus for GcpEventarc {
         let body: ListTriggersResponse = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
         let rules = body.triggers.unwrap_or_default().into_iter().map(|t| {
             EventRule {
-                name: t.name.split('/').last().unwrap_or("unknown").to_string(),
+                name: t.name.split('/').next_back().unwrap_or("unknown").to_string(),
                 description: None,
                 event_pattern: None, // Hard to reconstruct exact pattern from filters
                 schedule_expression: None,
@@ -331,7 +331,7 @@ impl EventBus for GcpEventarc {
                 // Expecting 'projects/.../services/...' for Cloud Run or '.../workflows/...'
                 // Simplified: Assume Cloud Run
                 "cloudRun": {
-                    "service": target.arn.split('/').last().unwrap_or("unknown"),
+                    "service": target.arn.split('/').next_back().unwrap_or("unknown"),
                     "region": self.region
                 }
             }

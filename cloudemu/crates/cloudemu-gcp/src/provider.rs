@@ -61,7 +61,7 @@ mod tests {
         let provider = GcpProvider::new();
         assert_eq!(provider.provider_name(), "gcp");
         assert_eq!(provider.default_port(), 4568);
-        assert!(provider.supported_services().len() > 0);
+        assert!(!provider.supported_services().is_empty());
     }
 
     #[tokio::test]

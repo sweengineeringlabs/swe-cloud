@@ -3,6 +3,12 @@ use cloudemu_core::{Request, Response, CloudResult, CloudError};
 /// Azure Blob Storage Service Handler
 pub struct BlobService;
 
+impl Default for BlobService {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl BlobService {
     pub fn new() -> Self {
         Self

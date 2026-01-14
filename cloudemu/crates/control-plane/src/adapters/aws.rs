@@ -156,7 +156,7 @@ mod tests {
 
         assert_eq!(provider.provider_name(), "aws");
         assert_eq!(provider.default_port(), 4566);
-        assert!(provider.supported_services().len() > 0);
+        assert!(!provider.supported_services().is_empty());
     }
 
     #[tokio::test]

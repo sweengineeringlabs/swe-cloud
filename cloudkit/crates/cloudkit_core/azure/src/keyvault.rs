@@ -93,7 +93,7 @@ impl SecretsManager for AzureKeyVaultSecrets {
         let mut meta = SecretMetadata::new(name);
         // Extract version from ID URL: https://vault.vault.azure.net/secrets/name/version
         let id = &secret.id;
-        meta.version_id = id.split('/').last().map(|s| s.to_string());
+        meta.version_id = id.split('/').next_back().map(|s| s.to_string());
         Ok(meta)
     }
 

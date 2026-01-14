@@ -51,7 +51,7 @@ impl GcpMonitor {
     }
 
     fn logging_base_url(&self) -> String {
-        format!("https://logging.googleapis.com/v2")
+        "https://logging.googleapis.com/v2".to_string()
     }
 }
 

@@ -11,6 +11,12 @@ pub struct AzureProvider {
     blob_service: BlobService,
 }
 
+impl Default for AzureProvider {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AzureProvider {
     /// Create a new Azure provider.
     pub fn new() -> Self {
@@ -84,7 +90,7 @@ mod tests {
         let provider = AzureProvider::new();
         assert_eq!(provider.provider_name(), "azure");
         assert_eq!(provider.default_port(), 4567);
-        assert!(provider.supported_services().len() > 0);
+        assert!(!provider.supported_services().is_empty());
     }
 
     #[tokio::test]

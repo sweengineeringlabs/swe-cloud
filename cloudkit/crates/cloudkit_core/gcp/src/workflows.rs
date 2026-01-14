@@ -55,15 +55,10 @@ impl GcpWorkflows {
         )
     }
 
-    fn executions_base_url(&self) -> String {
-        format!(
-            "https://workflowexecutions.googleapis.com/v1/projects/{}/locations/{}",
-            self.project_id, self.region
-        )
-    }
+
 
     fn parse_workflow(&self, w: GcpWorkflow) -> WorkflowDefinition {
-        let name = w.name.split('/').last().unwrap_or("unknown").to_string();
+        let name = w.name.split('/').next_back().unwrap_or("unknown").to_string();
         WorkflowDefinition {
             name: name.clone(),
             arn: Some(w.name),
@@ -302,7 +297,7 @@ impl WorkflowService for GcpWorkflows {
          Ok(Execution {
             execution_id: exec.name.clone(),
             workflow_arn: resource_name,
-            name: Some(exec.name.split('/').last().unwrap_or_default().to_string()),
+            name: Some(exec.name.split('/').next_back().unwrap_or_default().to_string()),
             status: match exec.state.as_str() {
                 "ACTIVE" => ExecutionStatus::Running,
                 "SUCCEEDED" => ExecutionStatus::Succeeded,
@@ -313,7 +308,7 @@ impl WorkflowService for GcpWorkflows {
             input: Some(input),
             output: None, // Not available immediately on start usually
             error: None,
-            start_time: exec.start_time.and_then(|t| DateTime::parse_from_rfc3339(&t).ok().map(|dt| dt.with_timezone(&Utc))).unwrap_or_else(|| Utc::now()),
+            start_time: exec.start_time.and_then(|t| DateTime::parse_from_rfc3339(&t).ok().map(|dt| dt.with_timezone(&Utc))).unwrap_or_else(Utc::now),
             stop_time: None,
         })
     }
@@ -382,7 +377,7 @@ impl WorkflowService for GcpWorkflows {
         Ok(Execution {
             execution_id: exec.name.clone(),
             workflow_arn,
-            name: Some(exec.name.split('/').last().unwrap_or_default().to_string()),
+            name: Some(exec.name.split('/').next_back().unwrap_or_default().to_string()),
             status: match exec.state.as_str() {
                 "ACTIVE" => ExecutionStatus::Running,
                 "SUCCEEDED" => ExecutionStatus::Succeeded,
@@ -396,7 +391,7 @@ impl WorkflowService for GcpWorkflows {
                 error: "ExecutionFailed".to_string(),
                 cause: e.payload.unwrap_or_else(|| e.context.unwrap_or_default()),
             }),
-            start_time: exec.start_time.and_then(|t| DateTime::parse_from_rfc3339(&t).ok().map(|dt| dt.with_timezone(&Utc))).unwrap_or_else(|| Utc::now()),
+            start_time: exec.start_time.and_then(|t| DateTime::parse_from_rfc3339(&t).ok().map(|dt| dt.with_timezone(&Utc))).unwrap_or_else(Utc::now),
             stop_time: exec.end_time.and_then(|t| DateTime::parse_from_rfc3339(&t).ok().map(|dt| dt.with_timezone(&Utc))),
         })
     }
@@ -430,7 +425,7 @@ impl WorkflowService for GcpWorkflows {
              Execution {
                 execution_id: exec.name.clone(),
                workflow_arn: resource_name.clone(),
-                name: Some(exec.name.split('/').last().unwrap_or_default().to_string()),
+                name: Some(exec.name.split('/').next_back().unwrap_or_default().to_string()),
                 status: match exec.state.as_str() {
                     "ACTIVE" => ExecutionStatus::Running,
                     "SUCCEEDED" => ExecutionStatus::Succeeded,
@@ -441,7 +436,7 @@ impl WorkflowService for GcpWorkflows {
                 input: None, // List doesn't usually return full input/output to save bandwidth in some APIs, assuming similar here or parsing is expensive
                 output: None,
                 error: None,
-                start_time: exec.start_time.and_then(|t| DateTime::parse_from_rfc3339(&t).ok().map(|dt| dt.with_timezone(&Utc))).unwrap_or_else(|| Utc::now()),
+                start_time: exec.start_time.and_then(|t| DateTime::parse_from_rfc3339(&t).ok().map(|dt| dt.with_timezone(&Utc))).unwrap_or_else(Utc::now),
                 stop_time: exec.end_time.and_then(|t| DateTime::parse_from_rfc3339(&t).ok().map(|dt| dt.with_timezone(&Utc))),
             }
         }).collect();
@@ -546,9 +541,9 @@ mod tests {
                 .expect("Failed to create context"),
         );
 
-        let workflows = GcpWorkflows::new(context, Arc::new(auth), project_id);
+        let _workflows = GcpWorkflows::new(context, Arc::new(auth), project_id);
 
-        let def = WorkflowDefinition::new(
+        let _def = WorkflowDefinition::new(
             "test-workflow",
             json!([
                 { "init": { "assign": [ { "message": "Hello" } ] } },

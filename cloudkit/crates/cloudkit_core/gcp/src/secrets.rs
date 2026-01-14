@@ -261,7 +261,7 @@ impl SecretsManager for GcpSecretManager {
         let body: ListSecretsResponse = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
         let secrets = body.secrets.unwrap_or_default();
         let meta = secrets.into_iter().map(|s| {
-            let short_name = s.name.split('/').last().unwrap_or("unknown").to_string();
+            let short_name = s.name.split('/').next_back().unwrap_or("unknown").to_string();
             let mut m = SecretMetadata::new(short_name);
             m.tags = s.labels.unwrap_or_default();
             m
@@ -289,7 +289,7 @@ impl SecretsManager for GcpSecretManager {
         }
         
         let body: SecretResponse = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
-        let short_name = body.name.split('/').last().unwrap_or("unknown").to_string();
+        let short_name = body.name.split('/').next_back().unwrap_or("unknown").to_string();
         let mut m = SecretMetadata::new(short_name);
         m.tags = body.labels.unwrap_or_default();
         Ok(m)
@@ -315,7 +315,7 @@ impl SecretsManager for GcpSecretManager {
         
         let body: ListSecretVersionsResponse = resp.json().await.map_err(|e| CloudError::Serialization(e.to_string()))?;
         let versions = body.versions.unwrap_or_default().into_iter().map(|v| {
-            let version_id = v.name.split('/').last().unwrap_or("unknown").to_string();
+            let version_id = v.name.split('/').next_back().unwrap_or("unknown").to_string();
              SecretVersion {
                 version_id,
                 stages: vec![v.state], // Map state to stage-like string
@@ -426,7 +426,6 @@ impl SecretsManager for GcpSecretManager {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
 
     #[tokio::test]
     #[ignore]

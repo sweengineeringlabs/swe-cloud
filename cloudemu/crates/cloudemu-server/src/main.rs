@@ -24,10 +24,12 @@ async fn main() -> anyhow::Result<()> {
         info!("Initializing AWS Provider (Port: {})...", port);
 
         // Configure legacy AWS control-plane
-        let mut dp_config = data_plane::Config::default();
-        dp_config.port = port;
-        dp_config.host = "0.0.0.0".to_string();
-        dp_config.data_dir = data_dir;
+        let dp_config = data_plane::Config {
+            port,
+            host: "0.0.0.0".to_string(),
+            data_dir,
+            ..Default::default()
+        };
 
         // Spawn AWS server
         tasks.spawn(async move {
