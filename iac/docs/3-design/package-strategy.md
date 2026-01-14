@@ -156,104 +156,89 @@ iac/core/
 
 ### Directory Structure
 ```
-iac/core/
+iac_core/              # Renamed from iac/core to match cloudkit_core
 ├── aws/
-│   ├── main.tf        # All AWS resources
-│   ├── variables.tf   # AWS configuration
-│   └── outputs.tf     # AWS outputs
+│   └── src/           # Matches cloudkit_core/aws/src/
+│       ├── compute/   # Like cloudkit_core/aws/src/ec2.rs
+│       ├── storage/   # Like cloudkit_core/aws/src/s3.rs
+│       ├── database/  # Like cloudkit_core/aws/src/dynamodb.rs
+│       ├── networking/# Like cloudkit_core/aws/src/vpc.rs
+│       └── iam/       # Like cloudkit_core/aws/src/iam.rs
 ├── azure/
-│   ├── main.tf
-│   ├── variables.tf
-│   └── outputs.tf
+│   └── src/
+│       ├── compute/
+│       ├── storage/
+│       └── database/
 └── gcp/
-    ├── main.tf
-    ├── variables.tf
-    └── outputs.tf
+    └── src/
+        ├── compute/
+        ├── storage/
+        └── database/
 ```
 
 ### Provider Module Pattern
+Each resource type is a separate module:
+
 ```hcl
-# core/aws/main.tf
+# iac_core/aws/src/compute/main.tf
 terraform {
   required_providers {
     aws = { source = "hashicorp/aws", version = "~> 5.0" }
   }
 }
 
-provider "aws" {
-  region = var.aws_region
-  default_tags { tags = var.common_tags }
-}
-
-# COMPUTE
-resource "aws_instance" "compute" {
-  count = var.compute_config != null ? 1 : 0
+resource "aws_instance" "this" {
+  ami           = var.ami
+  instance_type = var.instance_type
   # ...
 }
 
-# STORAGE
-resource "aws_s3_bucket" "storage" {
-  count = var.storage_config != null ? 1 : 0
+output "instance_id" {
+  value = aws_instance.this.id
+}
+```
+
+```hcl
+# iac_core/aws/src/storage/main.tf
+resource "aws_s3_bucket" "this" {
+  bucket = var.bucket_name
   # ...
 }
 
-# DATABASE
-resource "aws_db_instance" "database" {
-  count = var.database_config != null ? 1 : 0
-  # ...
-}
-
-# NETWORKING
-resource "aws_vpc" "network" {
-  count = var.network_config != null ? 1 : 0
-  # ...
-}
-
-# Outputs grouped by resource type
-output "compute" {
-  value = var.compute_config != null ? {
-    instance_id = aws_instance.compute[0].id
-    public_ip   = aws_instance.compute[0].public_ip
-  } : null
-}
-
-output "storage" {
-  value = var.storage_config != null ? {
-    bucket_id  = aws_s3_bucket.storage[0].id
-    bucket_arn = aws_s3_bucket.storage[0].arn
-  } : null
+output "bucket_id" {
+  value = aws_s3_bucket.this.id
 }
 ```
 
 ### Usage from Facade
 ```hcl
 # facade/main.tf
-module "aws" {
-  source = "../../core/aws"
+module "aws_compute" {
+  source = "../../iac_core/aws/src/compute"
   
-  compute_config = {
-    ami           = "ami-xxxxx"
-    instance_type = "t3.medium"
-    tags          = local.tags
-  }
+  ami           = "ami-xxxxx"
+  instance_type = "t3.medium"
+  tags          = local.tags
+}
+
+module "aws_storage" {
+  source = "../../iac_core/aws/src/storage"
   
-  storage_config = {
-    bucket_name = "my-bucket"
-    tags        = local.tags
-  }
+  bucket_name = "my-bucket"
+  tags        = local.tags
 }
 
 output "instance_ip" {
-  value = module.aws.compute.public_ip
+  value = module.aws_compute.public_ip
 }
 ```
 
 ### Team Ownership
 ```
 CODEOWNERS:
-/iac/core/aws/     @aws-infrastructure-team
-/iac/core/azure/   @azure-infrastructure-team
-/iac/core/gcp/     @gcp-infrastructure-team
+/iac_core/aws/     @aws-infrastructure-team
+/iac_core/azure/   @azure-infrastructure-team
+/iac_core/gcp/     @gcp-infrastructure-team
 ```
 
 ---
@@ -341,11 +326,12 @@ locals {
 | Aspect | CloudKit (SDK) | IAC (Terraform) | Consistency |
 |--------|----------------|-----------------|-------------|
 | **Organization** | By Provider | By Provider | ✅ Match |
-| **AWS Location** | `cloudkit_core/aws/` | `iac/core/aws/` | ✅ Match |
-| **All Services** | `s3.rs`, `dynamodb.rs`, etc. | EC2, S3, RDS in `main.tf` | ✅ Match |
-| **Navigation** | "Want AWS?" → `aws/` | "Want AWS?" → `core/aws/` | ✅ Match |
-| **Team Ownership** | AWS team owns `aws/` | AWS team owns `core/aws/` | ✅ Match |
+| **AWS Location** | `cloudkit_core/aws/src/` | `iac_core/aws/src/` | ✅ Match |
+| **All Services** | `s3.rs`, `dynamodb.rs`, etc. | `compute/`, `storage/`, etc. | ✅ Match |
+| **Navigation** | "Want AWS?" → `aws/src/` | "Want AWS?" → `iac_core/aws/src/` | ✅ Match |
+| **Team Ownership** | AWS team owns `aws/` | AWS team owns `iac_core/aws/` | ✅ Match |
 | **Mental Model** | Provider-first | Provider-first | ✅ Match |
+| **Structure Depth** | `aws/src/s3.rs` (3 levels) | `aws/src/storage/` (3 levels) | ✅ Match |
 
 **Result:** Perfect alignment! 🎯
 
@@ -361,7 +347,7 @@ locals {
 
 ## References
 
-- **CloudKit Package Strategy** - `cloudkit/docs/3-design/package-strategy.md`
+- **CloudKit Package Strategy** - `cloudkit/crates/doc/3-design/15-package-strategy.md`
 - **Domain-Driven Design** - Eric Evans
 - **Terraform Best Practices** - HashiCorp
 - **Conway's Law** - System design mirrors org structure
@@ -381,16 +367,17 @@ providers/azure/...
 
 **To:** Provider-grouped (Vertical) ✅
 ```  
-core/aws/main.tf      → All AWS resources
-core/azure/main.tf    → All Azure resources
-core/gcp/main.tf      → All GCP resources
+iac_core/aws/src/compute/    → AWS compute module
+iac_core/aws/src/storage/    → AWS storage module
+iac_core/azure/src/compute/  → Azure compute module
+iac_core/gcp/src/compute/    → GCP compute module
 ```
 
 **Steps:**
-1. ✅ Create `core/aws/main.tf` with all AWS resources
-2. ✅ Create `core/azure/main.tf` with all Azure resources
-3. ✅ Create `core/gcp/main.tf` with all GCP resources
-4. ✅ Update facade to route to provider modules
+1. ✅ Rename `iac/core` to `iac_core` (match cloudkit_core)
+2. ✅ Create `iac_core/aws/src/` structure
+3. ✅ Create separate modules per resource type
+4. ✅ Update facade to use new module paths
 5. ✅ Remove old resource-grouped orchestration
 6. ✅ Update documentation
 
@@ -398,5 +385,5 @@ core/gcp/main.tf      → All GCP resources
 
 **Decision:** Package by Provider (Vertical Slicing) ✅  
 **Aligns with:** CloudKit SDK, DDD, Conway's Law, Team Boundaries  
-**Result:** `iac/core/aws/`, `iac/core/azure/`, `iac/core/gcp/`  
+**Result:** `iac_core/aws/src/compute/`, `iac_core/aws/src/storage/`, etc.  
 **Benefit:** Same mental model across codebase and infrastructure
