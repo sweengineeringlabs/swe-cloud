@@ -1,0 +1,160 @@
+name: CloudEmu Integration Tests
+
+on:
+  push:
+    branches: [ master, main, develop ]
+    paths:
+      - 'iac/**'
+      - 'cloudemu/**'
+      - '.github/workflows/cloudemu-integration.yml'
+  pull_request:
+    branches: [ master, main ]
+    paths:
+      - 'iac/**'
+      - 'cloudemu/**'
+
+jobs:
+  test-with-cloudemu:
+    name: IAC Integration Tests with CloudEmu
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+          aws --version
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            cloudemu/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build CloudEmu
+        run: |
+          cd cloudemu
+          cargo build --release -p cloudemu-server
+          echo "CloudEmu built successfully"
+
+      - name: Start CloudEmu Server
+        run: |
+          cd cloudemu
+          nohup ./target/release/cloudemu-server > cloudemu.log 2>&1 &
+          echo $! > cloudemu.pid
+          
+          # Wait for server to start
+          echo "Waiting for CloudEmu to start..."
+          for i in {1..30}; do
+            if curl -s http://localhost:4566/health > /dev/null 2>&1; then
+              echo "✓ CloudEmu started successfully"
+              break
+            fi
+            echo "Attempt $i: CloudEmu not ready yet..."
+            sleep 2
+          done
+          
+          # Verify CloudEmu is running
+          if ! curl -s http://localhost:4566/health > /dev/null 2>&1; then
+            echo "✗ CloudEmu failed to start"
+            cat cloudemu.log
+            exit 1
+          fi
+
+      - name: Verify CloudEmu endpoints
+        run: |
+          echo "Testing AWS endpoint..."
+          curl -f http://localhost:4566/health || exit 1
+          
+          echo "Testing Azure endpoint..."
+          curl -f http://localhost:4567/devstoreaccount1/?comp=list || exit 1
+          
+          echo "✓ All endpoints responding"
+
+      - name: Initialize Terraform
+        working-directory: ./iac/examples/local-cloudemu
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: ./iac/examples/local-cloudemu
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: ./iac/examples/local-cloudemu
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ./iac/examples/local-cloudemu
+        run: terraform apply -auto-approve tfplan
+
+      - name: Verify deployed resources
+        working-directory: ./iac
+        run: |
+          chmod +x scripts/verify-cloudemu.sh
+          ./scripts/verify-cloudemu.sh
+
+      - name: Run Terratest Integration Tests
+        working-directory: ./iac/test/integration
+        run: |
+          go mod download
+          go test -v -timeout 10m -parallel 4 ./...
+
+      - name: Terraform Destroy
+        if: always()
+        working-directory: ./iac/examples/local-cloudemu
+        run: terraform destroy -auto-approve || true
+
+      - name: Stop CloudEmu
+        if: always()
+        run: |
+          if [ -f cloudemu/cloudemu.pid ]; then
+            kill $(cat cloudemu/cloudemu.pid) || true
+            rm cloudemu/cloudemu.pid
+          fi
+          pkill -f cloudemu-server || true
+
+      - name: Upload CloudEmu logs
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cloudemu-logs
+          path: cloudemu/cloudemu.log
+          retention-days: 7
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## CloudEmu Integration Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- CloudEmu Version: Release build" >> $GITHUB_STEP_SUMMARY
+          echo "- Terraform Version: 1.6.0" >> $GITHUB_STEP_SUMMARY
+          echo "- Go Version: 1.21" >> $GITHUB_STEP_SUMMARY
+          echo "- Test Duration: ${{ job.duration }}" >> $GITHUB_STEP_SUMMARY
