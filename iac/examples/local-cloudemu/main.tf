@@ -60,22 +60,18 @@ module "storage" {
   encryption_enabled = true
 }
 
-# Database Facade Example (DynamoDB)
-/*
-module "database" {
-  source = "../../facade/database"
+# NoSQL Facade Example (DynamoDB)
+module "nosql_table" {
+  source = "../../facade/nosql"
   
   provider_name = "aws"
-  database_name = var.database_name
+  project_name  = "local-test"
+  table_name    = var.database_name # Reusing the variable name for simplicity
   environment   = var.environment
   
-  # CloudEmu supports basic DynamoDB operations
-  table_config = {
-    billing_mode = "PAY_PER_REQUEST"
-    hash_key     = "id"
-  }
+  hash_key      = "id"
+  hash_key_type = "S"
 }
-*/
 
 # Messaging Facade Example (SQS + SNS)
 module "queue" {
