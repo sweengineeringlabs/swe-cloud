@@ -76,3 +76,25 @@ async fn handle_request(
             .unwrap()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::body::Body;
+    use axum::http::{Request, StatusCode};
+    use tower::ServiceExt;
+    use gcp_control_core::GcpProvider;
+
+    #[tokio::test]
+    async fn test_router_routing() {
+        let provider = Arc::new(GcpProvider::in_memory());
+        let app = router(provider);
+
+        let response = app
+            .oneshot(Request::builder().method("PUT").uri("/test-bucket").body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::CREATED);
+    }
+}

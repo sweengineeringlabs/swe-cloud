@@ -76,3 +76,25 @@ async fn handle_request(
             .unwrap()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::body::Body;
+    use axum::http::{Request, StatusCode};
+    use tower::ServiceExt;
+    use azure_control_core::AzureProvider;
+
+    #[tokio::test]
+    async fn test_router_routing() {
+        let provider = Arc::new(AzureProvider::in_memory());
+        let app = router(provider);
+
+        let response = app
+            .oneshot(Request::builder().uri("/devstoreaccount1?comp=list").body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+    }
+}
