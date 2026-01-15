@@ -104,7 +104,7 @@ impl StorageEngine {
             size: data.len() as u64,
             content_type: content_type.map(|s| s.to_string()),
             etag,
-            created_at: now,
+            created_at: now.clone(),
             updated_at: now,
         })
     }

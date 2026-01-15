@@ -10,14 +10,14 @@ impl StorageEngine {
         let now = chrono::Utc::now().to_rfc3339();
         
         // Mock IP assignment
-        let private_ip = format!("10.128.0.{}", rand::random::<u8>());
-        let public_ip = format!("{}.{}.{}.{}", rand::random::<u8>(), rand::random::<u8>(), rand::random::<u8>(), rand::random::<u8>());
+        let private_ip = "10.0.0.5".to_string();
+        let public_ip = "35.20.30.40".to_string();
 
         db.execute(
             r#"INSERT INTO gcp_instances 
                (name, project_id, zone, machine_type, image, network, private_ip, public_ip, status, created_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'RUNNING', ?)"#,
-            params![name, project_id, zone, machine_type, image, network, private_ip, public_ip, now],
+            params![name, project_id, zone, machine_type, image, network, private_ip, public_ip, &now],
         ).map_err(|e| {
             if e.to_string().contains("UNIQUE constraint") {
                 EmulatorError::AlreadyExists(format!("Instance {} already exists", name))
@@ -79,14 +79,6 @@ impl StorageEngine {
     pub fn list_gcp_instances(&self, project_id: &str, zone: Option<&str>) -> Result<Vec<GcpInstanceMetadata>> {
         let db = self.db.lock();
         
-        let (query, params) = if let Some(z) = zone {
-            ("SELECT name, project_id, zone, machine_type, image, network, private_ip, public_ip, status, created_at FROM gcp_instances WHERE project_id = ? AND zone = ?", vec![project_id.to_string(), z.to_string()])
-        } else {
-            ("SELECT name, project_id, zone, machine_type, image, network, private_ip, public_ip, status, created_at FROM gcp_instances WHERE project_id = ?", vec![project_id.to_string()])
-        };
-
-        let mut stmt = db.prepare(query)?;
-        
         let map_row = |row: &rusqlite::Row| {
              Ok(GcpInstanceMetadata {
                 name: row.get(0)?,
@@ -102,9 +94,12 @@ impl StorageEngine {
             })
         };
 
+        let mut stmt;
         let instances = if let Some(z) = zone {
+            stmt = db.prepare("SELECT name, project_id, zone, machine_type, image, network, private_ip, public_ip, status, created_at FROM gcp_instances WHERE project_id = ? AND zone = ?")?;
             stmt.query_map(params![project_id, z], map_row)?
         } else {
+            stmt = db.prepare("SELECT name, project_id, zone, machine_type, image, network, private_ip, public_ip, status, created_at FROM gcp_instances WHERE project_id = ?")?;
             stmt.query_map(params![project_id], map_row)?
         }
         .filter_map(|r| r.ok())

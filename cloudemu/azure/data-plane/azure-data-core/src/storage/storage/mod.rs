@@ -2,17 +2,7 @@
 
 mod engine;
 mod schema;
-mod s3;
-mod dynamodb;
-mod kms;
-mod events;
-mod secrets;
-mod sqs;
-mod sns;
-mod lambda;
-mod monitoring;
-mod identity;
-mod workflows;
+// AWS modules removed (s3, dynamodb, etc)
 mod blob;
 mod cosmos;
 mod eventgrid;
@@ -35,4 +25,4 @@ pub use engine::{
     VirtualMachineMetadata
 };
 
-pub use lambda::CreateFunctionParams;
+

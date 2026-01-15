@@ -2,17 +2,7 @@
 
 mod engine;
 mod schema;
-mod s3;
-mod dynamodb;
-mod kms;
-mod events;
-mod secrets;
-mod sqs;
-mod sns;
-mod lambda;
-mod monitoring;
-mod identity;
-mod workflows;
+// AWS modules removed (s3, dynamodb, etc)
 mod gcs;
 mod firestore;
 mod pubsub;
@@ -35,4 +25,4 @@ pub use engine::{
     GcpInstanceMetadata
 };
 
-pub use lambda::CreateFunctionParams;
+

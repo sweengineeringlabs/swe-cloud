@@ -10,14 +10,14 @@ impl StorageEngine {
         let now = chrono::Utc::now().to_rfc3339();
         
         // Mock IP assignment
-        let private_ip = format!("10.0.0.{}", rand::random::<u8>());
-        let public_ip = format!("{}.{}.{}.{}", rand::random::<u8>(), rand::random::<u8>(), rand::random::<u8>(), rand::random::<u8>());
+        let private_ip = "10.0.0.4".to_string();
+        let public_ip = "20.30.40.50".to_string();
 
         db.execute(
             r#"INSERT INTO az_virtual_machines 
                (name, location, resource_group, vm_size, os_type, admin_username, private_ip, public_ip, status, created_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Running', ?)"#,
-            params![name, location, resource_group, vm_size, os_type, admin_username, private_ip, public_ip, now],
+            params![name, location, resource_group, vm_size, os_type, admin_username, private_ip, public_ip, &now],
         ).map_err(|e| {
             if e.to_string().contains("UNIQUE constraint") {
                 EmulatorError::AlreadyExists(format!("Virtual Machine {} already exists", name))
@@ -75,18 +75,6 @@ impl StorageEngine {
     pub fn list_virtual_machines(&self, resource_group: Option<&str>) -> Result<Vec<VirtualMachineMetadata>> {
         let db = self.db.lock();
         
-        // Build query based on optional resource group filter
-        let (query, params) = if let Some(rg) = resource_group {
-            ("SELECT name, location, resource_group, vm_size, os_type, admin_username, private_ip, public_ip, status, created_at FROM az_virtual_machines WHERE resource_group = ?", vec![rg.to_string()])
-        } else {
-            ("SELECT name, location, resource_group, vm_size, os_type, admin_username, private_ip, public_ip, status, created_at FROM az_virtual_machines", vec![])
-        };
-
-        let mut stmt = db.prepare(query)?;
-        
-        // This part is a bit tricky with dynamic params in rusqlite with params_from_iter, 
-        // but for simplicity let's handle the two cases
-        
         let map_row = |row: &rusqlite::Row| {
              Ok(VirtualMachineMetadata {
                 name: row.get(0)?,
@@ -102,9 +90,12 @@ impl StorageEngine {
             })
         };
 
+        let mut stmt;
         let vms = if let Some(rg) = resource_group {
+            stmt = db.prepare("SELECT name, location, resource_group, vm_size, os_type, admin_username, private_ip, public_ip, status, created_at FROM az_virtual_machines WHERE resource_group = ?")?;
             stmt.query_map(params![rg], map_row)?
         } else {
+            stmt = db.prepare("SELECT name, location, resource_group, vm_size, os_type, admin_username, private_ip, public_ip, status, created_at FROM az_virtual_machines")?;
             stmt.query_map([], map_row)?
         }
         .filter_map(|r| r.ok())
