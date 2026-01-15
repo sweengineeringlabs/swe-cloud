@@ -1,5 +1,9 @@
 mod config;
 mod error;
+mod router;
+mod handlers;
+
+use std::sync::Arc;
 
 use axum::{
     routing::get,
@@ -26,10 +30,9 @@ async fn main() {
     let core_config = CoreConfig::default()
         .data_dir(config.data_dir.clone());
     
-    // In a real app we'd handle this error properly
-    let _storage = StorageEngine::new(&core_config).expect("Failed to initialize storage engine");
+    let storage = Arc::new(StorageEngine::new(&core_config).expect("Failed to initialize storage engine"));
 
-    let app = Router::new()
+    let app = router::create_router(storage)
         .route("/health", get(health_check));
 
     let addr: SocketAddr = format!("{}:{}", config.host, config.port).parse().unwrap();
