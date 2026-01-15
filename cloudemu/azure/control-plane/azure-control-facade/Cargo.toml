@@ -10,3 +10,10 @@ azure-control-spi = { path = "../azure-control-spi" }
 azure-control-core = { path = "../azure-control-core" }
 azure-control-api = { path = "../azure-control-api" }
 
+axum = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+http-body-util = "0.1"
+
