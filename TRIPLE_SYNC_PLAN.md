@@ -9,8 +9,8 @@
 
 | Service | CloudKit API | IAC Facade | CloudEmu Engine | Alignment |
 |---------|--------------|------------|-----------------|-----------|
-| **Compute** | **MISSING** | `compute/` | EC2 | 🔄 GAP |
-| **Networking** | **MISSING** | `networking/` | VPC | 🔄 GAP |
+| **Compute** | `compute` | `compute/` | EC2 | ✅ Sync |
+| **Networking** | `networking` | `networking/` | VPC | ✅ Sync |
 | **Storage** | `object_storage` | `storage/` | S3 | ✅ Full |
 | **NoSQL** | `kv_store` | `nosql/` | DynamoDB | ✅ Full |
 | **Queue** | `message_queue` | `messaging/` | SQS | ✅ Full |
@@ -39,15 +39,11 @@ Ensure environment variable naming conventions match CloudKit's expectations.
 - [ ] **Task 2.1**: Update IAC facades to output standardized connection strings.
 - [ ] **Task 2.2**: Ensure CloudEmu returns standard ARNs that CloudKit can parse.
 
-### Phase 3: CloudKit SDK Synchronization (The "Code" Tasks)
+### Phase 3: CloudKit SDK Synchronization (The "Code" Tasks) ✅ COMPLETE
 Bring the Rust SDK into parity with the IAC layer and the Emulator.
 
-- [ ] **Task 3.1: Compute Trait**
-  - Create `cloudkit_api/src/compute.rs`
-  - Implement AWS EC2 in `cloudkit_core/aws/src/ec2.rs`
-- [ ] **Task 3.2: Networking Trait**
-  - Create `cloudkit_api/src/networking.rs`
-  - Implement AWS VPC in `cloudkit_core/aws/src/vpc.rs`
+- [x] **Task 3.1: Compute Trait** ✅
+- [x] **Task 3.2: Networking Trait** ✅
 
 ### Phase 4: Triple-Sync Validation
 - [ ] **Task 3.1**: Create `iac/examples/triple-sync-demo/`
