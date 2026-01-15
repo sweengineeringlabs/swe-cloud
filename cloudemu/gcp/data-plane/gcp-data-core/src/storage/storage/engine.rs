@@ -59,6 +59,38 @@ impl StorageEngine {
         })
     }
     
+    // ==================== Object Data Storage ====================
+    
+    /// Store object data to filesystem, returns content hash
+    pub(crate) fn store_object_data(&self, data: &[u8]) -> Result<String> {
+        use sha2::{Sha256, Digest};
+        
+        let mut hasher = Sha256::new();
+        hasher.update(data);
+        let hash = hex::encode(hasher.finalize());
+        
+        // Content-addressed storage: first 2 chars as directory
+        let dir = self.objects_dir.join(&hash[..2]);
+        fs::create_dir_all(&dir)?;
+        
+        let file_path = dir.join(&hash);
+        if !file_path.exists() {
+            fs::write(&file_path, data)?;
+        }
+        
+        Ok(hash)
+    }
+    
+    /// Read object data from filesystem
+    pub(crate) fn read_object_data(&self, content_hash: &str) -> Result<Vec<u8>> {
+        if content_hash.is_empty() {
+            return Ok(Vec::new());
+        }
+        
+        let file_path = self.objects_dir.join(&content_hash[..2]).join(content_hash);
+        fs::read(&file_path).map_err(|e| crate::error::EmulatorError::Internal(e.to_string()))
+    }
+    
     // Bucket Operations moved to s3.rs
     
     // Object Operations moved to s3.rs
@@ -354,4 +386,51 @@ pub struct LambdaMetadata {
     pub runtime: String,
     pub handler: String,
     pub last_modified: String,
+}
+
+// ==================== GCP Metadata ====================
+
+/// GCS Bucket metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GcsBucketMetadata {
+    pub name: String,
+    pub project_id: String,
+    pub location: String,
+    pub storage_class: String,
+    pub versioning_enabled: bool,
+    pub created_at: String,
+}
+
+/// GCS Object metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GcsObjectMetadata {
+    pub name: String,
+    pub bucket: String,
+    pub generation: i64,
+    pub size: u64,
+    pub content_type: Option<String>,
+    pub etag: String,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+/// Firestore Database metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FirestoreDatabaseMetadata {
+    pub name: String,
+    pub project_id: String,
+    pub location_id: String,
+    pub created_at: String,
+}
+
+/// Firestore Document metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FirestoreDocumentMetadata {
+    pub path: String,
+    pub database_name: String,
+    pub collection_id: String,
+    pub document_id: String,
+    pub fields_json: String,
+    pub create_time: String,
+    pub update_time: String,
 }

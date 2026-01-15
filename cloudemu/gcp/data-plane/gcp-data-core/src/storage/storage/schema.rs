@@ -395,4 +395,76 @@ CREATE TABLE IF NOT EXISTS lambda_functions (
     environment_variables TEXT,
     last_modified TEXT NOT NULL
 );
+
+-- =================================================================================================
+-- GCP TABLES
+-- =================================================================================================
+
+-- GCS Buckets
+CREATE TABLE IF NOT EXISTS gcs_buckets (
+    name TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    location TEXT NOT NULL,
+    storage_class TEXT DEFAULT 'STANDARD',
+    versioning_enabled BOOLEAN DEFAULT 0,
+    created_at TEXT NOT NULL,
+    labels TEXT
+);
+
+-- GCS Objects
+CREATE TABLE IF NOT EXISTS gcs_objects (
+    name TEXT NOT NULL,
+    bucket TEXT NOT NULL,
+    generation INTEGER NOT NULL, -- Version ID equivalent
+    
+    content_hash TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    content_type TEXT,
+    crc32c TEXT,
+    md5_hash TEXT,
+    
+    etag TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    metadata TEXT,
+    storage_class TEXT,
+    
+    PRIMARY KEY (bucket, name, generation),
+    FOREIGN KEY (bucket) REFERENCES gcs_buckets(name) ON DELETE CASCADE
+);
+
+-- Firestore Databases
+CREATE TABLE IF NOT EXISTS fs_databases (
+    name TEXT PRIMARY KEY, -- projects/{project_id}/databases/{database_id}
+    project_id TEXT NOT NULL,
+    location_id TEXT NOT NULL,
+    type TEXT DEFAULT 'FIRESTORE_NATIVE',
+    created_at TEXT NOT NULL
+);
+
+-- Firestore Documents
+CREATE TABLE IF NOT EXISTS fs_documents (
+    path TEXT NOT NULL, -- projects/{project}/databases/{database}/documents/{collection}/{doc...}
+    database_name TEXT NOT NULL,
+    collection_id TEXT NOT NULL,
+    document_id TEXT NOT NULL,
+    
+    fields_json TEXT NOT NULL,
+    create_time TEXT NOT NULL,
+    update_time TEXT NOT NULL,
+    
+    PRIMARY KEY (database_name, path),
+    FOREIGN KEY (database_name) REFERENCES fs_databases(name) ON DELETE CASCADE
+);
+
+-- Firestore Indexes (Basic)
+CREATE TABLE IF NOT EXISTS fs_indexes (
+    name TEXT PRIMARY KEY,
+    database_name TEXT NOT NULL,
+    collection_id TEXT NOT NULL,
+    fields_json TEXT NOT NULL,
+    state TEXT DEFAULT 'READY',
+    
+    FOREIGN KEY (database_name) REFERENCES fs_databases(name) ON DELETE CASCADE
+);
 "#;

@@ -13,6 +13,8 @@ mod lambda;
 mod monitoring;
 mod identity;
 mod workflows;
+mod gcs;
+mod firestore;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -23,7 +25,10 @@ pub use engine::{
     StateMachineMetadata, ExecutionMetadata,
     QueueMetadata, MessageMetadata,
     TableMetadata, ItemMetadata,
-    TopicMetadata, SubscriptionMetadata, LambdaMetadata
+    TopicMetadata, SubscriptionMetadata, LambdaMetadata,
+    // GCP
+    GcsBucketMetadata, GcsObjectMetadata,
+    FirestoreDatabaseMetadata, FirestoreDocumentMetadata
 };
 
 pub use lambda::CreateFunctionParams;
