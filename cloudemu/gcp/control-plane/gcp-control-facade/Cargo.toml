@@ -8,4 +8,5 @@ description = "gcp control facade"
 [dependencies]
 gcp-control-spi = { path = "../gcp-control-spi" }
 gcp-control-core = { path = "../gcp-control-core" }
+gcp-control-api = { path = "../gcp-control-api" }
 
