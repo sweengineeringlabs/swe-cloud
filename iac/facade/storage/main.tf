@@ -68,13 +68,19 @@ module "aws_storage" {
   tags                = local.common_tags
 }
 
-/*
 # Route to Azure storage module  
 module "azure_storage" {
   count  = var.provider_name == "azure" ? 1 : 0
   source = "../../iac_core/azure/src/storage"
   
-  # Azure-specific variables would go here
+  storage_account_name = replace(lower(var.bucket_name), "-", "") # Azure requires alphanumeric
+  resource_group_name  = "${var.project_name}-${var.environment}-rg"
+  location             = "East US"
+  versioning_enabled   = var.versioning_enabled
+  block_public_access  = var.public_access_block
+  create_container     = true
+  container_name       = var.bucket_name
+  tags                 = local.common_tags
 }
 
 # Route to GCP storage module
@@ -82,29 +88,40 @@ module "gcp_storage" {
   count  = var.provider_name == "gcp" ? 1 : 0
   source = "../../iac_core/gcp/src/storage"
   
-  # GCP-specific variables would go here
+  bucket_name         = var.bucket_name
+  versioning_enabled  = var.versioning_enabled
+  project_id          = var.project_name
+  location            = "US"
+  tags                = local.common_tags
 }
-*/
 
 # Aggregated outputs (select based on provider)
 locals {
   bucket_id = (
     var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_id : null) :
+    var.provider_name == "azure" ? (length(module.azure_storage) > 0 ? module.azure_storage[0].storage_account_id : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_storage) > 0 ? module.gcp_storage[0].bucket_id : null) :
     null
   )
   
   bucket_arn = (
     var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_arn : null) :
+    var.provider_name == "azure" ? (length(module.azure_storage) > 0 ? module.azure_storage[0].storage_account_name : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_storage) > 0 ? module.gcp_storage[0].bucket_url : null) :
     null
   )
   
   bucket_url = (
     var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_domain_name : null) :
+    var.provider_name == "azure" ? (length(module.azure_storage) > 0 ? module.azure_storage[0].primary_blob_endpoint : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_storage) > 0 ? module.gcp_storage[0].bucket_url : null) :
     null
   )
   
   bucket_region = (
     var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].region : null) :
+    var.provider_name == "azure" ? "East US" :
+    var.provider_name == "gcp" ? "US" :
     null
   )
 }

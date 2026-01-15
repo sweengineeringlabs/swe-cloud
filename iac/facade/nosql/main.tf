@@ -30,16 +30,44 @@ module "aws_nosql" {
   tags = local.common_tags
 }
 
-# Azure: CosmosDB (Stub)
-# module "azure_nosql" { ... }
+# Azure: CosmosDB
+module "azure_nosql" {
+  count  = var.provider_name == "azure" ? 1 : 0
+  source = "../../iac_core/azure/src/nosql"
 
-# GCP: Firestore (Stub)
-# module "gcp_nosql" { ... }
+  account_name        = replace(lower(var.table_name), "-", "")
+  resource_group_name = "${var.project_name}-${var.environment}-rg"
+  location            = "East US"
+  container_name      = var.table_name
+  partition_key_path  = "/${var.hash_key}"
+
+  tags = local.common_tags
+}
+
+# GCP: Firestore
+module "gcp_nosql" {
+  count  = var.provider_name == "gcp" ? 1 : 0
+  source = "../../iac_core/gcp/src/nosql"
+
+  project_id  = var.project_name
+  database_id = var.table_name
+  location_id = "us-east1"
+}
 
 output "table_id" {
-  value = var.provider_name == "aws" ? (length(module.aws_nosql) > 0 ? module.aws_nosql[0].table_id : null) : null
+  value = (
+    var.provider_name == "aws" ? (length(module.aws_nosql) > 0 ? module.aws_nosql[0].table_id : null) :
+    var.provider_name == "azure" ? (length(module.azure_nosql) > 0 ? module.azure_nosql[0].account_id : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_nosql) > 0 ? module.gcp_nosql[0].database_id : null) :
+    null
+  )
 }
 
 output "table_arn" {
-  value = var.provider_name == "aws" ? (length(module.aws_nosql) > 0 ? module.aws_nosql[0].table_arn : null) : null
+  value = (
+    var.provider_name == "aws" ? (length(module.aws_nosql) > 0 ? module.aws_nosql[0].table_arn : null) :
+    var.provider_name == "azure" ? (length(module.azure_nosql) > 0 ? module.azure_nosql[0].endpoint : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_nosql) > 0 ? module.gcp_nosql[0].database_id : null) :
+    null
+  )
 }

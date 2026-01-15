@@ -71,9 +71,15 @@ module "azure_compute" {
   count  = var.provider_name == "azure" ? 1 : 0
   source = "../../iac_core/azure/src/compute"
   
-  # Azure-specific variables would go here
-  # vm_size = local.compute_instance_types[var.provider_name][var.instance_size]
-  # tags    = local.common_tags
+  vm_name             = var.instance_name
+  vm_size             = local.compute_instance_types[var.provider_name][var.instance_size]
+  resource_group_name = "${var.project_name}-${var.environment}-rg"
+  location            = "East US"
+  admin_username      = "cloudkit"
+  ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : "ssh-rsa AAAAB3NzaC1yc2EA..." # Default dummy key
+  subnet_id           = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vn/subnets/sn" # Placeholder
+  create_public_ip    = true
+  tags                = local.common_tags
 }
 
 # Route to GCP compute module
@@ -81,27 +87,36 @@ module "gcp_compute" {
   count  = var.provider_name == "gcp" ? 1 : 0
   source = "../../iac_core/gcp/src/compute"
   
-  # GCP-specific variables would go here
-  # machine_type = local.compute_instance_types[var.provider_name][var.instance_size]
-  # labels       = local.common_tags
+  instance_name  = var.instance_name
+  machine_type   = local.compute_instance_types[var.provider_name][var.instance_size]
+  zone           = "us-east1-b"
+  boot_disk_image = "debian-cloud/debian-11"
+  network        = "default"
+  subnetwork     = "default"
+  create_external_ip = true
+  labels         = local.common_tags
 }
 
 # Aggregated outputs (select based on provider)
 locals {
   instance_id = (
     var.provider_name == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].instance_id : null) :
-    var.provider_name == "azure" ? (length(module.azure_compute) > 0 ? "azure-instance" : null) :
-    var.provider_name == "gcp" ? (length(module.gcp_compute) > 0 ? "gcp-instance" : null) :
+    var.provider_name == "azure" ? (length(module.azure_compute) > 0 ? module.azure_compute[0].vm_id : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_compute) > 0 ? module.gcp_compute[0].instance_id : null) :
     null
   )
   
   public_ip = (
     var.provider_name == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].public_ip : null) :
+    var.provider_name == "azure" ? (length(module.azure_compute) > 0 ? module.azure_compute[0].public_ip : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_compute) > 0 ? module.gcp_compute[0].public_ip : null) :
     null
   )
   
   private_ip = (
     var.provider_name == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].private_ip : null) :
+    var.provider_name == "azure" ? (length(module.azure_compute) > 0 ? module.azure_compute[0].private_ip : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_compute) > 0 ? module.gcp_compute[0].private_ip : null) :
     null
   )
 }
