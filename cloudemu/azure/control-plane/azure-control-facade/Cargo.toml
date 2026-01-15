@@ -1,0 +1,11 @@
+[package]
+name = "azure-control-facade"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "azure control facade"
+
+[dependencies]
+azure-control-spi = { path = "../azure-control-spi" }
+azure-control-core = { path = "../azure-control-core" }
+

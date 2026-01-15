@@ -1,70 +1,83 @@
 # CloudEmu
 
-**Unified Multi-Cloud Emulator for Local Development (AWS, Azure, GCP)**
+**A Universal, Multi-Cloud Local Emulator**
 
-CloudEmu is a fast, production-like local cloud emulator. It allows you to develop and test cloud applications locally by emulating APIs for AWS, Azure, and Google Cloud Platform (GCP).
+CloudEmu is a lightweight, unified emulator for AWS, Azure, and Google Cloud Platform (GCP). It enables developers to test multi-cloud applications locally without needing valid cloud credentials or incurring costs.
 
-## Quick Start
+## 🌟 Key Features
 
-```bash
-# Start the unified multi-cloud server
-cargo run -p cloudemu-server
-```
+- **Multi-Cloud Support**: Emulates core services from AWS, Azure, and GCP.
+- **Unified Architecture**: Uses a single "Storage Engine Architecture" (SEA) to back all three clouds.
+- **Persistence**: All data is persisted locally via SQLite and filesystem.
+- **Lightweight**: Written in Rust for high performance and low resource usage.
+- **Standalone**: Runs as a single binary (or library) handling requests on different ports.
 
-The server will start listening on the following ports:
-- **AWS**: `http://localhost:4566` (e.g., S3, DynamoDB)
-- **Azure**: `http://localhost:4567` (e.g., Blob Storage)
-- **GCP**: `http://localhost:4568` (Connectivity Only)
+## 🚀 Supported Services
 
-## Supported Clouds
+| Service Type | AWS (Port 4566) | Azure (Port 4567) | GCP (Port 4568) |
+|--------------|-----------------|-------------------|-----------------|
+| **Object Storage** | S3 | Blob Storage | Cloud Storage |
+| **NoSQL Database** | DynamoDB | Cosmos DB | Firestore |
+| **Message Queue** | SQS | Service Bus | *Pub/Sub* |
+| **Pub/Sub** | SNS | - | Pub/Sub |
+| **Functions** | Lambda | Azure Functions | Cloud Functions |
+| **Secrets** | Secrets Manager | Key Vault | Secret Manager |
 
-| Cloud Provider | Port | Status | Services Emulated |
-| :--- | :--- | :--- | :--- |
-| **AWS** | 4566 | ✅ Stable | S3, DynamoDB, SQS, SNS, Lambda, KMS, Secrets Manager, CloudWatch, EventBridge, Cognito, Step Functions |
-| **Azure** | 4567 | 🔄 Beta | Blob Storage (Basic emulation) |
-| **GCP** | 4568 | 🚧 Alpha | Connectivity Only (Skeleton) |
+*Plus AWS extras: KMS, EventBridge, CloudWatch, Cognito, Step Functions.*
 
-## Usage Examples
+## 🛠️ Getting Started
 
-### AWS CLI
-```bash
-export AWS_ENDPOINT_URL=http://localhost:4566
-aws s3 mb s3://my-bucket
-aws s3 ls
-```
+### Prerequisites
+- Rust (latest stable)
+- SQLite (bundled)
 
-### Azure (Blob Storage)
-Use with standard Azure connection strings or direct HTTP calls.
+### Running the Emulator
 
 ```bash
-# Check service health / List containers
-curl "http://localhost:4567/devstoreaccount1/?comp=list"
+# Clone the repository
+git clone https://github.com/sweengineeringlabs/cloudemu.git
+cd cloudemu
+
+# Run the server
+cargo run --bin cloudemu-server
 ```
 
-## Features
+The server will start listening on:
+- **AWS**: `http://localhost:4566`
+- **Azure**: `http://localhost:4567`
+- **GCP**: `http://localhost:4568`
 
-- 🎯 **Multi-Cloud Support** - Orchestrates emulators for AWS, Azure, and GCP in a single process.
-- 🏗️ **Terraform Compatible** - Deploy infrastructure locally using standard providers.
-- 💾 **Persistent Storage** - Metadata and data persisted locally (default: `.cloudemu` directory).
-- 🚀 **Fast Startup** - Async Rust implementation for millisecond startup times.
+### Configuration
 
-## Documentation
+You can configure CloudEmu via environment variables:
 
-For comprehensive documentation, see the **[Documentation Hub](./doc/overview.md)**.
+```bash
+export CLOUDEMU_DATA_DIR="./.cloudemu_data"
+export CLOUDEMU_LOGGING="true"
+```
 
-### Quick Links
-- [Architecture](./doc/3-design/architecture.md)
-- [Implementation Status](./doc/3-design/implementation-status.md)
-- [Testing Strategy](./doc/5-testing/testing-strategy.md)
+## 📐 Architecture
 
-## Contributing
+CloudEmu uses a **Facade Pattern** where each cloud provider's API is translated into a common set of storage primitives.
 
-We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+- **SPI Layer**: Defines common interfaces for Cloud Providers.
+- **Control Plane**: Parses AWS/Azure/GCP specific HTTP requests.
+- **Data Plane**: A shared storage engine (SQLite + FS) that persists all resources.
 
-## License
+See [Documentation](./doc/3-design/storage-engine-architecture.md) for details.
 
-MIT - See [LICENSE](./LICENSE) for details.
+## 🧪 Testing
 
----
+Integration tests are available for each provider:
 
-**Start testing your cloud infrastructure locally, today! 🚀**
+```bash
+# Run Azure tests
+cargo test -p azure-control-core --test integration
+
+# Run GCP tests
+cargo test -p gcp-control-core --test integration
+```
+
+## 📜 License
+
+MIT License.

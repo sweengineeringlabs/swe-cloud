@@ -1,0 +1,11 @@
+[package]
+name = "gcp-data-facade"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "gcp data facade"
+
+[dependencies]
+gcp-data-spi = { path = "../gcp-data-spi" }
+gcp-data-core = { path = "../gcp-data-core" }
+

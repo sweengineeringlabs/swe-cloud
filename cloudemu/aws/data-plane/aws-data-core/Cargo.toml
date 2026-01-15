@@ -1,0 +1,37 @@
+[package]
+name = "aws-data-core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "aws data core with embedded storage"
+
+[dependencies]
+thiserror = "2.0"
+tracing = "0.1"
+async-trait = "0.1"
+aws-data-spi = { path = "../aws-data-spi" }
+aws-data-api = { path = "../aws-data-api" }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rusqlite = { version = "0.32", features = ["bundled"] }
+uuid = { version = "1.11", features =["v4", "serde"] }
+
+
+hex = "0.4"
+base64 = "0.22"
+hmac = "0.12"
+sha2 = "0.10"
+aes-gcm = "0.10"
+quick-xml = { version = "0.37", features = ["serialize"] }
+percent-encoding = "2.3"
+
+
+http = "1.1"
+hyper = { version = "1.6", features = ["full"] }
+bytes = "1.6"
+
+anyhow = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+
+parking_lot = "0.12"

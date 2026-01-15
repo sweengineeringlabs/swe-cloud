@@ -1,0 +1,11 @@
+[package]
+name = "aws-data-api"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "aws data api"
+
+[dependencies]
+aws-data-spi = { path = "../aws-data-spi" }
+async-trait = "0.1"
+

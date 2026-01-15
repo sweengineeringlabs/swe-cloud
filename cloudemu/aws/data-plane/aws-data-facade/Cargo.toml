@@ -1,0 +1,11 @@
+[package]
+name = "aws-data-facade"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "aws data facade"
+
+[dependencies]
+aws-data-spi = { path = "../aws-data-spi" }
+aws-data-core = { path = "../aws-data-core" }
+

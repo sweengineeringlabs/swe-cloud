@@ -1,0 +1,11 @@
+[package]
+name = "azure-data-facade"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "azure data facade"
+
+[dependencies]
+azure-data-spi = { path = "../azure-data-spi" }
+azure-data-core = { path = "../azure-data-core" }
+

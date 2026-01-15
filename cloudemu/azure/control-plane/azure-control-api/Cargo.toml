@@ -1,0 +1,11 @@
+[package]
+name = "azure-control-api"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "azure control api"
+
+[dependencies]
+azure-control-spi = { path = "../azure-control-spi" }
+async-trait = "0.1"
+

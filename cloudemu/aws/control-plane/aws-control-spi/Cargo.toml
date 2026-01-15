@@ -1,0 +1,15 @@
+[package]
+name = "aws-control-spi"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "AWS Control-Plane SPI - Foundation types for AWS emulation control"
+
+[dependencies]
+chrono = { version = "0.4", features = ["serde"] }
+# Self-contained - no external cloudemu dependencies
+async-trait = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2.0"
+

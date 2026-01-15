@@ -1,18 +1,35 @@
 [workspace]
 resolver = "2"
 members = [
-    # CloudEmu crates
-    "cloudemu/crates/cloudemu_spi",
-    "cloudemu/crates/cloudemu_api",
-    "cloudemu/crates/cloudemu_core",
-    "cloudemu/crates/cloudemu_server",
-    "cloudemu/crates/data-plane",
-    # CloudEmu provider crates (nested under cloudemu_core)
-    "cloudemu/crates/cloudemu_core/aws",
-    "cloudemu/crates/cloudemu_core/aws/control-plane",
-    "cloudemu/crates/cloudemu_core/aws/data-plane",
-    "cloudemu/crates/cloudemu_core/azure",
-    "cloudemu/crates/cloudemu_core/gcp",
+    "cloudemu/server",
+    # CloudEmu provider crates (Full SEA pattern)
+    # AWS
+    "cloudemu/aws/control-plane/aws-control-spi",
+    "cloudemu/aws/control-plane/aws-control-api",
+    "cloudemu/aws/control-plane/aws-control-core",
+    "cloudemu/aws/control-plane/aws-control-facade",
+    "cloudemu/aws/data-plane/aws-data-spi",
+    "cloudemu/aws/data-plane/aws-data-api",
+    "cloudemu/aws/data-plane/aws-data-core",
+    "cloudemu/aws/data-plane/aws-data-facade",
+    # Azure
+    "cloudemu/azure/control-plane/azure-control-spi",
+    "cloudemu/azure/control-plane/azure-control-api",
+    "cloudemu/azure/control-plane/azure-control-core",
+    "cloudemu/azure/control-plane/azure-control-facade",
+    "cloudemu/azure/data-plane/azure-data-spi",
+    "cloudemu/azure/data-plane/azure-data-api",
+    "cloudemu/azure/data-plane/azure-data-core",
+    "cloudemu/azure/data-plane/azure-data-facade",
+    # GCP
+    "cloudemu/gcp/control-plane/gcp-control-spi",
+    "cloudemu/gcp/control-plane/gcp-control-api",
+    "cloudemu/gcp/control-plane/gcp-control-core",
+    "cloudemu/gcp/control-plane/gcp-control-facade",
+    "cloudemu/gcp/data-plane/gcp-data-spi",
+    "cloudemu/gcp/data-plane/gcp-data-api",
+    "cloudemu/gcp/data-plane/gcp-data-core",
+    "cloudemu/gcp/data-plane/gcp-data-facade",
     # CloudKit crates
     "cloudkit/crates/cloudkit_*",
     # CloudKit provider crates (nested under cloudkit_core)
@@ -44,15 +61,7 @@ cloudkit-gcp = { path = "cloudkit/crates/cloudkit_core/gcp" }
 cloudkit-oracle = { path = "cloudkit/crates/cloudkit_core/oracle" }
 
 # CloudEmu modules
-cloudemu_spi = { path = "cloudemu/crates/cloudemu_spi" }
-cloudemu_api = { path = "cloudemu/crates/cloudemu_api" }
-cloudemu_core = { path = "cloudemu/crates/cloudemu_core" }
-cloudemu_server = { path = "cloudemu/crates/cloudemu_server" }
-data-plane = { path = "cloudemu/crates/data-plane" }
-# CloudEmu provider crates (nested under cloudemu_core)
-cloudemu-aws = { path = "cloudemu/crates/cloudemu_core/aws" }
-cloudemu-azure = { path = "cloudemu/crates/cloudemu_core/azure" }
-cloudemu-gcp = { path = "cloudemu/crates/cloudemu_core/gcp" }
+cloudemu_server = { path = "cloudemu/server" }
 
 
 # Async

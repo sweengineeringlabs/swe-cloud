@@ -1,0 +1,53 @@
+[package]
+name = "aws-control-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "AWS Control-Plane Core - Implementation of AWS service emulation"
+
+[features]
+default = ["s3"]
+s3 = []
+dynamodb = []
+sqs = []
+sns = []
+lambda = []
+secretsmanager = []
+eventbridge = []
+kms = []
+cloudwatch = []
+cognito = []
+stepfunctions = []
+full = ["s3", "dynamodb", "sqs", "sns", "lambda", "secretsmanager", "eventbridge", "kms", "cloudwatch", "cognito", "stepfunctions"]
+
+[dependencies]
+aws-control-spi = { path = "../aws-control-spi" }
+aws-control-api = { path = "../aws-control-api" }
+aws-data-core = { path = "../../data-plane/aws-data-core" }
+
+async-trait = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+anyhow = { workspace = true }
+base64 = { workspace = true }
+hmac = "0.12"
+sha2 = "0.10"
+aes-gcm = "0.10"
+quick-xml = { version = "0.37", features = ["serialize"] }
+percent-encoding = "2.3"
+axum = { workspace = true }
+tower = { workspace = true, features = ["util"] }
+tower-http = { workspace = true }
+http-body-util = "0.1"
+hyper = { version = "1.6", features = ["full"] }
+
+[dev-dependencies]
+tokio-test = "0.4"
+tracing-subscriber = { workspace = true }
+

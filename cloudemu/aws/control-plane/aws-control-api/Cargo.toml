@@ -1,0 +1,13 @@
+[package]
+name = "aws-control-api"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "AWS Control-Plane API - Service traits for AWS emulation"
+
+[dependencies]
+aws-control-spi = { path = "../aws-control-spi" }
+async-trait = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+bytes = "1.0"
+

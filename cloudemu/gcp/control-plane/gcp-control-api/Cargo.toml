@@ -1,0 +1,11 @@
+[package]
+name = "gcp-control-api"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "gcp control api"
+
+[dependencies]
+gcp-control-spi = { path = "../gcp-control-spi" }
+async-trait = "0.1"
+

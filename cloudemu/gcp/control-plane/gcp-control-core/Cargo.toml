@@ -1,0 +1,19 @@
+[package]
+name = "gcp-control-core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "gcp control core"
+
+[dependencies]
+gcp-control-spi = { path = "../gcp-control-spi" }
+gcp-control-api = { path = "../gcp-control-api" }
+gcp-data-core = { path = "../../data-plane/gcp-data-core" }
+gcp-data-api = { path = "../../data-plane/gcp-data-api" }
+tokio = { workspace = true }
+async-trait = "0.1"
+tracing = "0.1"
+uuid = { version = "1.0", features = ["v4"] }
+
+[dev-dependencies]
+

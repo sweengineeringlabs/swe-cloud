@@ -1,0 +1,11 @@
+[package]
+name = "gcp-data-api"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "gcp data api"
+
+[dependencies]
+gcp-data-spi = { path = "../gcp-data-spi" }
+async-trait = "0.1"
+

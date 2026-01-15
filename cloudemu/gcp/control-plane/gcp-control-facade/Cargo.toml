@@ -1,0 +1,11 @@
+[package]
+name = "gcp-control-facade"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "gcp control facade"
+
+[dependencies]
+gcp-control-spi = { path = "../gcp-control-spi" }
+gcp-control-core = { path = "../gcp-control-core" }
+

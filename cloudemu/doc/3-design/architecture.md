@@ -1,120 +1,347 @@
 # CloudEmu Architecture
 
-**Audience**: Developers, Contributors, and System Architects.
+## Overview
 
-## WHAT: Two-Layer Emulation Design
+CloudEmu implements a **Full Stratified Encapsulation Architecture (SEA)** across all providers and both control-plane and data-plane components. This results in a highly modular, consistent, and maintainable codebase.
 
-CloudEmu uses a **Control Plane / Data Plane** architecture to separate HTTP orchestration from persistence logic. This design allows for modular service development, efficient testing, and future extensibility (e.g., adding support for Azure or GCP emulation).
+## Architectural Principles
 
-**Scope**:
-- Request lifecycle from HTTP ingress to storage.
-- Separation of concerns between the API boundary and persistence.
-- Crate organization (`control-plane` and `data-plane`).
+### 1. Stratified Encapsulation
 
-## WHY: Separation of Concerns
-
-### Problems Addressed
-
-1. **Monolithic Storage Logic**
-   - Impact: All service storage operations in a single 1700+ line file.
-   - Consequence: Difficult to test, maintain, and extend individual services.
-
-2. **HTTP and Storage Coupling**
-   - Impact: Service handlers directly calling storage methods.
-   - Consequence: Hard to swap storage backends or add caching layers.
-
-### Benefits
-- **Testability**: Each plane can be unit-tested independently.
-- **Modularity**: Adding a new AWS service only requires a handler and storage method.
-- **Performance**: Future optimizations (e.g., caching, connection pooling) can be added to the Data Plane without affecting the Control Plane.
-
-## HOW: Request Lifecycle
+Each provider's control-plane and data-plane is divided into 4 distinct layers:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Request Lifecycle                            │
-│                                                                   │
-│   1. HTTP Request (Terraform/AWS SDK/CLI)                        │
-│      │                                                            │
-│      ▼                                                            │
-│   ┌──────────────────────────────────────────────────────────┐   │
-│   │  CONTROL PLANE (crates/control-plane)                    │   │
-│   │                                                           │   │
-│   │  a) Ingress: Axum HTTP Server (0.0.0.0:4566)            │   │
-│   │  b) Gateway: Route to service endpoint                   │   │
-│   │  c) Dispatcher: Parse AWS headers (x-amz-target)        │   │
-│   │  d) Service Handler: Execute service logic              │   │
-│   │     - services/s3/                                        │   │
-│   │     - services/dynamodb/                                  │   │
-│   │     - services/sqs/                                       │   │
-│   │     - services/lambda/                                    │   │
-│   │     - services/secrets/                                   │   │
-│   │     - services/kms/                                       │   │
-│   │     - services/events/                                    │   │
-│   │     - services/monitoring/                                │   │
-│   │     - services/identity/                                  │   │
-│   │     - services/workflows/                                 │   │
-│   └──────────────────────┬───────────────────────────────────┘   │
-│                          │                                        │
-│                          ▼                                        │
-│   ┌──────────────────────────────────────────────────────────┐   │
-│   │  DATA PLANE (crates/data-plane)                          │   │
-│   │                                                           │   │
-│   │  a) Storage Engine: Unified persistence API              │   │
-│   │     - SQLite (metadata, indexes, policies)               │   │
-│   │     - Filesystem (S3 object blobs)                       │   │
-│   │  b) Configuration: Global emulator settings              │   │
-│   └──────────────────────────────────────────────────────────┘   │
-│                                                                   │
-└─────────────────────────────────────────────────────────────────┘
+Facade Layer    (HTTP routing, public API)
+    ↓
+Core Layer      (Business logic, service implementations)
+    ↓
+API Layer       (Traits, service contracts)
+    ↓
+SPI Layer       (Foundation types, errors, base traits)
 ```
 
-### Data Flow Example (S3 PutObject)
+### 2. Provider Isolation
 
-```
-1. Client → PUT /my-bucket/hello.txt
-2. Gateway → Route to S3 handler
-3. Dispatcher → Identify "s3:PutObject"
-4. S3 Handler → Validate bucket, parse body
-5. Storage Engine → Insert metadata row (SQLite)
-6. Storage Engine → Write blob to .cloudemu/objects/{hash}
-7. S3 Handler → Generate XML response
-8. Client ← 200 OK
-```
+Each provider (AWS, Azure, GCP) has its own complete stack, ensuring:
+- No cross-provider contamination
+- Independent versioning capability
+- Clear provider-specific logic separation
+
+### 3. Plane Separation
+
+**Control-Plane**: Handles API requests, service emulation, routing
+**Data-Plane**: Manages persistence, storage, data retrieval
+
+This separation allows:
+- Independent scaling of API vs storage
+- Different optimization strategies per plane
+- Clear architectural boundaries
 
 ## Crate Structure
 
+### Provider Crates (24 total: 8 per provider)
+
+#### AWS Example
+
+**Control-Plane** (4 crates):
 ```
-cloudemu/
-├── crates/
-│   ├── control-plane/       # HTTP orchestration
-│   │   ├── src/
-│   │   │   ├── gateway/     # Axum router
-│   │   │   ├── services/    # AWS service handlers
-│   │   │   └── lib.rs       # Public API
-│   └── data-plane/          # Persistence
-│       ├── src/
-│       │   ├── storage/     # SQLite + Filesystem
-│       │   ├── config.rs    # Configuration
-│       │   └── lib.rs       # Public API
+aws-control-spi    → Foundation (types, errors)
+aws-control-api    → Service traits (S3Service, DynamoDBService, etc.)
+aws-control-core   → Service implementations (actual emulation logic)
+aws-control-facade → HTTP routing (Axum handlers)
 ```
+
+**Data-Plane** (4 crates):
+```
+aws-data-spi    → Storage foundation types
+aws-data-api    → Storage service traits
+aws-data-core   → Storage implementations
+aws-data-facade → Storage API endpoints
+```
+
+Azure and GCP follow identical patterns.
+
+### Global Crates (5 total)
+
+```
+cloudemu_spi    → Global foundation (shared types, base traits)
+cloudemu_api    → Global service contracts
+cloudemu_core   → Provider orchestration (feature flags, re-exports)
+cloudemu_server → HTTP server runtime
+data-plane      → Shared storage engine (SQLite-based)
+```
+
+## Dependency Flow
+
+### Vertical (Within a Provider)
+
+```
+facade
+  ↓ depends on
+core
+  ↓ depends on
+api
+  ↓ depends on
+spi
+  ↓ depends on
+cloudemu_spi (global)
+```
+
+### Horizontal (Across Providers)
+
+Providers are **independent**. No provider directly depends on another.
+
+```
+aws/        azure/      gcp/
+  ↓           ↓           ↓
+       cloudemu_spi (shared)
+```
+
+### Server Integration
+
+```
+cloudemu_server
+  ↓ depends on
+aws-control-facade, azure-control-facade, gcp-control-facade
+  ↓ which depend on
+respective core implementations
+```
+
+## Layer Responsibilities
+
+### SPI Layer (Foundation)
+
+**Purpose**: Provide foundation types and base traits
+
+**Contents**:
+- Re-exports from `cloudemu_spi`
+- Provider-specific error types
+- Provider-specific base types
+- Extension traits
+
+**Example** (`aws-control-spi/src/lib.rs`):
+```rust
+pub use cloudemu_spi::*;
+
+pub mod types {
+    // AWS-specific types
+}
+
+pub mod error {
+    use thiserror::Error;
+    
+    #[derive(Error, Debug)]
+    pub enum AwsControlError {
+        #[error("AWS control error: {0}")]
+        Generic(String),
+    }
+}
+```
+
+### API Layer (Contracts)
+
+**Purpose**: Define service contracts as traits
+
+**Contents**:
+- Service traits (e.g., `S3Service`, `DynamoDBService`)
+- Request/response types
+- Service-specific errors
+
+**Example** (`aws-control-api/src/s3.rs`):
+```rust
+#[async_trait]
+pub trait S3Service {
+    async fn put_object(&self, bucket: &str, key: &str, data: Vec<u8>) 
+        -> Result<(), String>;
+    async fn get_object(&self, bucket: &str, key: &str) 
+        -> Result<Vec<u8>, String>;
+}
+```
+
+### Core Layer (Implementation)
+
+**Purpose**: Implement service logic
+
+**Contents**:
+- Service implementations
+- Business logic
+- Service modules (s3/, dynamodb/, sqs/, etc.)
+- Adapters and utilities
+
+**Example** (aws-control-core structure):
+```
+aws-control-core/
+├── src/
+│   ├── lib.rs
+│   ├── services/
+│   │   ├── s3/
+│   │   │   ├── mod.rs
+│   │   │   ├── service.rs
+│   │   │   ├── handlers.rs
+│   │   │   └── xml.rs
+│   │   ├── dynamodb/
+│   │   ├── sqs/
+│   │   └── ...
+│   ├── gateway/
+│   │   ├── dispatcher.rs
+│   │   └── router.rs
+│   └── adapters/
+```
+
+### Facade Layer (Public API)
+
+**Purpose**: Expose HTTP API and orchestrate core
+
+**Contents**:
+- Axum HTTP routing
+- Request parsing
+- Response formatting
+- Public API endpoints
+
+**Example** (`aws-control-facade/src/lib.rs`):
+```rust
+pub use aws_control_spi;
+pub use aws_control_api;
+pub use aws_control_core;
+
+// Re-export gateway/routing
+pub use aws_control_core::gateway;
+```
+
+## Data Flow
+
+### Request Flow (Control-Plane)
+
+```
+1. HTTP Request → cloudemu_server
+2. Router → aws-control-facade
+3. Dispatcher → aws-control-core
+4. Service Implementation → aws-control-api trait
+5. Storage Access → data-plane
+6. Response → HTTP Response
+```
+
+### Storage Flow (Data-Plane)
+
+```
+1. Storage Request → aws-data-facade
+2. Storage Logic → aws-data-core
+3. Storage Trait → aws-data-api
+4. Shared Engine → data-plane (SQLite)
+```
+
+## Feature Flags
+
+### Core Layer Features
+
+Each provider's core supports service-specific features:
+
+```toml
+[features]
+default = ["s3"]
+s3 = []
+dynamodb = []
+sqs = []
+sns = []
+lambda = []
+full = ["s3", "dynamodb", "sqs", "sns", "lambda"]
+```
+
+### Orchestration Layer Features
+
+`cloudemu_core` orchestrates provider selection:
+
+```toml
+[features]
+default = []
+aws = ["dep:aws-control-facade"]
+azure = ["dep:azure-control-facade"]
+gcp = ["dep:gcp-control-facade"]
+full = ["aws", "azure", "gcp"]
+```
+
+## Benefits
+
+### Modularity
+- Each crate has ~single responsibility
+- Easy to test individual components
+- Clear boundaries reduce cognitive load
+
+### Consistency
+- All providers follow identical structure
+- Switching providers requires same mental model
+- Predictable code organization
+
+### Extensibility
+- Add new services by extending API + Core
+- Add new providers by replicating structure
+- Add new layers without disrupting existing ones
+
+### Type Safety
+- Full Rust type system across all layers
+- Compile-time verification of contracts
+- No runtime surprises
+
+### Performance
+- Granular compilation units
+- Feature flags reduce binary size
+- Clear hot paths for optimization
+
+## Comparison with Alternatives
+
+### vs. Monolithic Design
+```
+Monolithic: All code in one crate
+SEA: 24 crates, clear boundaries
+→ SEA wins on maintainability, loses slightly on compile time
+```
+
+### vs. Partial Layering
+```
+Partial: Only facade + core
+Full SEA: Facade + core + API + SPI
+→ Full SEA wins on clarity, extensibility
+```
+
+### vs. Per-Service Crates
+```
+Per-Service: s3/, dynamodb/, sqs/ as separate crates
+SEA: Services within provider core
+→ SEA wins on provider cohesion
+```
+
+## Migration Path
+
+### From Old Structure
+```
+OLD: cloudemu/crates/cloudemu_core/aws/control-plane/
+NEW: cloudemu/aws/control-plane/aws-control-core/
+```
+
+### Import Changes
+```rust
+// OLD
+use cloudemu_spi::CloudError;
+
+// NEW
+use aws_control_spi::CloudError;
+```
+
+## Future Enhancements
+
+### Potential Additions
+1. **Observability Layer** - Monitoring and tracing
+2. **Plugin System** - Dynamic service loading
+3. **Multi-Region** - Regional emulation
+4. **Chaos Engineering** - Failure injection
+
+### Versioning Strategy
+- Per-crate semantic versioning
+- Provider independence allows breaking changes
+- Global SPI versioning for cross-provider compatibility
 
 ---
 
-## Summary
-
-The Control Plane / Data Plane architecture provides a clean separation between HTTP orchestration and persistence. This design makes CloudEmu modular, testable, and extensible for future enhancements.
-
-**Key Takeaways**:
-1. Control Plane handles all HTTP routing and service logic.
-2. Data Plane handles all persistence (SQLite and filesystem).
-3. Each AWS service is a self-contained module in `services/`.
-
----
-
-**Related Documentation**:
-- [Backlog](../4-development/backlog.md)
-- [Overview](../overview.md)
-
-**Last Updated**: 2026-01-14  
-**Version**: 1.0
+**Version**: 1.0  
+**Last Updated**: 2026-01-15  
+**Authors**: SWE Engineering Labs

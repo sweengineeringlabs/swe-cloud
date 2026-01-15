@@ -1,0 +1,2 @@
+//! sns service traits
+

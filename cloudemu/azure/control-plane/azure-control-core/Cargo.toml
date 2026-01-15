@@ -1,0 +1,20 @@
+[package]
+name = "azure-control-core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "azure control core"
+
+[dependencies]
+azure-control-spi = { path = "../azure-control-spi" }
+azure-control-api = { path = "../azure-control-api" }
+azure-data-core = { path = "../../data-plane/azure-data-core" }
+azure-data-api = { path = "../../data-plane/azure-data-api" }
+tokio = { workspace = true }
+async-trait = "0.1"
+tracing = "0.1"
+serde_json = "1.0"
+
+[dev-dependencies]
+uuid = { version = "1.0", features = ["v4"] }
+
