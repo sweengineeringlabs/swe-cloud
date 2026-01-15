@@ -59,6 +59,38 @@ impl StorageEngine {
         })
     }
     
+    // ==================== Object Data Storage ====================
+    
+    /// Store object data to filesystem, returns content hash
+    pub(crate) fn store_object_data(&self, data: &[u8]) -> Result<String> {
+        use sha2::{Sha256, Digest};
+        
+        let mut hasher = Sha256::new();
+        hasher.update(data);
+        let hash = hex::encode(hasher.finalize());
+        
+        // Content-addressed storage: first 2 chars as directory
+        let dir = self.objects_dir.join(&hash[..2]);
+        fs::create_dir_all(&dir)?;
+        
+        let file_path = dir.join(&hash);
+        if !file_path.exists() {
+            fs::write(&file_path, data)?;
+        }
+        
+        Ok(hash)
+    }
+    
+    /// Read object data from filesystem
+    pub(crate) fn read_object_data(&self, content_hash: &str) -> Result<Vec<u8>> {
+        if content_hash.is_empty() {
+            return Ok(Vec::new());
+        }
+        
+        let file_path = self.objects_dir.join(&content_hash[..2]).join(content_hash);
+        fs::read(&file_path).map_err(|e| crate::error::EmulatorError::Internal(e.to_string()))
+    }
+    
     // Bucket Operations moved to s3.rs
     
     // Object Operations moved to s3.rs
@@ -354,4 +386,85 @@ pub struct LambdaMetadata {
     pub runtime: String,
     pub handler: String,
     pub last_modified: String,
+}
+
+// ==================== Azure Metadata ====================
+
+/// Azure Storage Account metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StorageAccountMetadata {
+    pub name: String,
+    pub location: String,
+    pub resource_group: String,
+    pub sku_name: String,
+    pub kind: String,
+    pub access_tier: Option<String>,
+    pub created_at: String,
+}
+
+/// Azure Container metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BlobContainerMetadata {
+    pub name: String,
+    pub account_name: String,
+    pub public_access: String,
+    pub etag: String,
+    pub last_modified: String,
+}
+
+/// Azure Blob metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BlobMetadata {
+    pub name: String,
+    pub container_name: String,
+    pub account_name: String,
+    pub blob_type: String,
+    pub access_tier: String,
+    pub size: u64,
+    pub content_type: Option<String>,
+    pub etag: String,
+    pub last_modified: String,
+}
+
+/// Azure Cosmos Account metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CosmosAccountMetadata {
+    pub name: String,
+    pub location: String,
+    pub resource_group: String,
+    pub kind: String,
+    pub created_at: String,
+}
+
+/// Azure Cosmos Database metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CosmosDatabaseMetadata {
+    pub name: String,
+    pub account_name: String,
+    pub throughput: Option<i32>,
+    pub etag: String,
+}
+
+/// Azure Cosmos Container metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CosmosContainerMetadata {
+    pub name: String,
+    pub database_name: String,
+    pub account_name: String,
+    pub partition_key_path: String,
+    pub throughput: Option<i32>,
+    pub etag: String,
+}
+
+/// Azure Cosmos Item metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CosmosItemMetadata {
+    pub id: String,
+    pub container_name: String,
+    pub database_name: String,
+    pub account_name: String,
+    pub partition_key_value: String,
+    pub item_json: String,
+    pub last_modified: i64,
+    pub etag: String,
 }

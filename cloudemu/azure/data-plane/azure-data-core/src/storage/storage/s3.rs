@@ -424,37 +424,6 @@ impl StorageEngine {
         })
     }
     
-    // ==================== Object Data Storage ====================
-    
-    /// Store object data to filesystem, returns content hash
-    fn store_object_data(&self, data: &[u8]) -> Result<String> {
-        use sha2::{Sha256, Digest};
-        
-        let mut hasher = Sha256::new();
-        hasher.update(data);
-        let hash = hex::encode(hasher.finalize());
-        
-        // Content-addressed storage: first 2 chars as directory
-        let dir = self.objects_dir.join(&hash[..2]);
-        fs::create_dir_all(&dir)?;
-        
-        let file_path = dir.join(&hash);
-        if !file_path.exists() {
-            fs::write(&file_path, data)?;
-        }
-        
-        Ok(hash)
-    }
-    
-    /// Read object data from filesystem
-    fn read_object_data(&self, content_hash: &str) -> Result<Vec<u8>> {
-        if content_hash.is_empty() {
-            return Ok(Vec::new());
-        }
-        
-        let file_path = self.objects_dir.join(&content_hash[..2]).join(content_hash);
-        fs::read(&file_path).map_err(|e| EmulatorError::Internal(e.to_string()))
-    }
 
     // ==================== Multipart Upload Operations ====================
 

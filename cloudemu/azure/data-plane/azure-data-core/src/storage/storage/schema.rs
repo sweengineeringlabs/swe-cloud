@@ -395,4 +395,106 @@ CREATE TABLE IF NOT EXISTS lambda_functions (
     environment_variables TEXT,
     last_modified TEXT NOT NULL
 );
+
+-- =================================================================================================
+-- AZURE TABLES
+-- =================================================================================================
+
+-- Azure Storage Accounts
+CREATE TABLE IF NOT EXISTS az_storage_accounts (
+    name TEXT PRIMARY KEY,
+    location TEXT NOT NULL,
+    resource_group TEXT NOT NULL,
+    sku_name TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    access_tier TEXT,
+    created_at TEXT NOT NULL
+);
+
+-- Azure Storage Containers
+CREATE TABLE IF NOT EXISTS az_storage_containers (
+    name TEXT NOT NULL,
+    account_name TEXT NOT NULL,
+    public_access TEXT DEFAULT 'None', -- Blob, Container, None
+    metadata TEXT,
+    etag TEXT NOT NULL,
+    last_modified TEXT NOT NULL,
+    
+    PRIMARY KEY (account_name, name),
+    FOREIGN KEY (account_name) REFERENCES az_storage_accounts(name) ON DELETE CASCADE
+);
+
+-- Azure Blobs
+CREATE TABLE IF NOT EXISTS az_blobs (
+    name TEXT NOT NULL,
+    container_name TEXT NOT NULL,
+    account_name TEXT NOT NULL,
+    
+    blob_type TEXT DEFAULT 'BlockBlob',
+    access_tier TEXT DEFAULT 'Hot',
+    
+    content_hash TEXT NOT NULL,
+    content_length INTEGER NOT NULL,
+    content_type TEXT,
+    content_encoding TEXT,
+    content_md5 TEXT,
+    
+    etag TEXT NOT NULL,
+    last_modified TEXT NOT NULL,
+    metadata TEXT,
+    
+    PRIMARY KEY (account_name, container_name, name),
+    FOREIGN KEY (account_name, container_name) REFERENCES az_storage_containers(account_name, name) ON DELETE CASCADE
+);
+
+-- Azure Cosmos Accounts
+CREATE TABLE IF NOT EXISTS az_cosmos_accounts (
+    name TEXT PRIMARY KEY,
+    location TEXT NOT NULL,
+    resource_group TEXT NOT NULL,
+    kind TEXT DEFAULT 'GlobalDocumentDB',
+    consistency_policy TEXT,
+    created_at TEXT NOT NULL
+);
+
+-- Azure Cosmos Databases
+CREATE TABLE IF NOT EXISTS az_cosmos_databases (
+    name TEXT NOT NULL,
+    account_name TEXT NOT NULL,
+    throughput INTEGER,
+    etag TEXT NOT NULL,
+    
+    PRIMARY KEY (account_name, name),
+    FOREIGN KEY (account_name) REFERENCES az_cosmos_accounts(name) ON DELETE CASCADE
+);
+
+-- Azure Cosmos Containers
+CREATE TABLE IF NOT EXISTS az_cosmos_containers (
+    name TEXT NOT NULL,
+    database_name TEXT NOT NULL,
+    account_name TEXT NOT NULL,
+    partition_key_path TEXT NOT NULL,
+    throughput INTEGER,
+    default_ttl INTEGER,
+    etag TEXT NOT NULL,
+    
+    PRIMARY KEY (account_name, database_name, name),
+    FOREIGN KEY (account_name, database_name) REFERENCES az_cosmos_databases(account_name, name) ON DELETE CASCADE
+);
+
+-- Azure Cosmos Items
+CREATE TABLE IF NOT EXISTS az_cosmos_items (
+    id TEXT NOT NULL,
+    container_name TEXT NOT NULL,
+    database_name TEXT NOT NULL,
+    account_name TEXT NOT NULL,
+    
+    partition_key_value TEXT NOT NULL,
+    item_json TEXT NOT NULL,
+    last_modified INTEGER NOT NULL, -- Timestamp
+    etag TEXT NOT NULL,
+    
+    PRIMARY KEY (account_name, database_name, container_name, id, partition_key_value),
+    FOREIGN KEY (account_name, database_name, container_name) REFERENCES az_cosmos_containers(account_name, database_name, name) ON DELETE CASCADE
+);
 "#;
