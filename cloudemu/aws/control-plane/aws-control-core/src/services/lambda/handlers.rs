@@ -7,6 +7,7 @@ use axum::{
 };
 use serde_json::{json, Value};
 use std::sync::Arc;
+use crate::services::lambda::executor::execute_lambda;
 
 pub async fn handle_request(
     State(emulator): State<Arc<Emulator>>,
@@ -54,14 +55,11 @@ pub async fn handle_request(
 }
 
 // Special handler for POST /2015-03-31/functions/{FunctionName}/invocations
-pub async fn invoke(emulator: &Emulator, name: &str, _payload: Value) -> Result<Value, EmulatorError> {
-    let _function = emulator.storage.get_function(name)?;
+pub async fn invoke(emulator: &Emulator, name: &str, payload: Value) -> Result<Value, EmulatorError> {
+    let function = emulator.storage.get_function(name)?;
+    let code_bytes = emulator.storage.get_function_code(name)?;
     
-    // CloudEmu mock: just returns a success message
-    Ok(json!({
-        "StatusCode": 200,
-        "Payload": "Mock execution successful"
-    }))
+    execute_lambda(&function.runtime, &function.handler, &code_bytes, &payload)
 }
 
 pub async fn create_function(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> {
@@ -71,12 +69,20 @@ pub async fn create_function(emulator: &Emulator, body: Value) -> Result<Value, 
     let handler = body["Handler"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing Handler".into()))?;
     
     
+    let code_bytes = if let Some(zip_file) = body["Code"]["ZipFile"].as_str() {
+        use base64::{Engine as _, engine::general_purpose};
+        general_purpose::STANDARD.decode(zip_file)
+            .map_err(|e| EmulatorError::InvalidArgument(format!("Invalid Base64 in Code.ZipFile: {}", e)))?
+    } else {
+        return Err(EmulatorError::InvalidArgument("Missing Code.ZipFile (Base64 encoded zip)".into()));
+    };
+    
     let func = emulator.storage.create_function(aws_data_core::storage::CreateFunctionParams {
         name,
         runtime,
         role,
         handler,
-        code_hash: "mock-hash",
+        code_bytes: &code_bytes,
         account_id: &emulator.config.account_id,
         region: &emulator.config.region
     })?;

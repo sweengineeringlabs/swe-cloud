@@ -111,6 +111,26 @@ impl StorageEngine {
 
         Ok(())
     }
+
+    pub fn list_queues(&self) -> Result<Vec<QueueMetadata>> {
+        let db = self.db.lock();
+        let mut stmt = db.prepare(
+            "SELECT name, url, arn, created_at, visibility_timeout, message_retention_period, delay_seconds, receive_message_wait_time_seconds FROM sqs_queues ORDER BY name"
+        )?;
+        let queues = stmt.query_map([], |row| {
+            Ok(QueueMetadata {
+                name: row.get(0)?,
+                url: row.get(1)?,
+                arn: row.get(2)?,
+                created_at: row.get(3)?,
+                visibility_timeout: row.get(4)?,
+                message_retention_period: row.get(5)?,
+                delay_seconds: row.get(6)?,
+                receive_message_wait_time_seconds: row.get(7)?,
+            })
+        })?.filter_map(|r| r.ok()).collect();
+        Ok(queues)
+    }
 }
 
 #[cfg(test)]

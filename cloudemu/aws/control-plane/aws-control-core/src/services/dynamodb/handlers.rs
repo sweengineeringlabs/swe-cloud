@@ -161,9 +161,11 @@ async fn describe_table(_emulator: &Emulator, body: Value) -> Result<Value, Emul
      }))
 }
 
-async fn list_tables(_emulator: &Emulator, _body: Value) -> Result<Value, EmulatorError> {
+async fn list_tables(emulator: &Emulator, _body: Value) -> Result<Value, EmulatorError> {
+    let tables = emulator.storage.list_tables()?;
+    let table_names: Vec<String> = tables.into_iter().map(|t| t.name).collect();
     Ok(json!({
-        "TableNames": []
+        "TableNames": table_names
     }))
 }
 
@@ -200,7 +202,14 @@ async fn query(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError>
 
     let items_json = emulator.storage.query_items(table_name, &pk_val)?;
     
-    let items: Vec<Value> = items_json.into_iter().map(|s| serde_json::from_str(&s).unwrap_or(Value::Null)).collect();
+    let mut items: Vec<Value> = items_json.into_iter().map(|s| serde_json::from_str(&s).unwrap_or(Value::Null)).collect();
+
+    // Apply FilterExpression if present
+    if let Some(filter_exp) = body["FilterExpression"].as_str() {
+        let attr_names = &body["ExpressionAttributeNames"];
+        let attr_values = &body["ExpressionAttributeValues"];
+        items.retain(|item| evaluate_expression(item, filter_exp, attr_names, attr_values));
+    }
 
     Ok(json!({
         "Items": items,
@@ -213,11 +222,91 @@ async fn scan(emulator: &Emulator, body: Value) -> Result<Value, EmulatorError> 
     let table_name = body["TableName"].as_str().ok_or_else(|| EmulatorError::InvalidArgument("Missing TableName".into()))?;
     
     let items_json = emulator.storage.scan_items(table_name)?;
-    let items: Vec<Value> = items_json.into_iter().map(|s| serde_json::from_str(&s).unwrap_or(Value::Null)).collect();
+    let mut items: Vec<Value> = items_json.into_iter().map(|s| serde_json::from_str(&s).unwrap_or(Value::Null)).collect();
+
+    // Apply FilterExpression if present
+    if let Some(filter_exp) = body["FilterExpression"].as_str() {
+        let attr_names = &body["ExpressionAttributeNames"];
+        let attr_values = &body["ExpressionAttributeValues"];
+        items.retain(|item| evaluate_expression(item, filter_exp, attr_names, attr_values));
+    }
 
     Ok(json!({
         "Items": items,
         "Count": items.len(),
         "ScannedCount": items.len()
     }))
+}
+
+// Helpers for expression evaluation
+fn evaluate_expression(
+    item: &Value,
+    expression: &str,
+    attr_names: &Value,
+    attr_values: &Value,
+) -> bool {
+    // Extremely simplified parser: supports "field op :placeholder"
+    let parts: Vec<&str> = expression.split_whitespace().collect();
+    if parts.len() < 3 {
+        return true; 
+    }
+    
+    let field_name_raw = parts[0];
+    let op = parts[1];
+    let val_placeholder = parts[2];
+    
+    let field_name = if field_name_raw.starts_with('#') {
+        attr_names[field_name_raw].as_str().unwrap_or(field_name_raw)
+    } else {
+        field_name_raw
+    };
+    
+    let item_val_obj = match item.get(field_name) {
+        Some(v) => v,
+        None => return false,
+    };
+    
+    let item_val = extract_ddb_value(item_val_obj);
+    let filter_val_obj = &attr_values[val_placeholder];
+    let filter_val = extract_ddb_value(filter_val_obj);
+    
+    match op {
+        "=" => item_val == filter_val,
+        "<>" => item_val != filter_val,
+        ">" => compare_ddb_values(&item_val, &filter_val) == std::cmp::Ordering::Greater,
+        ">=" => compare_ddb_values(&item_val, &filter_val) != std::cmp::Ordering::Less,
+        "<" => compare_ddb_values(&item_val, &filter_val) == std::cmp::Ordering::Less,
+        "<=" => compare_ddb_values(&item_val, &filter_val) != std::cmp::Ordering::Greater,
+        _ => true,
+    }
+}
+
+fn extract_ddb_value(val: &Value) -> Value {
+    if let Some(s) = val["S"].as_str() {
+        Value::String(s.to_string())
+    } else if let Some(n) = val["N"].as_str() {
+        if let Ok(i) = n.parse::<i64>() {
+            Value::Number(i.into())
+        } else if let Ok(f) = n.parse::<f64>() {
+            serde_json::Number::from_f64(f).map(Value::Number).unwrap_or(Value::Null)
+        } else {
+            Value::String(n.to_string())
+        }
+    } else if let Some(b) = val["BOOL"].as_bool() {
+        Value::Bool(b)
+    } else {
+        Value::Null
+    }
+}
+
+fn compare_ddb_values(a: &Value, b: &Value) -> std::cmp::Ordering {
+    match (a, b) {
+        (Value::Number(an), Value::Number(bn)) => {
+            let af = an.as_f64().unwrap_or(0.0);
+            let bf = bn.as_f64().unwrap_or(0.0);
+            af.partial_cmp(&bf).unwrap_or(std::cmp::Ordering::Equal)
+        }
+        (Value::String(as_str), Value::String(bs_str)) => as_str.cmp(bs_str),
+        _ => std::cmp::Ordering::Equal,
+    }
 }

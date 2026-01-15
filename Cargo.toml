@@ -102,6 +102,10 @@ anyhow = "1.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
+# Utils
+zip = "2.2"
+tempfile = "3.16"
+
 # Testing
 mockall = "0.13"
 wiremock = "0.6"

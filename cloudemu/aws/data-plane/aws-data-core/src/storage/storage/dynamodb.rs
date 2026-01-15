@@ -114,6 +114,24 @@ impl StorageEngine {
         }
         Ok(items)
     }
+
+    pub fn list_tables(&self) -> Result<Vec<TableMetadata>> {
+        let db = self.db.lock();
+        let mut stmt = db.prepare(
+            "SELECT name, arn, status, attribute_definitions, key_schema, created_at FROM ddb_tables ORDER BY name"
+        )?;
+        let tables = stmt.query_map([], |row| {
+            Ok(TableMetadata {
+                name: row.get(0)?,
+                arn: row.get(1)?,
+                status: row.get(2)?,
+                attribute_definitions: row.get(3)?,
+                key_schema: row.get(4)?,
+                created_at: row.get(5)?,
+            })
+        })?.filter_map(|r| r.ok()).collect();
+        Ok(tables)
+    }
 }
 
 #[cfg(test)]

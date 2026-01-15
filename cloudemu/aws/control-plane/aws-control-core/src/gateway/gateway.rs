@@ -16,6 +16,7 @@ pub fn create_router(emulator: Arc<Emulator>) -> Router {
         // Health check endpoints
         .route("/health", get(health_check))
         .route("/_localstack/health", get(health_check)) // LocalStack compat
+        .route("/dashboard", get(super::dashboard::render_dashboard))
         .route("/", axum::routing::post(super::dispatcher::dispatch));
 
     // S3 routes
