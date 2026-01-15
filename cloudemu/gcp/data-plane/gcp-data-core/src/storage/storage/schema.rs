@@ -467,4 +467,24 @@ CREATE TABLE IF NOT EXISTS fs_indexes (
     
     FOREIGN KEY (database_name) REFERENCES fs_databases(name) ON DELETE CASCADE
 );
+
+-- GCP Pub/Sub Topics
+CREATE TABLE IF NOT EXISTS pubsub_topics (
+    name TEXT PRIMARY KEY, -- projects/{project}/topics/{topic}
+    project_id TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
+-- GCP Pub/Sub Subscriptions
+CREATE TABLE IF NOT EXISTS pubsub_subscriptions (
+    name TEXT PRIMARY KEY, -- projects/{project}/subscriptions/{sub}
+    topic_name TEXT NOT NULL,
+    project_id TEXT NOT NULL,
+    push_endpoint TEXT, -- If push subscription
+    ack_deadline_seconds INTEGER DEFAULT 10,
+    created_at TEXT NOT NULL,
+    
+    FOREIGN KEY (topic_name) REFERENCES pubsub_topics(name) ON DELETE CASCADE
+);
+
 "#;

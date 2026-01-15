@@ -468,3 +468,23 @@ pub struct CosmosItemMetadata {
     pub last_modified: i64,
     pub etag: String,
 }
+
+/// Azure Event Grid Topic metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EventGridTopicMetadata {
+    pub name: String,
+    pub location: String,
+    pub resource_group: String,
+    pub endpoint: String,
+    pub created_at: String,
+}
+
+/// Azure Event Grid Subscription metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EventGridSubscriptionMetadata {
+    pub name: String,
+    pub topic_name: String,
+    pub endpoint: String,
+    pub protocol: String,
+    pub created_at: String,
+}

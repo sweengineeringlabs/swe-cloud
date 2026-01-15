@@ -434,3 +434,24 @@ pub struct FirestoreDocumentMetadata {
     pub create_time: String,
     pub update_time: String,
 }
+
+// ==================== GCP Pub/Sub Metadata ====================
+
+/// Pub/Sub Topic metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PubSubTopicMetadata {
+    pub name: String,
+    pub project_id: String,
+    pub created_at: String,
+}
+
+/// Pub/Sub Subscription metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PubSubSubscriptionMetadata {
+    pub name: String,
+    pub topic_name: String,
+    pub project_id: String,
+    pub push_endpoint: Option<String>,
+    pub ack_deadline_seconds: i32,
+    pub created_at: String,
+}

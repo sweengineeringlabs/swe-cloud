@@ -15,6 +15,7 @@ mod identity;
 mod workflows;
 mod blob;
 mod cosmos;
+mod eventgrid;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -28,7 +29,8 @@ pub use engine::{
     TopicMetadata, SubscriptionMetadata, LambdaMetadata,
     // Azure
     StorageAccountMetadata, BlobContainerMetadata, BlobMetadata,
-    CosmosAccountMetadata, CosmosDatabaseMetadata, CosmosContainerMetadata, CosmosItemMetadata
+    CosmosAccountMetadata, CosmosDatabaseMetadata, CosmosContainerMetadata, CosmosItemMetadata,
+    EventGridTopicMetadata, EventGridSubscriptionMetadata
 };
 
 pub use lambda::CreateFunctionParams;
