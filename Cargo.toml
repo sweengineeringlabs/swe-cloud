@@ -1,17 +1,25 @@
 [workspace]
 resolver = "2"
 members = [
-    "cloudemu/crates/cloudemu-core",
-    "cloudemu/crates/cloudemu-azure",
-    "cloudemu/crates/cloudemu-gcp",
-    "cloudemu/crates/control-plane",
+    # CloudEmu crates
+    "cloudemu/crates/cloudemu_spi",
+    "cloudemu/crates/cloudemu_api",
+    "cloudemu/crates/cloudemu_core",
+    "cloudemu/crates/cloudemu_server",
     "cloudemu/crates/data-plane",
+    # CloudEmu provider crates (nested under cloudemu_core)
+    "cloudemu/crates/cloudemu_core/aws",
+    "cloudemu/crates/cloudemu_core/aws/control-plane",
+    "cloudemu/crates/cloudemu_core/aws/data-plane",
+    "cloudemu/crates/cloudemu_core/azure",
+    "cloudemu/crates/cloudemu_core/gcp",
+    # CloudKit crates
     "cloudkit/crates/cloudkit_*",
-    # Nested provider crates under cloudkit_core
+    # CloudKit provider crates (nested under cloudkit_core)
     "cloudkit/crates/cloudkit_core/aws",
     "cloudkit/crates/cloudkit_core/azure",
     "cloudkit/crates/cloudkit_core/gcp",
-    "cloudkit/crates/cloudkit_core/oracle", "cloudemu/crates/cloudemu-server",
+    "cloudkit/crates/cloudkit_core/oracle",
 ]
 
 
@@ -24,18 +32,27 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/sweengineeringlabs/swe-cloud"
 
 [workspace.dependencies]
-# Cloud Modules
+# CloudKit modules
 cloudkit = { path = "cloudkit/crates/cloudkit_facade" }
 cloudkit_spi = { path = "cloudkit/crates/cloudkit_spi" }
 cloudkit_api = { path = "cloudkit/crates/cloudkit_api" }
 cloudkit_core = { path = "cloudkit/crates/cloudkit_core" }
-cloudemu = { path = "cloudemu/crates/control-plane" }
-data-plane = { path = "cloudemu/crates/data-plane" }
-# Provider crates (nested under cloudkit_core)
+# CloudKit provider crates (nested under cloudkit_core)
 cloudkit-aws = { path = "cloudkit/crates/cloudkit_core/aws" }
 cloudkit-azure = { path = "cloudkit/crates/cloudkit_core/azure" }
 cloudkit-gcp = { path = "cloudkit/crates/cloudkit_core/gcp" }
 cloudkit-oracle = { path = "cloudkit/crates/cloudkit_core/oracle" }
+
+# CloudEmu modules
+cloudemu_spi = { path = "cloudemu/crates/cloudemu_spi" }
+cloudemu_api = { path = "cloudemu/crates/cloudemu_api" }
+cloudemu_core = { path = "cloudemu/crates/cloudemu_core" }
+cloudemu_server = { path = "cloudemu/crates/cloudemu_server" }
+data-plane = { path = "cloudemu/crates/data-plane" }
+# CloudEmu provider crates (nested under cloudemu_core)
+cloudemu-aws = { path = "cloudemu/crates/cloudemu_core/aws" }
+cloudemu-azure = { path = "cloudemu/crates/cloudemu_core/azure" }
+cloudemu-gcp = { path = "cloudemu/crates/cloudemu_core/gcp" }
 
 
 # Async

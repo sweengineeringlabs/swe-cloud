@@ -1,0 +1,34 @@
+[package]
+name = "cloudemu-aws"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "AWS provider for CloudEmu - includes control-plane and data-plane"
+
+[features]
+default = ["s3"]
+s3 = ["aws-control-plane/s3"]
+dynamodb = ["aws-control-plane/dynamodb"]
+sqs = ["aws-control-plane/sqs"]
+sns = ["aws-control-plane/sns"]
+lambda = ["aws-control-plane/lambda"]
+secretsmanager = ["aws-control-plane/secretsmanager"]
+eventbridge = ["aws-control-plane/eventbridge"]
+kms = ["aws-control-plane/kms"]
+cloudwatch = ["aws-control-plane/cloudwatch"]
+cognito = ["aws-control-plane/cognito"]
+stepfunctions = ["aws-control-plane/stepfunctions"]
+full = [
+    "s3", "dynamodb", "sqs", "sns", "lambda", 
+    "secretsmanager", "eventbridge", "kms", 
+    "cloudwatch", "cognito", "stepfunctions"
+]
+
+[dependencies]
+cloudemu_spi = { path = "../../cloudemu_spi" }
+aws-control-plane = { path = "./control-plane" }
+aws-data-plane = { path = "./data-plane" }
+
+[dev-dependencies]
+tokio = { workspace = true }

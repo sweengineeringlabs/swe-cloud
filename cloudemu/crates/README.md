@@ -1,200 +1,140 @@
-# CloudEmu
+# CloudEmu Crates
 
-**Production-Grade Local Cloud Emulator**
+CloudEmu follows the **Stratified Encapsulation Architecture (SEA)**, mirroring the CloudKit SDK structure for consistency.
 
-CloudEmu is a local cloud services emulator that behaves like production AWS. It works with Terraform, AWS SDKs, and AWS CLI out of the box.
+## Architecture Overview
 
-## Features
+```
+cloudemu/crates/
+├── cloudemu_spi/       Foundation Layer - Core types, errors, traits
+├── cloudemu_api/       API Layer - Service contracts and trait definitions
+├── cloudemu_core/      Orchestration Layer - Provider implementations
+│   ├── aws/           (cloudemu-aws) AWS emulation
+│   ├── azure/         (cloudemu-azure) Azure emulation  
+│   └── gcp/           (cloudemu-gcp) GCP emulation
+├── cloudemu_server/    Server Layer - HTTP server and runtime
+└── data-plane/         Storage engine for resource persistence
+```
 
-- 🎯 **Production-like behavior** - Accurate AWS API responses
-- 🏗️ **Terraform compatible** - Deploy infrastructure locally
-- 💾 **Persistent storage** - SQLite for metadata, files for objects
-- 🔄 **Versioning support** - Full S3 versioning workflow
-- 📋 **Bucket policies** - JSON policy storage and retrieval
-- 🚀 **Fast startup** - Ready in milliseconds
+## Layer Responsibilities
 
-## Quick Start
+### 1. `cloudemu_spi` (Service Provider Interface)
+- **Purpose**: Foundation types and extension points
+- **Provides**: 
+  - Core error types (`CloudError`)
+  - Provider traits (`CloudProviderTrait`)
+  - Request/Response types
+  - Service type enums
+- **Dependencies**: Pure (no internal dependencies)
 
-### 1. Start the Emulator
+### 2. `cloudemu_api` (API Layer)
+- **Purpose**: Service contract definitions
+- **Provides**: 
+  - Storage service traits
+  - Database service traits
+  - Messaging service traits
+- **Dependencies**: `cloudemu_spi`
+
+### 3. `cloudemu_core` (Core Orchestration)
+- **Purpose**: Provider orchestration and feature flags
+- **Provides**: 
+  - Re-exports of provider crates
+  - Feature-gated provider selection
+- **Dependencies**: `cloudemu_spi`, `cloudemu_api`, provider crates (optional)
+
+#### Provider Crates (nested in `cloudemu_core/`)
+
+**`cloudemu-aws`** (AWS Provider)
+- S3, DynamoDB, SQS, SNS, Lambda, Secrets Manager, KMS, EventBridge, CloudWatch, Cognito, Step Functions
+- Default port: `4566`
+
+**`cloudemu-azure`** (Azure Provider)
+- Blob Storage, Cosmos DB, Service Bus, Functions
+- Default port: `4567`
+
+**`cloudemu-gcp`** (GCP Provider)
+- Cloud Storage, Firestore, Pub/Sub, Cloud Functions
+- Default port: `4568`
+
+### 4. `cloudemu_server` (Server/Facade)
+- **Purpose**: HTTP server runtime and multi-provider orchestration
+- **Provides**: 
+  - Main server binary
+  - Provider routing
+  - Configuration management
+- **Dependencies**: All layers
+
+### 5. `data-plane` (Storage Engine)
+- **Purpose**: Persistent storage for emulated resources
+- **Provides**: 
+  - File-based resource storage
+  - Query and indexing
+  - Transaction support
+- **Dependencies**: Standalone (workspace-level)
+
+## Feature Flags
+
+The `cloudemu_core` crate uses feature flags to enable specific providers:
+
+```toml
+[dependencies]
+cloudemu_core = { version = "0.2", features = ["aws", "azure"] }
+```
+
+Available features:
+- `aws` - Enable AWS emulation
+- `azure` - Enable Azure emulation
+- `gcp` - Enable GCP emulation
+- `full` - Enable all providers
+
+## Usage
+
+### Running the Server
 
 ```bash
-cargo run -p cloudemu
+# All providers (default)
+cargo run -p cloudemu_server
+
+# Specific providers
+cargo run -p cloudemu_server -- --enable-aws --enable-azure
+
+# Custom ports
+cargo run -p cloudemu_server -- --aws-port 4566 --azure-port 4567
 ```
 
-Output:
-```
-   _____ _                 _ ______                
-  / ____| |               | |  ____|               
- | |    | | ___  _   _  __| | |__   _ __ ___  _   _ 
- | |    | |/ _ \| | | |/ _` |  __| | '_ ` _ \| | | |
- | |____| | (_) | |_| | (_| | |____| | | | | | |_| |
-  \_____|_|\___/ \__,_|\__,_|______|_| |_| |_|\__,_|
-                                                    
-  Production-Grade Local Cloud Emulator v0.1.0
-
-  Endpoint:    http://0.0.0.0:4566
-  Data Dir:    .cloudemu
-  Region:      us-east-1
-```
-
-### 2. Use with Terraform
-
-```hcl
-provider "aws" {
-  endpoints {
-    s3 = "http://localhost:4566"
-  }
-  region                      = "us-east-1"
-  skip_credentials_validation = true
-  skip_metadata_api_check     = true
-  skip_requesting_account_id  = true
-  s3_use_path_style           = true
-}
-
-resource "aws_s3_bucket" "my_bucket" {
-  bucket = "my-bucket"
-}
-
-resource "aws_s3_bucket_versioning" "versioning" {
-  bucket = aws_s3_bucket.my_bucket.id
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
-resource "aws_s3_bucket_policy" "policy" {
-  bucket = aws_s3_bucket.my_bucket.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect    = "Allow"
-      Principal = "*"
-      Action    = "s3:GetObject"
-      Resource  = "${aws_s3_bucket.my_bucket.arn}/*"
-    }]
-  })
-}
-```
-
-```bash
-terraform init
-terraform apply
-```
-
-### 3. Use with AWS CLI
-
-```bash
-export AWS_ENDPOINT_URL=http://localhost:4566
-export AWS_ACCESS_KEY_ID=test
-export AWS_SECRET_ACCESS_KEY=test
-
-# Create bucket
-aws s3 mb s3://my-bucket
-
-# Upload file
-aws s3 cp hello.txt s3://my-bucket/
-
-# List objects
-aws s3 ls s3://my-bucket/
-
-# Enable versioning
-aws s3api put-bucket-versioning \
-  --bucket my-bucket \
-  --versioning-configuration Status=Enabled
-
-# Set bucket policy
-aws s3api put-bucket-policy \
-  --bucket my-bucket \
-  --policy '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::my-bucket/*"}]}'
-```
-
-### 4. Use with AWS SDK (Rust)
+### Using as a Library
 
 ```rust
-use aws_config::BehaviorVersion;
+use cloudemu_spi::{CloudProviderTrait, Request};
+use cloudemu_aws::AwsProvider;
+use std::sync::Arc;
 
 #[tokio::main]
 async fn main() {
-    let config = aws_config::defaults(BehaviorVersion::latest())
-        .endpoint_url("http://localhost:4566")
-        .load()
-        .await;
-
-    let s3 = aws_sdk_s3::Client::new(&config);
-
-    // Create bucket
-    s3.create_bucket()
-        .bucket("my-bucket")
-        .send()
-        .await
-        .unwrap();
-
-    // Enable versioning
-    s3.put_bucket_versioning()
-        .bucket("my-bucket")
-        .versioning_configuration(
-            aws_sdk_s3::types::VersioningConfiguration::builder()
-                .status(aws_sdk_s3::types::BucketVersioningStatus::Enabled)
-                .build()
-        )
-        .send()
-        .await
-        .unwrap();
-
-    // Upload object
-    s3.put_object()
-        .bucket("my-bucket")
-        .key("hello.txt")
-        .body("Hello, World!".into())
-        .send()
-        .await
-        .unwrap();
+    let provider = Arc::new(AwsProvider::new(/* config */));
+    
+    let req = Request {
+        method: "GET".to_string(),
+        path: "/health".to_string(),
+        headers: Default::default(),
+        body: vec![],
+    };
+    
+    let response = provider.handle_request(req).await.unwrap();
+    println!("Status: {}", response.status);
 }
 ```
 
-## Configuration
+## Comparison with CloudKit
 
-| Environment Variable | Default | Description |
-|---------------------|---------|-------------|
-| `CLOUDEMU_HOST` | `0.0.0.0` | Bind address |
-| `CLOUDEMU_PORT` | `4566` | Listen port |
-| `CLOUDEMU_DATA_DIR` | `.cloudemu` | Data directory |
-| `CLOUDEMU_REGION` | `us-east-1` | AWS region |
-| `CLOUDEMU_ACCOUNT_ID` | `000000000000` | AWS account ID |
+CloudEmu's architecture mirrors CloudKit for consistency:
 
-## Supported Services ✅
+| CloudKit        | CloudEmu          | Purpose |
+|----------------|-------------------|---------|
+| `cloudkit_spi` | `cloudemu_spi`    | Foundation types |
+| `cloudkit_api` | `cloudemu_api`    | Service traits |
+| `cloudkit_core`| `cloudemu_core`   | Orchestration |
+| `cloudkit_facade` | `cloudemu_server` | Public API |
+| Provider crates | Provider crates  | Implementation |
 
-CloudEmu supports the following AWS services:
-
-- **S3** (Object Storage) - Full versioning, policies, and metadata support
-- **DynamoDB** (NoSQL Database) - Key-Value storage with basic CRUD
-- **SQS** (Message Queues) - Message production, consumption, and visibility timeouts
-- **SNS** (Pub/Sub) - Topic management and subscriptions
-- **Lambda** (Serverless) - Function management and mock invocations
-- **Secrets Manager** - Secure secret storage and versioning
-- **KMS** (Key Management) - Key creation, encryption/decryption, and signing
-- **EventBridge** (Events) - Event buses, rules, and targets
-- **CloudWatch** (Monitoring & Logs) - Metrics and log group/stream management
-- **Cognito** (Identity) - User pools, groups, and basic auth
-- **Step Functions** (Workflows) - State machine creation and execution tracking
-
-### Coming Soon 🚧
-- Multipart upload (S3)
-- Secondary Indexes (DynamoDB)
-- Dead Letter Queues (SQS)
-- Real Lambda Execution (Docker/WASR)
-
-## Data Storage
-
-```
-.cloudemu/
-├── metadata.db     # SQLite database (buckets, objects, policies)
-└── objects/        # Object data (content-addressed)
-    ├── ab/
-    │   └── cdef1234...
-    └── ...
-```
-
-## License
-
-MIT
+This alignment makes it easy to understand both codebases and maintain consistency between the SDK and emulator.

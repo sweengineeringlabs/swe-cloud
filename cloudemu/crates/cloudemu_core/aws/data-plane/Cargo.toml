@@ -1,0 +1,15 @@
+[package]
+name = "aws-data-plane"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "AWS-specific data plane for CloudEmu"
+
+[dependencies]
+cloudemu_spi = { path = "../../../cloudemu_spi" }
+# Use the workspace data-plane as a shared storage engine
+data-plane = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
