@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-    "cloudemu/server",
+
     # CloudEmu provider crates (Full SEA pattern)
     # AWS
     "cloudemu/aws/control-plane/aws-control-spi",
@@ -61,7 +61,7 @@ cloudkit-gcp = { path = "cloudkit/crates/cloudkit_core/gcp" }
 cloudkit-oracle = { path = "cloudkit/crates/cloudkit_core/oracle" }
 
 # CloudEmu modules
-cloudemu_server = { path = "cloudemu/server" }
+
 
 
 # Async

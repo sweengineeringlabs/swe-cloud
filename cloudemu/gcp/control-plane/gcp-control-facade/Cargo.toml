@@ -16,4 +16,8 @@ tower-http = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
 http-body-util = "0.1"
+clap = { version = "4.0", features = ["derive", "env"] }
+tracing-subscriber = { workspace = true }
+serde = { workspace = true }
+anyhow = { workspace = true }
 
