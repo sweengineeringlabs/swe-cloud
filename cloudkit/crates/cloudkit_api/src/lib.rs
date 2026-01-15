@@ -42,6 +42,8 @@ mod object_storage;
 mod pubsub;
 mod secrets;
 mod workflow;
+mod compute;
+mod networking;
 
 // Re-export all API types
 pub use encryption::*;
@@ -55,3 +57,5 @@ pub use object_storage::*;
 pub use pubsub::*;
 pub use secrets::*;
 pub use workflow::*;
+pub use compute::*;
+pub use networking::*;

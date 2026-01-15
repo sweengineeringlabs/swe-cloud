@@ -72,6 +72,12 @@ mod cognito;
 #[cfg(feature = "kms")]
 mod kms;
 
+#[cfg(feature = "ec2")]
+mod ec2;
+
+#[cfg(feature = "vpc")]
+mod vpc;
+
 pub use builder::*;
 
 #[cfg(feature = "s3")]
@@ -106,4 +112,10 @@ pub use cognito::*;
 
 #[cfg(feature = "kms")]
 pub use kms::*;
+
+#[cfg(feature = "ec2")]
+pub use ec2::*;
+
+#[cfg(feature = "vpc")]
+pub use vpc::*;
 

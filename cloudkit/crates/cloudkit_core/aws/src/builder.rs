@@ -170,6 +170,18 @@ impl AwsClient {
     pub fn identity(&self) -> super::cognito::AwsIdentity {
         super::cognito::AwsIdentity::new(self.context.clone(), self.sdk_config.clone())
     }
+
+    /// Get the EC2 compute client.
+    #[cfg(feature = "ec2")]
+    pub fn compute(&self) -> super::ec2::Ec2Compute {
+        super::ec2::Ec2Compute::new(self.context.clone(), self.sdk_config.clone())
+    }
+
+    /// Get the VPC networking client.
+    #[cfg(feature = "vpc")]
+    pub fn networking(&self) -> super::vpc::VpcNetworking {
+        super::vpc::VpcNetworking::new(self.context.clone(), self.sdk_config.clone())
+    }
 }
 
 #[cfg(test)]

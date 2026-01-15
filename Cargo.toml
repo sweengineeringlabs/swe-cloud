@@ -114,6 +114,7 @@ tokio-test = "0.4"
 # AWS SDK
 aws-config = "1.5"
 aws-sdk-s3 = "1.65"
+aws-sdk-ec2 = "1.52"
 aws-sdk-dynamodb = "1.56"
 aws-sdk-sqs = "1.51"
 aws-sdk-sns = "1.53"

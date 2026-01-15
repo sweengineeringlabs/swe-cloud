@@ -123,6 +123,74 @@ impl BucketMetadata {
     }
 }
 
+/// Compute instance metadata.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InstanceMetadata {
+    /// Instance ID
+    pub id: ResourceId,
+    /// Instance type/size
+    pub instance_type: String,
+    /// Current state (running, stopped, etc)
+    pub state: String,
+    /// Private IP address
+    pub private_ip: Option<String>,
+    /// Public IP address
+    pub public_ip: Option<String>,
+    /// VPC ID
+    pub vpc_id: Option<ResourceId>,
+    /// Subnet ID
+    pub subnet_id: Option<ResourceId>,
+    /// Launch timestamp
+    pub launch_time: DateTime<Utc>,
+    /// Tags
+    pub tags: HashMap<String, String>,
+}
+
+/// Virtual Private Cloud metadata.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VpcMetadata {
+    /// VPC ID
+    pub id: ResourceId,
+    /// CIDR block
+    pub cidr_block: String,
+    /// Current state
+    pub state: String,
+    /// Whether it is the default VPC
+    pub is_default: bool,
+    /// Tags
+    pub tags: HashMap<String, String>,
+}
+
+/// Subnet metadata.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SubnetMetadata {
+    /// Subnet ID
+    pub id: ResourceId,
+    /// VPC ID
+    pub vpc_id: ResourceId,
+    /// CIDR block
+    pub cidr_block: String,
+    /// Availability zone
+    pub availability_zone: String,
+    /// Tags
+    pub tags: HashMap<String, String>,
+}
+
+/// Security Group metadata.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SecurityGroupMetadata {
+    /// Security Group ID
+    pub id: ResourceId,
+    /// Group name
+    pub name: String,
+    /// Description
+    pub description: Option<String>,
+    /// VPC ID
+    pub vpc_id: ResourceId,
+    /// Tags
+    pub tags: HashMap<String, String>,
+}
+
 /// Pagination token for list operations.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PaginationToken(pub Option<String>);
