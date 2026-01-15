@@ -30,7 +30,9 @@ The AWS provider serves as the reference implementation, mapping directly to the
 | **DynamoDB** | NoSQL | ✅ Active | Tables, Items, Scan, Put/Get |
 | **SQS** | Queue | ✅ Active | Queues, Send, Receive |
 | **SNS** | Pub/Sub | ✅ Active | Topics, Subscriptions |
-| **Lambda** | Functions | ✅ Active | Function Registration, Invocation simulation |
+| **Lambda** | Functions | ✅ Active | Code storage & Local execution (Python/Node) |
+| **EC2** | Compute | ✅ Active | Control Plane (Metadata) |
+| **VPC** | Networking | ✅ Active | VRF Management (Metadata) |
 | **Secrets Manager** | Secrets | ✅ Active | Secrets, Versions |
 | **KMS** | Key Management | ✅ Active | Keys, Encryption simulation |
 | **EventBridge** | Event Bus | ✅ Active | Buses, Rules, Events |
@@ -89,7 +91,8 @@ Integration tests verifying request flow, persistence, and routing are implement
 
 ## 🚀 Future Roadmap (Post-v1.0)
 
-1. **Advanced Logic**: Implement filtering/querying for NoSQL (currently basic scans).
-2. **Container Execution**: Actually run Lambda/Functions in Docker (currently metadata only).
+1. **Advanced Logic**: Implement filtering/querying for NoSQL (✅ Simple filtering done; GSI/LSI pending).
+2. **Container Execution**: Actually run Lambda/Functions in Docker (✅ Local Python/Node execution done; Docker sandboxing pending).
 3. **Advanced Routing**: Support header-based routing for Azure/GCP (domain simulation).
-4. **Dashboard**: Web UI to view emulated resources.
+4. **Dashboard**: Web UI to view emulated resources (✅ Initial version at `/dashboard`).
+5. **EC2/VPC Data Plane**: Implement real process simulation and network isolation for compute instances.

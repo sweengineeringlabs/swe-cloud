@@ -13,6 +13,8 @@ mod lambda;
 mod monitoring;
 mod identity;
 mod workflows;
+mod ec2;
+mod vpc;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -23,7 +25,9 @@ pub use engine::{
     StateMachineMetadata, ExecutionMetadata,
     QueueMetadata, MessageMetadata,
     TableMetadata, ItemMetadata,
-    TopicMetadata, SubscriptionMetadata, LambdaMetadata
+    TopicMetadata, SubscriptionMetadata, LambdaMetadata,
+    VpcMetadata, SubnetMetadata, SecurityGroupMetadata,
+    InstanceMetadata, KeyPairMetadata
 };
 
 pub use lambda::CreateFunctionParams;

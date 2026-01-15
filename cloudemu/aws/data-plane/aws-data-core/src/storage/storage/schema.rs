@@ -395,4 +395,61 @@ CREATE TABLE IF NOT EXISTS lambda_functions (
     environment_variables TEXT,
     last_modified TEXT NOT NULL
 );
+
+-- VPCs table
+CREATE TABLE IF NOT EXISTS vpc_vpcs (
+    id TEXT PRIMARY KEY,
+    cidr_block TEXT NOT NULL,
+    state TEXT DEFAULT 'available',
+    is_default INTEGER DEFAULT 0,
+    tags TEXT
+);
+
+-- Subnets table
+CREATE TABLE IF NOT EXISTS vpc_subnets (
+    id TEXT PRIMARY KEY,
+    vpc_id TEXT NOT NULL,
+    cidr_block TEXT NOT NULL,
+    availability_zone TEXT NOT NULL,
+    state TEXT DEFAULT 'available',
+    map_public_ip_on_launch INTEGER DEFAULT 0,
+    tags TEXT,
+    FOREIGN KEY (vpc_id) REFERENCES vpc_vpcs(id) ON DELETE CASCADE
+);
+
+-- Security Groups table
+CREATE TABLE IF NOT EXISTS vpc_security_groups (
+    id TEXT PRIMARY KEY,
+    group_name TEXT NOT NULL,
+    description TEXT,
+    vpc_id TEXT NOT NULL,
+    tags TEXT,
+    FOREIGN KEY (vpc_id) REFERENCES vpc_vpcs(id) ON DELETE CASCADE
+);
+
+-- EC2 Instances table
+CREATE TABLE IF NOT EXISTS ec2_instances (
+    id TEXT PRIMARY KEY,
+    image_id TEXT NOT NULL,
+    instance_type TEXT NOT NULL,
+    key_name TEXT,
+    state TEXT DEFAULT 'running',
+    private_ip TEXT,
+    public_ip TEXT,
+    vpc_id TEXT,
+    subnet_id TEXT,
+    security_groups TEXT, -- JSON array of IDs
+    launch_time TEXT NOT NULL,
+    tags TEXT,
+    FOREIGN KEY (vpc_id) REFERENCES vpc_vpcs(id) ON DELETE SET NULL,
+    FOREIGN KEY (subnet_id) REFERENCES vpc_subnets(id) ON DELETE SET NULL
+);
+
+-- EC2 Key Pairs table
+CREATE TABLE IF NOT EXISTS ec2_key_pairs (
+    key_name TEXT PRIMARY KEY,
+    key_fingerprint TEXT NOT NULL,
+    key_material TEXT,
+    tags TEXT
+);
 "#;

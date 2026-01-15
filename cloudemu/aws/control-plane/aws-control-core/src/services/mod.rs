@@ -32,3 +32,6 @@ pub mod identity;
 
 #[cfg(feature = "stepfunctions")]
 pub mod workflows;
+
+#[cfg(feature = "ec2")]
+pub mod ec2;

@@ -90,6 +90,14 @@ pub async fn dispatch(
                 Json(body),
             ).await
         }
+        #[cfg(feature = "ec2")]
+        "AmazonEC2" => {
+             crate::services::ec2::handlers::handle_request(
+                State(emulator),
+                headers,
+                Json(body),
+            ).await
+        }
         #[cfg(feature = "sns")]
         "AmazonSNS" | "" if body["Action"].as_str().is_some() => {
              crate::services::sns::handlers::handle_request(

@@ -84,6 +84,10 @@ impl StorageEngine {
     // SNS Operations moved to sns.rs
 
     // Lambda Operations moved to lambda.rs
+
+    // VPC Operations moved to vpc.rs
+
+    // EC2 Operations moved to ec2.rs
 }
 
 /// Bucket metadata
@@ -354,4 +358,62 @@ pub struct LambdaMetadata {
     pub runtime: String,
     pub handler: String,
     pub last_modified: String,
+}
+
+/// VPC metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VpcMetadata {
+    pub id: String,
+    pub cidr_block: String,
+    pub state: String,
+    pub is_default: bool,
+    pub tags: Option<String>,
+}
+
+/// Subnet metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SubnetMetadata {
+    pub id: String,
+    pub vpc_id: String,
+    pub cidr_block: String,
+    pub availability_zone: String,
+    pub state: String,
+    pub map_public_ip_on_launch: bool,
+    pub tags: Option<String>,
+}
+
+/// Security Group metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SecurityGroupMetadata {
+    pub id: String,
+    pub name: String,
+    pub description: Option<String>,
+    pub vpc_id: String,
+    pub tags: Option<String>,
+}
+
+/// EC2 Instance metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InstanceMetadata {
+    pub id: String,
+    pub image_id: String,
+    pub instance_type: String,
+    pub key_name: Option<String>,
+    pub state: String,
+    pub private_ip: Option<String>,
+    pub public_ip: Option<String>,
+    pub vpc_id: Option<String>,
+    pub subnet_id: Option<String>,
+    pub security_groups: Vec<String>,
+    pub launch_time: String,
+    pub tags: Option<String>,
+}
+
+/// EC2 Key Pair metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct KeyPairMetadata {
+    pub key_name: String,
+    pub key_fingerprint: String,
+    pub key_material: Option<String>,
+    pub tags: Option<String>,
 }

@@ -94,7 +94,7 @@ This document tracks the development backlog for CloudEmu, organized by priority
 - [ ] Extract S3 storage to `storage/s3.rs`
 - [ ] Extract DynamoDB storage to `storage/dynamodb.rs`
 - [ ] Extract SQS storage to `storage/sqs.rs`
-- [ ] Extract other services to separate files
+- [x] Extract other services to separate files (S3, DynamoDB, SQS, Lambda, EC2, VPC, etc)
 - [ ] Create storage traits for consistency
 - [ ] Update tests to use new modules
 
@@ -132,15 +132,16 @@ storage/
 - Hardcoded mock responses
 
 **Tasks:**
-- [ ] Implement `Query` operation with partition key filtering
-- [ ] Implement `Scan` operation with full table scan
+- [x] Implement `Query` operation with partition key filtering
+- [x] Implement `Scan` operation with full table scan
 - [ ] Implement `UpdateItem` with expression support
 - [ ] Implement `DeleteItem`
 - [ ] Add `BatchGetItem` and `BatchWriteItem`
-- [ ] Support FilterExpression and ProjectionExpression
-- [ ] Add proper table metadata retrieval
+- [x] Support FilterExpression (simple logic)
+- [ ] Support ProjectionExpression
+- [x] Add proper table metadata retrieval
 - [ ] Remove hardcoded timestamps
-- [ ] Add comprehensive DynamoDB tests
+- [x] Add comprehensive DynamoDB tests
 
 **Acceptance Criteria:**
 - Query and Scan operations work correctly
@@ -333,13 +334,13 @@ S3 multipart upload is essential for files >5GB and commonly used in production.
 ---
 
 ### 14. 🟢 Complete Lambda Service
-**Status:** 🚧 Partial  
-**Priority:** P2  
-**Estimated Effort:** 14-21 days
+**Status:** 🚧 Partial
+**Priority:** P2
 
 **Tasks:**
-- [ ] Implement function code storage
-- [ ] Add Docker-based execution
+- [x] Implement function code storage
+- [x] Implement local runtime execution (Python/Node)
+- [ ] Add Docker-based execution (Sandboxed)
 - [ ] Implement environment variables
 - [ ] Add layer support
 - [ ] Implement async invocation
@@ -348,24 +349,25 @@ S3 multipart upload is essential for files >5GB and commonly used in production.
 
 ---
 
-### 15. 🟢 Monitoring & Observability
-**Status:** ⬜ Not Started  
-**Priority:** P2  
-**Estimated Effort:** 3-5 days
+### 15. 🟡 EC2 & VPC Data Plane
+**Status:** 🚧 Partial
+**Priority:** P1
+
+**Issues:**
+- Current EC2/VPC implementation is **Control Plane only** (metadata)
+- Instances have no real execution or networking capabilities
+- Security Groups are stored but not enforced
 
 **Tasks:**
-- [ ] Add structured logging
-- [ ] Add metrics collection
-- [ ] Add request tracing
-- [ ] Add health check endpoint improvements
-- [ ] Add CloudWatch metrics emulation
-- [ ] Add log aggregation
+- [x] Implement EC2/VPC Control Plane APIs
+- [ ] Implement local instance simulation (Process-based)
+- [ ] Add TAP/TUN device integration for real networking
+- [ ] Implement virtual routing table logic
+- [ ] Implement Security Group enforcement (Local Firewall)
 
 ---
 
-## P3 - Low Priority / Future Enhancements
-
-### 16. 🔵 Additional AWS Services
+### 16. 🟢 Monitoring & Observability
 **Status:** ⬜ Not Started  
 **Priority:** P3  
 
@@ -387,7 +389,7 @@ S3 multipart upload is essential for files >5GB and commonly used in production.
 - [ ] Add Docker image
 - [ ] Add Docker Compose examples
 - [ ] Create CLI tool for management
-- [ ] Add web UI for monitoring
+- [x] Add web UI for resource monitoring (Dashboard)
 - [ ] Improve startup banner
 - [ ] Add configuration presets
 

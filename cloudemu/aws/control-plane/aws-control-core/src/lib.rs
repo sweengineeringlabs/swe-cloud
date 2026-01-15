@@ -36,6 +36,8 @@ pub struct Emulator {
     pub sns: services::sns::SnsService,
     #[cfg(feature = "lambda")]
     pub lambda: services::lambda::LambdaService,
+    #[cfg(feature = "ec2")]
+    pub ec2: services::ec2::Ec2Service,
 }
 
 impl Emulator {
@@ -72,6 +74,8 @@ impl Emulator {
             sns: services::sns::SnsService::new(storage.clone()),
             #[cfg(feature = "lambda")]
             lambda: services::lambda::LambdaService::new(storage.clone()),
+            #[cfg(feature = "ec2")]
+            ec2: services::ec2::Ec2Service::new(storage.clone()),
             storage,
             config,
         })
