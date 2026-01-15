@@ -51,6 +51,7 @@ module "storage" {
   source = "../../facade/storage"
   
   provider_name = "aws"
+  project_name  = "local-test"
   bucket_name   = var.bucket_name
   environment   = var.environment
   
@@ -60,6 +61,7 @@ module "storage" {
 }
 
 # Database Facade Example (DynamoDB)
+/*
 module "database" {
   source = "../../facade/database"
   
@@ -73,14 +75,26 @@ module "database" {
     hash_key     = "id"
   }
 }
+*/
 
 # Messaging Facade Example (SQS + SNS)
-module "messaging" {
+module "queue" {
   source = "../../facade/messaging"
   
   provider_name = "aws"
-  queue_name    = var.queue_name
-  topic_name    = var.topic_name
+  name          = var.queue_name
+  type          = "queue"
+  project_name  = "local-test"
+  environment   = var.environment
+}
+
+module "topic" {
+  source = "../../facade/messaging"
+  
+  provider_name = "aws"
+  name          = var.topic_name
+  type          = "topic"
+  project_name  = "local-test"
   environment   = var.environment
 }
 
@@ -88,11 +102,14 @@ module "messaging" {
 module "lambda" {
   source = "../../facade/lambda"
   
-  provider_name   = "aws"
-  function_name   = var.function_name
-  runtime         = "python3.11"
-  handler         = "index.handler"
-  environment_vars = var.environment
+  provider_name    = "aws"
+  project_name     = "local-test"
+  function_name    = var.function_name
+  runtime          = "python3.11"
+  handler          = "index.handler"
+  environment_variables = {
+    Environment = var.environment
+  }
   
   # Simple test function
   source_code = <<-EOT

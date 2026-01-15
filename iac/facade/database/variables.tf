@@ -1,9 +1,9 @@
 # General Configuration
-variable "provider" {
+variable "provider_name" {
   description = "Cloud provider (aws, azure, gcp)"
   type        = string
   validation {
-    condition     = contains(["aws", "azure", "gcp"], var.provider)
+    condition     = contains(["aws", "azure", "gcp"], var.provider_name)
     error_message = "Provider must be one of: aws, azure, gcp."
   }
 }

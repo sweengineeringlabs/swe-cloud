@@ -80,7 +80,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 |---------|--------|----------|------------------|-------|
 | **web-app** | ✅ | P0 | - | Updated to new structure |
 | **data-pipeline** | ✅ | P2 | - | Complete multi-cloud example |
-| **multi-region** | ❌ | P3 | 2 hours | Multi-region deployment example |
+| **multi-region** | ✅ | P3 | - | Multi-region deployment example complete |
 | **multi-cloud** | ✅ | P3 | - | AWS + Azure + GCP in one setup complete |
 
 ### Documentation
@@ -89,10 +89,10 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 |----------|--------|----------|------------------|-------|
 | PROGRESS.md | ✅ | P0 | - | Complete |
 | package-strategy.md ADR | ✅ | P0 | - | Complete and up-to-date |
-| Module README per resource | 🟡 | P1 | 3 hours | Basic structure in place |
+| Module README per resource | ✅ | P1 | - | Standardized pattern implemented for all facades |
 | Migration guide | ✅ | P2 | - | Complete |
 | Testing guide | ✅ | P2 | - | Complete (Testing Strategy & Unit Testing Guide) |
-| Contributing guide | 🟡 | P3 | 1 hour | Standards defined in ARCHITECTURE.md |
+| Contributing guide | ✅ | P3 | - | Standards defined in CONTRIBUTING.md |
 
 ---
 
@@ -119,7 +119,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | AWS SPI | ✅ | P0 | - | Complete |
 | Azure SPI | ✅ | P1 | - | Azure backend & provider config complete |
 | GCP SPI | ✅ | P1 | - | GCS backend & provider config complete |
-| Oracle SPI | ❌ | P3 | 2 hours | OCI backend needed |
+| Oracle SPI | ✅ | P3 | - | Oracle OCI provider support added to facades |
 
 ---
 

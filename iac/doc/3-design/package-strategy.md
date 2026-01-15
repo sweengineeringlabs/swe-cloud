@@ -92,7 +92,7 @@ iac/core/
 - ✅ Clear team ownership: AWS team owns `core/aws/`
 - ✅ Single provider block per provider module
 - ✅ Easy navigation: "Need AWS?" → `core/aws/`
-- ✅ Adding provider = one new directory
+- ✅ Adding provider_name = one new directory
 - ✅ Provider-specific optimizations isolated
 - ✅ Shared locals/data sources within provider
 - ✅ Consistent mental model with SDK

@@ -11,7 +11,7 @@ locals {
     {
       ManagedBy    = "Terraform"
       Environment  = var.environment
-      Provider     = var.provider
+      Provider     = var.provider_name
       Project      = var.project_name
       Module       = "Monitoring-Facade"
     }
@@ -20,7 +20,7 @@ locals {
 
 # AWS: CloudWatch
 module "aws_monitoring" {
-  count  = var.provider == "aws" ? 1 : 0
+  count  = var.provider_name == "aws" ? 1 : 0
   source = "../../iac_core/aws/src/monitoring"
   
   create_alarm        = true
@@ -38,7 +38,7 @@ module "aws_monitoring" {
 
 # Azure: Azure Monitor
 module "azure_monitoring" {
-  count  = var.provider == "azure" ? 1 : 0
+  count  = var.provider_name == "azure" ? 1 : 0
   source = "../../iac_core/azure/src/monitoring"
   
   alarm_name          = var.alarm_name
@@ -55,7 +55,7 @@ module "azure_monitoring" {
 
 # GCP: Cloud Monitoring
 module "gcp_monitoring" {
-  count  = var.provider == "gcp" ? 1 : 0
+  count  = var.provider_name == "gcp" ? 1 : 0
   source = "../../iac_core/gcp/src/monitoring"
   
   create_alert_policy = true
@@ -70,9 +70,9 @@ module "gcp_monitoring" {
 
 output "alarm_id" {
   value = (
-    var.provider == "aws" ? (length(module.aws_monitoring) > 0 ? module.aws_monitoring[0].alarm_arn : null) :
-    var.provider == "azure" ? (length(module.azure_monitoring) > 0 ? module.azure_monitoring[0].metric_alert_id : null) :
-    var.provider == "gcp" ? (length(module.gcp_monitoring) > 0 ? module.gcp_monitoring[0].alert_policy_id : null) :
+    var.provider_name == "aws" ? (length(module.aws_monitoring) > 0 ? module.aws_monitoring[0].alarm_arn : null) :
+    var.provider_name == "azure" ? (length(module.azure_monitoring) > 0 ? module.azure_monitoring[0].metric_alert_id : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_monitoring) > 0 ? module.gcp_monitoring[0].alert_policy_id : null) :
     null
   )
 }

@@ -3,7 +3,7 @@
 # Storage outputs
 output "bucket_name" {
   description = "Name of the created S3 bucket"
-  value       = module.storage.bucket_name
+  value       = module.storage.bucket.name
 }
 
 output "bucket_arn" {
@@ -13,10 +13,11 @@ output "bucket_arn" {
 
 output "bucket_endpoint" {
   description = "Endpoint URL for the S3 bucket"
-  value       = module.storage.endpoint
+  value       = module.storage.bucket_url
 }
 
-# Database outputs
+# Database outputs (disabled)
+/*
 output "table_name" {
   description = "Name of the created DynamoDB table"
   value       = module.database.table_name
@@ -26,16 +27,17 @@ output "table_arn" {
   description = "ARN of the created DynamoDB table"
   value       = module.database.table_arn
 }
+*/
 
 # Messaging outputs
 output "queue_url" {
   description = "URL of the created SQS queue"
-  value       = module.messaging.queue_url
+  value       = module.queue.resource_url
 }
 
 output "topic_arn" {
   description = "ARN of the created SNS topic"
-  value       = module.messaging.topic_arn
+  value       = module.topic.resource_arn
 }
 
 # Lambda outputs

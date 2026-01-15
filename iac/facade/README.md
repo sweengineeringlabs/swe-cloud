@@ -47,7 +47,7 @@ Create virtual machine instances across clouds with a simple interface.
 module "web_server" {
   source = "./facade/compute"
   
-  provider      = "aws"
+  provider_name = "aws"
   instance_name = "web-01"
   instance_size = "medium"
   project_name  = "my-app"
@@ -61,7 +61,7 @@ module "app_server" {
   source = "./facade/compute"
   
   # Required
-  provider      = "aws"
+  provider_name = "aws"
   instance_name = "app-server-01"
   instance_size = "large"
   project_name  = "my-app"
@@ -121,7 +121,7 @@ Create object storage buckets across clouds with lifecycle management.
 module "data_bucket" {
   source = "./facade/storage"
   
-  provider     = "aws"
+  provider_name = "aws"
   bucket_name  = "my-data-prod"
   project_name = "my-app"
   environment  = "prod"
@@ -134,7 +134,7 @@ module "archive_bucket" {
   source = "./facade/storage"
   
   # Required
-  provider     = "aws"
+  provider_name = "aws"
   bucket_name  = "my-archive-storage"
   project_name = "my-app"
   environment  = "prod"
@@ -213,7 +213,7 @@ output "bucket_url" {
 module "aws_server" {
   source = "./facade/compute"
   
-  provider      = "aws"
+  provider_name = "aws"
   instance_name = "web-aws"
   instance_size = "medium"
   project_name  = "multi-cloud-app"
@@ -227,7 +227,7 @@ module "aws_server" {
 module "azure_server" {
   source = "./facade/compute"
   
-  provider      = "azure"
+  provider_name = "azure"
   instance_name = "web-azure"
   instance_size = "medium"  # Same size, different type!
   project_name  = "multi-cloud-app"
@@ -242,7 +242,7 @@ module "azure_server" {
 module "gcp_server" {
   source = "./facade/compute"
   
-  provider      = "gcp"
+  provider_name = "gcp"
   instance_name = "web-gcp"
   instance_size = "medium"  # Same size, different type!
   project_name  = "multi-cloud-app"
@@ -320,7 +320,7 @@ Tags are merged in this order (later overrides earlier):
    {
      ManagedBy    = "Terraform"
      Environment  = "prod"
-     Provider     = "aws"
+     provider_name = "aws"
      Project      = "my-app"
      Architecture = "SEA"
    }
@@ -374,7 +374,7 @@ Error: When using AWS, provider_config.ami is required
 module "prod_server" {
   source = "../../facade/compute"
   
-  provider     = "aws"
+  provider_name = "aws"
   environment  = "prod"
   instance_size = "large"
   # ...
@@ -384,7 +384,7 @@ module "prod_server" {
 module "dev_server" {
   source = "../../facade/compute"
   
-  provider     = "aws"
+  provider_name = "aws"
   environment  = "dev"
   instance_size = "small"  # Smaller for dev
   # ...
@@ -408,7 +408,7 @@ module "compute" {
   source = "./facade/compute"
   
   project_name = var.project_name
-  provider     = var.provider
+  provider_name = var.provider
   # ...
 }
 ```
@@ -443,7 +443,7 @@ module "instance" {
   source = "./facade/compute"
   
   # Required (4 parameters minimum)
-  provider      = "aws" | "azure" | "gcp" | "oracle"
+  provider_name = "aws" | "azure" | "gcp" | "oracle"
   instance_name = "name"
   project_name  = "project"
   environment   = "dev" | "staging" | "prod"
@@ -464,7 +464,7 @@ module "bucket" {
   source = "./facade/storage"
   
   # Required (4 parameters minimum)
-  provider     = "aws" | "azure" | "gcp" | "oracle"
+  provider_name = "aws" | "azure" | "gcp" | "oracle"
   bucket_name  = "name"
   project_name = "project"
   environment  = "dev" | "staging" | "prod"

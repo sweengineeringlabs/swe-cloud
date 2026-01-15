@@ -5,11 +5,11 @@
 # REQUIRED INPUTS
 # ============================================================================
 
-variable "provider" {
+variable "provider_name" {
   description = "Cloud provider (aws, azure, gcp, or oracle)"
   type        = string
   validation {
-    condition     = contains(["aws", "azure", "gcp", "oracle"], var.provider)
+    condition     = contains(["aws", "azure", "gcp", "oracle"], var.provider_name)
     error_message = "Provider must be one of: aws, azure, gcp, oracle"
   }
 }
@@ -33,7 +33,7 @@ variable "environment" {
   type        = string
   default     = "dev"
   validation {
-    condition     = contains(["dev", "staging", "prod"], var.environment)
+    condition     = contains(["local", "dev", "staging", "prod"], var.environment)
     error_message = "Environment must be one of: dev, staging, prod"
   }
 }

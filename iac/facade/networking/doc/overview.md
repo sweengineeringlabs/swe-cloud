@@ -19,7 +19,7 @@ The Networking facade provides a unified interface for AWS VPC, Azure VNet, and 
 ```hcl
 module "base_network" {
   source       = "../../facade/networking"
-  provider     = "azure"
+  provider_name = "azure"
   network_name = "corp-vnet"
   metrics = {
     cidr    = "10.0.0.0/16"

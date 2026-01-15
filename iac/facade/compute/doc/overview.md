@@ -20,7 +20,7 @@ The Compute facade provides a single interface for deploying virtual machines ac
 ```hcl
 module "web_server" {
   source        = "../../facade/compute"
-  provider      = "aws"
+  provider_name = "aws"
   instance_name = "prod-web-01"
   instance_size = "medium"
   project_name  = "ProjectX"

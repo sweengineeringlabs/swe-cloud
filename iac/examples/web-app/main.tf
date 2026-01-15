@@ -29,7 +29,7 @@ variable "project_name" {
 module "aws_web_server" {
   source = "../../facade/compute"
 
-  provider      = "aws"
+  provider_name = "aws"
   instance_name = "web-aws-${var.environment}"
   instance_size = var.environment == "prod" ? "large" : "medium"
   project_name  = var.project_name
@@ -72,7 +72,7 @@ module "aws_web_server" {
 module "aws_storage" {
   source = "../../facade/storage"
 
-  provider     = "aws"
+  provider_name = "aws"
   bucket_name  = "webapp-storage-aws-${var.environment}"
   project_name = var.project_name
   environment  = var.environment
@@ -114,7 +114,7 @@ module "aws_storage" {
 module "azure_web_server" {
   source = "../../facade/compute"
 
-  provider      = "azure"
+  provider_name = "azure"
   instance_name = "web-azure-${var.environment}"
   instance_size = var.environment == "prod" ? "large" : "medium"
   project_name  = var.project_name
@@ -145,7 +145,7 @@ module "azure_web_server" {
 module "gcp_web_server" {
   source = "../../facade/compute"
 
-  provider      = "gcp"
+  provider_name = "gcp"
   instance_name = "web-gcp-${var.environment}"
   instance_size = var.environment == "prod" ? "large" : "medium"
   project_name  = var.project_name

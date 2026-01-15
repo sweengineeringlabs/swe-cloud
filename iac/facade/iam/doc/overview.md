@@ -19,7 +19,7 @@ The IAM facade provides a unified interface for AWS IAM Roles, Azure Managed Ide
 ```hcl
 module "app_identity" {
   source        = "../../facade/iam"
-  provider      = "aws"
+  provider_name = "aws"
   identity_name = "app-server-role"
   identity_type = "role"
   principals    = ["ec2.amazonaws.com"]

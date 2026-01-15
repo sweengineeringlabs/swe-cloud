@@ -78,7 +78,7 @@
 ┌───────────────────────────────────────────────────────────────┐
 │ USER: module "web" {                                          │
 │         source = "facade/compute"                             │
-│         provider = "aws"                                      │
+│         provider_name = "aws"                                      │
 │         instance_size = "medium"                              │
 │       }                                                       │
 └───────┬───────────────────────────────────────────────────────┘
@@ -136,7 +136,7 @@
 │   instance_id   = "i-0123456789abcdef"                       │
 │   instance_type = "t3.medium"                                │
 │   public_ip     = "54.123.456.789"                           │
-│   provider      = "aws"                                      │
+│   provider_name = "aws"                                      │
 │   normalized_size = "medium"                                 │
 │ }                                                            │
 └───────────────────────────────────────────────────────────────┘
@@ -147,7 +147,7 @@
 ```
                            ┌──────────────┐
                            │ USER CONFIG  │
-                           │ provider =   │
+                           │ provider_name =   │
                            │  "aws"       │
                            └──────┬───────┘
                                   │
@@ -158,7 +158,7 @@
                                   │
          ┌────────────────────────┼────────────────────────┐
          │                        │                        │
-    provider="aws"          provider="azure"        provider="gcp"
+    provider_name ="aws"          provider_name ="azure"        provider_name ="gcp"
          │                        │                        │
          ▼                        ▼                        ▼
 ┌────────────────┐       ┌────────────────┐      ┌────────────────┐

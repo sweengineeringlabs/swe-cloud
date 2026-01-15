@@ -19,7 +19,7 @@ The Storage facade provides a unified interface for S3 (AWS), Blob Storage (Azur
 ```hcl
 module "assets" {
   source      = "../../facade/storage"
-  provider    = "gcp"
+  provider_name = "gcp"
   bucket_name = "my-public-assets-789"
   environment = "dev"
 }

@@ -1,4 +1,4 @@
-variable "provider" {
+variable "provider_name" {
   description = "Cloud provider (aws, azure, gcp)"
   type        = string
 }
@@ -42,3 +42,16 @@ variable "provider_config" {
   type        = any
   default     = {}
 }
+
+variable "source_code" {
+  description = "Inline source code"
+  type        = string
+  default     = null
+}
+
+variable "environment_variables" {
+  description = "Environment variables"
+  type        = map(string)
+  default     = {}
+}
+

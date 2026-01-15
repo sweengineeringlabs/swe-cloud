@@ -19,7 +19,7 @@ The Lambda facade provides a unified interface for serverless functions. Current
 ```hcl
 module "process_data" {
   source        = "../../facade/lambda"
-  provider      = "aws"
+  provider_name = "aws"
   function_name = "data-processor"
   handler       = "index.handler"
   runtime       = "python3.11"

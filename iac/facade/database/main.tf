@@ -38,7 +38,7 @@ locals {
     {
       ManagedBy    = "Terraform"
       Environment  = var.environment
-      Provider     = var.provider
+      Provider     = var.provider_name
       Project      = var.project_name
       Module       = "Database-Facade"
     }
@@ -51,7 +51,7 @@ locals {
 
 # AWS: RDS
 module "aws_database" {
-  count  = var.provider == "aws" ? 1 : 0
+  count  = var.provider_name == "aws" ? 1 : 0
   source = "../../iac_core/aws/src/database"
   
   identifier             = var.identifier
@@ -79,7 +79,7 @@ module "aws_database" {
 
 # Azure: SQL Database
 module "azure_database" {
-  count  = var.provider == "azure" ? 1 : 0
+  count  = var.provider_name == "azure" ? 1 : 0
   source = "../../iac_core/azure/src/database"
   
   server_name         = var.identifier
@@ -100,7 +100,7 @@ module "azure_database" {
 
 # GCP: Cloud SQL
 module "gcp_database" {
-  count  = var.provider == "gcp" ? 1 : 0
+  count  = var.provider_name == "gcp" ? 1 : 0
   source = "../../iac_core/gcp/src/database"
   
   instance_name    = var.identifier
@@ -118,8 +118,6 @@ module "gcp_database" {
   # Network
   private_network  = lookup(var.provider_config, "network_link", null)
   public_ip_enabled = var.publicly_accessible
-  
-  labels = local.common_tags
 }
 
 # ============================================================================
@@ -129,17 +127,17 @@ module "gcp_database" {
 locals {
   # ID
   db_id = (
-    var.provider == "aws"   ? (length(module.aws_database) > 0 ? module.aws_database[0].db_instance_id : null) :
-    var.provider == "azure" ? (length(module.azure_database) > 0 ? module.azure_database[0].database_id : null) :
-    var.provider == "gcp"   ? (length(module.gcp_database) > 0 ? module.gcp_database[0].instance_name : null) :
+    var.provider_name == "aws"   ? (length(module.aws_database) > 0 ? module.aws_database[0].db_instance_id : null) :
+    var.provider_name == "azure" ? (length(module.azure_database) > 0 ? module.azure_database[0].database_id : null) :
+    var.provider_name == "gcp"   ? (length(module.gcp_database) > 0 ? module.gcp_database[0].instance_name : null) :
     null
   )
   
   # Endpoint
   db_endpoint = (
-    var.provider == "aws"   ? (length(module.aws_database) > 0 ? module.aws_database[0].db_instance_endpoint : null) :
-    var.provider == "azure" ? (length(module.azure_database) > 0 ? module.azure_database[0].server_fqdn : null) :
-    var.provider == "gcp"   ? (length(module.gcp_database) > 0 ? module.gcp_database[0].public_ip : null) :
+    var.provider_name == "aws"   ? (length(module.aws_database) > 0 ? module.aws_database[0].db_instance_endpoint : null) :
+    var.provider_name == "azure" ? (length(module.azure_database) > 0 ? module.azure_database[0].server_fqdn : null) :
+    var.provider_name == "gcp"   ? (length(module.gcp_database) > 0 ? module.gcp_database[0].public_ip : null) :
     null
   )
 }

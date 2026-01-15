@@ -11,7 +11,7 @@ locals {
     {
       ManagedBy    = "Terraform"
       Environment  = var.environment
-      Provider     = var.provider
+      Provider     = var.provider_name
       Project      = var.project_name
       Module       = "Messaging-Facade"
     }
@@ -20,7 +20,7 @@ locals {
 
 # AWS: SQS or SNS
 module "aws_messaging" {
-  count  = var.provider == "aws" ? 1 : 0
+  count  = var.provider_name == "aws" ? 1 : 0
   source = "../../iac_core/aws/src/messaging"
   
   create_queue = var.type == "queue"
@@ -36,9 +36,14 @@ module "aws_messaging" {
 # For now we route to AWS or provide placeholders.
 
 output "resource_arn" {
-  value = var.provider == "aws" ? (var.type == "queue" ? module.aws_messaging[0].queue_arn : module.aws_messaging[0].topic_arn) : "placeholder-arn"
+  value = var.provider_name == "aws" ? (var.type == "queue" ? module.aws_messaging[0].queue_arn : module.aws_messaging[0].topic_arn) : "placeholder-arn"
 }
 
 output "resource_name" {
   value = var.name
 }
+
+output "resource_url" {
+  value = var.provider_name == "aws" && var.type == "queue" ? module.aws_messaging[0].queue_id : null
+}
+

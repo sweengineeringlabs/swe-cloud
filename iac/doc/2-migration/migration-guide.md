@@ -38,7 +38,7 @@ module "app_server" {
 ```hcl
 module "app_server" {
   source   = "../../facade/compute"
-  provider = "aws" # or "azure", "gcp"
+  provider_name = "aws" # or "azure", "gcp"
   # ...
 }
 ```

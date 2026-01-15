@@ -19,7 +19,7 @@ The Monitoring facade provides a unified interface for AWS CloudWatch Alarms, Az
 ```hcl
 module "cpu_alarm" {
   source      = "../../facade/monitoring"
-  provider    = "aws"
+  provider_name = "aws"
   alarm_name  = "cpu-high"
   metric_name = "CPUUtilization"
   threshold   = 85

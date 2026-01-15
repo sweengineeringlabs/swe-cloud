@@ -14,7 +14,7 @@
 ```hcl
 module "storage" {
   source      = "./facade/storage"
-  provider    = "aws" # Switch to "azure" or "gcp" with zero code changes
+  provider_name = "aws" # Switch to "azure" or "gcp" with zero code changes
   bucket_name = "my-secure-data-123"
   environment = "prod"
 }

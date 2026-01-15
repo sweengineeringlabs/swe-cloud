@@ -19,7 +19,7 @@ The Database facade provides a unified interface for Amazon RDS, Azure SQL Datab
 ```hcl
 module "main_db" {
   source          = "../../facade/database"
-  provider        = "aws"
+  provider_name = "aws"
   identifier      = "prod-db-01"
   engine          = "postgres"
   instance_class  = "medium"

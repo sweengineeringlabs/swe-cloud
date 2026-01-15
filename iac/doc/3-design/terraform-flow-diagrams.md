@@ -91,7 +91,7 @@ sequenceDiagram
     participant Core
     participant Provider
     
-    User->>Facade: var.provider = "aws"<br/>var.bucket_name = "my-bucket"
+    User->>Facade: var.provider_name = "aws"<br/>var.bucket_name = "my-bucket"
     Facade->>Core: Pass normalized vars
     Core->>Core: Validate + transform
     Core->>Provider: Provider-specific vars

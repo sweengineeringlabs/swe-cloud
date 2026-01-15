@@ -136,7 +136,7 @@ module "compute_api" {
   # Inputs conform to API contract
   instance_name        = var.instance_name
   instance_size        = var.instance_size
-  provider             = var.provider
+  provider_name = var.provider
   ssh_public_key       = var.ssh_key
   allow_public_access  = var.allow_public_access
 }
@@ -232,7 +232,7 @@ resource "test_instance" "compute_contract" {
   # Must accept all required inputs
   instance_name = "test-01"
   instance_size = "medium"
-  provider      = "aws"
+  provider_name = "aws"
   
   # Must produce all required outputs
   lifecycle {

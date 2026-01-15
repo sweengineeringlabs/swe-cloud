@@ -15,7 +15,7 @@ locals {
     {
       ManagedBy    = "Terraform"
       Environment  = var.environment
-      Provider     = var.provider
+      Provider     = var.provider_name
       Project      = var.project_name
       Module       = "Networking-Facade"
     }
@@ -28,7 +28,7 @@ locals {
 
 # AWS: VPC
 module "aws_networking" {
-  count  = var.provider == "aws" ? 1 : 0
+  count  = var.provider_name == "aws" ? 1 : 0
   source = "../../iac_core/aws/src/networking"
   
   vpc_name            = var.network_name
@@ -46,7 +46,7 @@ module "aws_networking" {
 
 # Azure: VNet
 module "azure_networking" {
-  count  = var.provider == "azure" ? 1 : 0
+  count  = var.provider_name == "azure" ? 1 : 0
   source = "../../iac_core/azure/src/networking"
   
   vnet_name           = var.network_name
@@ -76,7 +76,7 @@ module "azure_networking" {
 
 # GCP: VPC
 module "gcp_networking" {
-  count  = var.provider == "gcp" ? 1 : 0
+  count  = var.provider_name == "gcp" ? 1 : 0
   source = "../../iac_core/gcp/src/networking"
   
   network_name = var.network_name
@@ -111,9 +111,9 @@ module "gcp_networking" {
 
 locals {
   network_id = (
-    var.provider == "aws"   ? (length(module.aws_networking) > 0 ? module.aws_networking[0].vpc_id : null) :
-    var.provider == "azure" ? (length(module.azure_networking) > 0 ? module.azure_networking[0].vnet_id : null) :
-    var.provider == "gcp"   ? (length(module.gcp_networking) > 0 ? module.gcp_networking[0].network_id : null) :
+    var.provider_name == "aws"   ? (length(module.aws_networking) > 0 ? module.aws_networking[0].vpc_id : null) :
+    var.provider_name == "azure" ? (length(module.azure_networking) > 0 ? module.azure_networking[0].vnet_id : null) :
+    var.provider_name == "gcp"   ? (length(module.gcp_networking) > 0 ? module.gcp_networking[0].network_id : null) :
     null
   )
 }

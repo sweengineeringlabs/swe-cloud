@@ -268,7 +268,7 @@ Single interface for 4 cloud providers:
 # Same code, different cloud
 module "server" {
   source = "./facade/compute"
-  provider = var.cloud  # "aws", "azure", "gcp", or "oracle"
+  provider_name = var.cloud  # "aws", "azure", "gcp", or "oracle"
   instance_size = "medium"
 }
 ```
@@ -339,7 +339,7 @@ Complete web-app deployment:
 ```hcl
 module "server" {
   source = "./facade/compute"
-  provider = "aws"
+  provider_name = "aws"
   instance_name = "web-01"
   instance_size = "medium"
   project_name = "my-app"
@@ -349,10 +349,10 @@ module "server" {
 ### 2. Switch Providers with 1 Variable
 ```hcl
 # Change this
-provider = "aws"
+provider_name = "aws"
 
 # To this
-provider = "azure"
+provider_name = "azure"
 
 # Everything else stays the same!
 ```

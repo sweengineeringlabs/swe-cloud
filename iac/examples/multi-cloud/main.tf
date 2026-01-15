@@ -15,7 +15,7 @@ variable "environment" { default = "prod" }
 module "aws_network" {
   source = "../../facade/networking"
   
-  provider     = "aws"
+  provider_name = "aws"
   project_name = var.project_name
   environment  = var.environment
   network_name = "aws-vpc"
@@ -31,7 +31,7 @@ module "aws_network" {
 module "aws_compute" {
   source = "../../facade/compute"
   
-  provider      = "aws"
+  provider_name = "aws"
   project_name  = var.project_name
   environment   = var.environment
   instance_name = "api-server"
@@ -46,7 +46,7 @@ module "aws_compute" {
 module "azure_network" {
   source = "../../facade/networking"
   
-  provider     = "azure"
+  provider_name = "azure"
   project_name = var.project_name
   environment  = var.environment
   network_name = "azure-vnet"
@@ -67,7 +67,7 @@ module "azure_network" {
 module "azure_db" {
   source = "../../facade/database"
   
-  provider     = "azure"
+  provider_name = "azure"
   identifier   = "corp-db"
   project_name = var.project_name
   environment  = var.environment
@@ -89,7 +89,7 @@ module "azure_db" {
 module "gcp_storage" {
   source = "../../facade/storage"
   
-  provider     = "gcp"
+  provider_name = "gcp"
   bucket_name  = "global-analytics-data"
   project_name = var.project_name
   environment  = var.environment
@@ -102,7 +102,7 @@ module "gcp_storage" {
 module "gcp_compute" {
   source = "../../facade/compute"
   
-  provider      = "gcp"
+  provider_name = "gcp"
   project_name  = var.project_name
   environment   = var.environment
   instance_name = "analytics-worker"

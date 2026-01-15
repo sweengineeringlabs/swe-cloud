@@ -126,7 +126,7 @@ locals {
     {
       ManagedBy   = "Terraform"
       Environment = var.environment
-      Provider    = var.provider
+      provider_name = var.provider
       Project     = var.project_name
       CostCenter  = var.cost_center
       Owner       = var.owner
@@ -298,7 +298,7 @@ output "ssh_connection" {
 output "metadata" {
   description = "Additional instance metadata"
   value = {
-    provider      = var.provider
+    provider_name = var.provider
     size          = var.instance_size
     created_at    = timestamp()
     tags          = local.common_tags
@@ -514,7 +514,7 @@ module "compute_core" {
   source = "../../core/compute"
 
   # Pass through normalized inputs
-  provider      = var.provider
+  provider_name = var.provider
   instance_name = var.instance_name
   instance_size = var.instance_size
   ssh_key       = var.ssh_key
@@ -540,7 +540,7 @@ output "instance" {
     public_ip   = module.compute_core.public_ip
     private_ip  = module.compute_core.private_ip
     ssh         = module.compute_core.ssh_connection
-    provider    = var.provider
+    provider_name = var.provider
     size        = var.instance_size
   }
 }
@@ -614,7 +614,7 @@ variable "tags" {
 module "web_server_aws" {
   source = "../../facade/compute"
 
-  provider      = "aws"
+  provider_name = "aws"
   instance_name = "web-server-aws"
   instance_size = "medium"
   ssh_key       = file("~/.ssh/id_rsa.pub")
@@ -635,7 +635,7 @@ module "web_server_aws" {
 module "web_server_azure" {
   source = "../../facade/compute"
 
-  provider      = "azure"
+  provider_name = "azure"
   instance_name = "web-server-azure"
   instance_size = "medium"
   ssh_key       = file("~/.ssh/id_rsa.pub")

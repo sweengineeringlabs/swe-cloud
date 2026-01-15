@@ -44,7 +44,7 @@ locals {
     {
       ManagedBy    = "Terraform"
       Environment  = var.environment
-      Provider     = var.provider
+      Provider     = var.provider_name
       Project      = var.project_name
       Architecture = "SEA"
     }
@@ -57,7 +57,7 @@ locals {
 
 # Route to AWS storage module
 module "aws_storage" {
-  count  = var.provider == "aws" ? 1 : 0
+  count  = var.provider_name == "aws" ? 1 : 0
   source = "../../iac_core/aws/src/storage"
   
   bucket_name         = var.bucket_name
@@ -68,9 +68,10 @@ module "aws_storage" {
   tags                = local.common_tags
 }
 
+/*
 # Route to Azure storage module  
 module "azure_storage" {
-  count  = var.provider == "azure" ? 1 : 0
+  count  = var.provider_name == "azure" ? 1 : 0
   source = "../../iac_core/azure/src/storage"
   
   # Azure-specific variables would go here
@@ -78,31 +79,32 @@ module "azure_storage" {
 
 # Route to GCP storage module
 module "gcp_storage" {
-  count  = var.provider == "gcp" ? 1 : 0
+  count  = var.provider_name == "gcp" ? 1 : 0
   source = "../../iac_core/gcp/src/storage"
   
   # GCP-specific variables would go here
 }
+*/
 
 # Aggregated outputs (select based on provider)
 locals {
   bucket_id = (
-    var.provider == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_id : null) :
+    var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_id : null) :
     null
   )
   
   bucket_arn = (
-    var.provider == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_arn : null) :
+    var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_arn : null) :
     null
   )
   
   bucket_url = (
-    var.provider == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_domain_name : null) :
+    var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_domain_name : null) :
     null
   )
   
   bucket_region = (
-    var.provider == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].region : null) :
+    var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].region : null) :
     null
   )
 }
@@ -129,7 +131,7 @@ output "bucket" {
     encryption_enabled = var.encryption_enabled
     
     # Provider
-    provider = var.provider
+    provider = var.provider_name
     
     # Metadata
     tags = local.common_tags

@@ -15,7 +15,7 @@ locals {
     {
       ManagedBy    = "Terraform"
       Environment  = var.environment
-      Provider     = var.provider
+      Provider     = var.provider_name
       Project      = var.project_name
       Module       = "IAM-Facade"
     }
@@ -28,7 +28,7 @@ locals {
 
 # AWS: IAM Role or User
 module "aws_iam" {
-  count  = var.provider == "aws" ? 1 : 0
+  count  = var.provider_name == "aws" ? 1 : 0
   source = "../../iac_core/aws/src/iam"
   
   # Map 'role' -> IAM Role, 'user'/'service_agent' -> IAM User
@@ -46,7 +46,7 @@ module "aws_iam" {
 
 # Azure: User Assigned Managed Identity
 module "azure_iam" {
-  count  = var.provider == "azure" ? 1 : 0
+  count  = var.provider_name == "azure" ? 1 : 0
   source = "../../iac_core/azure/src/iam"
   
   # For Azure, we map 'service_agent'/'user' to Managed Identity
@@ -60,7 +60,7 @@ module "azure_iam" {
 
 # GCP: Service Account
 module "gcp_iam" {
-  count  = var.provider == "gcp" ? 1 : 0
+  count  = var.provider_name == "gcp" ? 1 : 0
   source = "../../iac_core/gcp/src/iam"
   
   # For GCP, we map 'service_agent'/'user' to Service Account
@@ -76,16 +76,16 @@ module "gcp_iam" {
 
 locals {
   identity_id = (
-    var.provider == "aws"   ? (length(module.aws_iam) > 0 ? (var.identity_type == "role" ? module.aws_iam[0].role_id : module.aws_iam[0].user_name) : null) :
-    var.provider == "azure" ? (length(module.azure_iam) > 0 ? module.azure_iam[0].identity_id : null) :
-    var.provider == "gcp"   ? (length(module.gcp_iam) > 0 ? module.gcp_iam[0].service_account_email : null) :
+    var.provider_name == "aws"   ? (length(module.aws_iam) > 0 ? (var.identity_type == "role" ? module.aws_iam[0].role_id : module.aws_iam[0].user_name) : null) :
+    var.provider_name == "azure" ? (length(module.azure_iam) > 0 ? module.azure_iam[0].identity_id : null) :
+    var.provider_name == "gcp"   ? (length(module.gcp_iam) > 0 ? module.gcp_iam[0].service_account_email : null) :
     null
   )
   
   principal_id = (
-    var.provider == "aws"   ? (length(module.aws_iam) > 0 ? (var.identity_type == "role" ? module.aws_iam[0].role_arn : module.aws_iam[0].user_arn) : null) :
-    var.provider == "azure" ? (length(module.azure_iam) > 0 ? module.azure_iam[0].identity_principal_id : null) :
-    var.provider == "gcp"   ? (length(module.gcp_iam) > 0 ? module.gcp_iam[0].service_account_email : null) :
+    var.provider_name == "aws"   ? (length(module.aws_iam) > 0 ? (var.identity_type == "role" ? module.aws_iam[0].role_arn : module.aws_iam[0].user_arn) : null) :
+    var.provider_name == "azure" ? (length(module.azure_iam) > 0 ? module.azure_iam[0].identity_principal_id : null) :
+    var.provider_name == "gcp"   ? (length(module.gcp_iam) > 0 ? module.gcp_iam[0].service_account_email : null) :
     null
   )
 }

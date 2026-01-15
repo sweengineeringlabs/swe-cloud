@@ -23,7 +23,7 @@ variable "project_name" {
 module "network_aws" {
   source = "../../facade/networking"
   
-  provider     = "aws"
+  provider_name = "aws"
   project_name = var.project_name
   environment  = var.environment
   network_name = "${var.project_name}-net"
@@ -40,7 +40,7 @@ module "network_aws" {
 module "ingestion_bucket" {
   source = "../../facade/storage"
   
-  provider     = "aws"
+  provider_name = "aws"
   bucket_name  = "ingest-${var.project_name}-${var.environment}"
   project_name = var.project_name
   environment  = var.environment
@@ -53,7 +53,7 @@ module "ingestion_bucket" {
 module "processor" {
   source = "../../facade/compute"
   
-  provider      = "aws"
+  provider_name = "aws"
   instance_name = "processor-${var.environment}"
   instance_size = "medium"
   project_name  = var.project_name
@@ -70,7 +70,7 @@ module "processor" {
 module "metadata_db" {
   source = "../../facade/database"
   
-  provider     = "aws"
+  provider_name = "aws"
   identifier   = "meta-${var.project_name}"
   project_name = var.project_name
   environment  = var.environment

@@ -194,7 +194,7 @@ Similar to CloudKit's provider pattern:
 module "compute" {
   source = "../facade/compute"
   
-  provider      = "aws"        # or "azure", "gcp", "oracle"
+  provider_name = "aws"        # or "azure", "gcp", "oracle"
   instance_size = "medium"     # Normalized size
   instance_name = "web-server"
   
@@ -259,13 +259,13 @@ Using Terraform's conditional logic:
 ```hcl
 # Enable/disable features
 module "aws_compute" {
-  count  = var.provider == "aws" ? 1 : 0
+  count  = var.provider_name == "aws" ? 1 : 0
   source = "../providers/aws/compute"
   # ...
 }
 
 module "azure_compute" {
-  count  = var.provider == "azure" ? 1 : 0
+  count  = var.provider_name == "azure" ? 1 : 0
   source = "../providers/azure/compute"
   # ...
 }

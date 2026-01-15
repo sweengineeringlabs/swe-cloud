@@ -52,7 +52,7 @@ Switching providers is done by changing a single variable in the Facade module.
 ```hcl
 module "storage" {
   source   = "../../facade/storage"
-  provider = "aws" # Change to "azure" or "gcp"
+  provider_name = "aws" # Change to "azure" or "gcp"
   # ...
 }
 ```

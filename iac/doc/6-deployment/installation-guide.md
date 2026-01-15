@@ -34,7 +34,7 @@ terraform init
 Create a `terraform.tfvars` file or prepare environment variables.
 Example `terraform.tfvars`:
 ```hcl
-provider     = "aws"
+provider_name = "aws"
 project_name = "my-awesome-project"
 environment  = "dev"
 bucket_name  = "my-data-bucket-unique-123"

@@ -44,7 +44,7 @@ locals {
     {
       ManagedBy    = "Terraform"
       Environment  = var.environment
-      Provider     = var.provider
+      Provider     = var.provider_name
       Project      = var.project_name
       Architecture = "SEA"
     }
@@ -57,51 +57,51 @@ locals {
 
 # Route to AWS compute module
 module "aws_compute" {
-  count  = var.provider == "aws" ? 1 : 0
+  count  = var.provider_name == "aws" ? 1 : 0
   source = "../../iac_core/aws/src/compute"
   
   ami           = lookup(var.provider_config, "ami", "ami-0c55b159cbfafe1f0")
-  instance_type = local.compute_instance_types[var.provider][var.instance_size]
+  instance_type = local.compute_instance_types[var.provider_name][var.instance_size]
   ssh_key_name  = var.ssh_public_key != null ? "compute-key" : null
   tags          = local.common_tags
 }
 
 # Route to Azure compute module  
 module "azure_compute" {
-  count  = var.provider == "azure" ? 1 : 0
+  count  = var.provider_name == "azure" ? 1 : 0
   source = "../../iac_core/azure/src/compute"
   
   # Azure-specific variables would go here
-  # vm_size = local.compute_instance_types[var.provider][var.instance_size]
+  # vm_size = local.compute_instance_types[var.provider_name][var.instance_size]
   # tags    = local.common_tags
 }
 
 # Route to GCP compute module
 module "gcp_compute" {
-  count  = var.provider == "gcp" ? 1 : 0
+  count  = var.provider_name == "gcp" ? 1 : 0
   source = "../../iac_core/gcp/src/compute"
   
   # GCP-specific variables would go here
-  # machine_type = local.compute_instance_types[var.provider][var.instance_size]
+  # machine_type = local.compute_instance_types[var.provider_name][var.instance_size]
   # labels       = local.common_tags
 }
 
 # Aggregated outputs (select based on provider)
 locals {
   instance_id = (
-    var.provider == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].instance_id : null) :
-    var.provider == "azure" ? (length(module.azure_compute) > 0 ? "azure-instance" : null) :
-    var.provider == "gcp" ? (length(module.gcp_compute) > 0 ? "gcp-instance" : null) :
+    var.provider_name == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].instance_id : null) :
+    var.provider_name == "azure" ? (length(module.azure_compute) > 0 ? "azure-instance" : null) :
+    var.provider_name == "gcp" ? (length(module.gcp_compute) > 0 ? "gcp-instance" : null) :
     null
   )
   
   public_ip = (
-    var.provider == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].public_ip : null) :
+    var.provider_name == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].public_ip : null) :
     null
   )
   
   private_ip = (
-    var.provider == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].private_ip : null) :
+    var.provider_name == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].private_ip : null) :
     null
   )
 }
@@ -118,9 +118,9 @@ output "instance" {
     name = var.instance_name
     
     # Specifications
-    type     = local.compute_instance_types[var.provider][var.instance_size]
+    type     = local.compute_instance_types[var.provider_name][var.instance_size]
     size     = var.instance_size
-    provider = var.provider
+    provider = var.provider_name
     
     # Network
     public_ip  = local.public_ip

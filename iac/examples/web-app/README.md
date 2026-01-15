@@ -151,7 +151,7 @@ terraform destroy -var="environment=dev"
    ```hcl
    module "azure_web_server" {
      source = "../../facade/compute"
-     provider = "azure"
+     provider_name = "azure"
      # ...
    }
    ```
@@ -219,7 +219,7 @@ Every resource gets these tags automatically:
   # Common tags (automatic)
   ManagedBy    = "Terraform"
   Environment  = "dev"  # or "prod"
-  Provider     = "aws"
+  provider_name = "aws"
   Project      = "web-app-demo"
   Architecture = "SEA"
   

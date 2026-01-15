@@ -1,4 +1,4 @@
-variable "provider" {
+variable "provider_name" {
   description = "Cloud provider (aws, azure, gcp)"
   type        = string
 }

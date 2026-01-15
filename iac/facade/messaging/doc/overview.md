@@ -19,7 +19,7 @@ The Messaging facade provides a simplified interface for AWS SQS/SNS, Azure Serv
 ```hcl
 module "order_queue" {
   source   = "../../facade/messaging"
-  provider = "aws"
+  provider_name = "aws"
   name     = "orders-inbound"
   type     = "queue"
 }
