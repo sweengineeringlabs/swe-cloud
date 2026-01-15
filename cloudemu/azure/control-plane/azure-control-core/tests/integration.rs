@@ -9,7 +9,7 @@ fn random_name() -> String {
 
 #[tokio::test]
 async fn test_azure_cosmos_flow() {
-    let provider = AzureProvider::new();
+    let provider = AzureProvider::in_memory();
     let db_name = "db1"; // cosmos.rs currently hardcodes return id as db1
     let coll_name = "coll1"; // cosmos.rs hardcodes coll1
 
@@ -48,7 +48,7 @@ async fn test_azure_cosmos_flow() {
 
 #[tokio::test]
 async fn test_azure_servicebus_flow() {
-    let provider = AzureProvider::new();
+    let provider = AzureProvider::in_memory();
     let queue_name = random_name();
 
     // 1. Create Queue: PUT /queue/{name}
@@ -62,19 +62,6 @@ async fn test_azure_servicebus_flow() {
     assert_eq!(res.status, 201);
 
     // 2. Send Message: POST /{queue}/messages
-    // Note: provider routes /messages or /queue
-    // servicebus expects /{queue}/messages
-    // if we send /queue/{name}/messages, provider sees "messages" and routes to servicebus
-    // servicebus trims slash: queue/{name}/messages.
-    // parts: ["queue", "{name}", "messages"]. len=3.
-    // servicebus logic: if parts[1] == "messages".
-    // Wait, servicebus logic at line 27: let resource = parts[1]. if resource == "messages".
-    // So it expects /{queue}/messages -> parts=["queue", "messages"].
-    // So path must be /{name}/messages.
-    
-    // But provider.rs routing maps /queue to servicebus.
-    // If I send /{name}/messages, provider maps it to ServiceBus? Yes, via .contains("/messages") check.
-    
     let req = Request {
         method: "POST".to_string(),
         path: format!("/{}/messages", queue_name),
@@ -87,7 +74,7 @@ async fn test_azure_servicebus_flow() {
 
 #[tokio::test]
 async fn test_azure_functions_flow() {
-    let provider = AzureProvider::new();
+    let provider = AzureProvider::in_memory();
     let func_name = random_name();
 
     // 1. Create Function: POST /admin/functions/{name}
@@ -103,7 +90,7 @@ async fn test_azure_functions_flow() {
 
 #[tokio::test]
 async fn test_azure_keyvault_flow() {
-    let provider = AzureProvider::new();
+    let provider = AzureProvider::in_memory();
     let secret_name = random_name();
 
     // 1. Set Secret: PUT /secrets/{name}

@@ -7,7 +7,7 @@ license.workspace = true
 description = "AWS Control-Plane Core - Implementation of AWS service emulation"
 
 [features]
-default = ["s3"]
+default = ["full"]
 s3 = []
 dynamodb = []
 sqs = []

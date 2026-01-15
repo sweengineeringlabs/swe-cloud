@@ -44,6 +44,20 @@ impl AzureProvider {
             keyvault: KeyVaultService::new(engine.clone()),
         }
     }
+
+    /// Create a new in-memory Azure provider for testing
+    pub fn in_memory() -> Self {
+         let engine = Arc::new(StorageEngine::in_memory().expect("Failed to create in-memory engine"));
+         
+         Self {
+            engine: engine.clone(),
+            blob: BlobService::new(engine.clone()),
+            cosmos: CosmosService::new(engine.clone()),
+            servicebus: ServiceBusService::new(engine.clone()),
+            functions: FunctionsService::new(engine.clone()),
+            keyvault: KeyVaultService::new(engine.clone()),
+        }
+    }
 }
 
 #[async_trait::async_trait]

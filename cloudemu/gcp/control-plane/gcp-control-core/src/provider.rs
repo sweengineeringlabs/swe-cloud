@@ -38,6 +38,20 @@ impl GcpProvider {
             secret_manager: SecretManagerService::new(engine.clone()),
         }
     }
+
+    /// Create a new in-memory GCP provider for testing
+    pub fn in_memory() -> Self {
+         let engine = Arc::new(StorageEngine::in_memory().expect("Failed to create in-memory engine"));
+         
+         Self {
+            engine: engine.clone(),
+            storage: CloudStorageService::new(engine.clone()),
+            firestore: FirestoreService::new(engine.clone()),
+            pubsub: PubSubService::new(engine.clone()),
+            functions: CloudFunctionsService::new(engine.clone()),
+            secret_manager: SecretManagerService::new(engine.clone()),
+        }
+    }
 }
 
 impl Default for GcpProvider {

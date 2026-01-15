@@ -9,7 +9,7 @@ fn random_name() -> String {
 
 #[tokio::test]
 async fn test_gcp_storage_flow() {
-    let provider = GcpProvider::new();
+    let provider = GcpProvider::in_memory();
     let bucket_name = random_name();
 
     // 1. Create Bucket
@@ -46,7 +46,7 @@ async fn test_gcp_storage_flow() {
 
 #[tokio::test]
 async fn test_gcp_firestore_flow() {
-    let provider = GcpProvider::new();
+    let provider = GcpProvider::in_memory();
     let collection = random_name();
 
     // 1. Create Document
@@ -75,7 +75,7 @@ async fn test_gcp_firestore_flow() {
 
 #[tokio::test]
 async fn test_gcp_pubsub_flow() {
-    let provider = GcpProvider::new();
+    let provider = GcpProvider::in_memory();
     let topic_name = random_name();
 
     // 1. Create Topic
@@ -101,7 +101,7 @@ async fn test_gcp_pubsub_flow() {
 
 #[tokio::test]
 async fn test_gcp_functions_flow() {
-    let provider = GcpProvider::new();
+    let provider = GcpProvider::in_memory();
     let func_name = random_name();
 
     // 1. Create Function
@@ -117,7 +117,7 @@ async fn test_gcp_functions_flow() {
 
 #[tokio::test]
 async fn test_gcp_secrets_flow() {
-    let provider = GcpProvider::new();
+    let provider = GcpProvider::in_memory();
     let secret_name = random_name();
 
     // 1. Create Secret
