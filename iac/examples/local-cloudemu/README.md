@@ -4,10 +4,13 @@ This example demonstrates deploying IAC modules to CloudEmu for local testing.
 
 ## Prerequisites
 
-1. **CloudEmu Server Running**:
+1. **CloudEmu Components Running**:
    ```bash
    cd ../../../cloudemu
-   cargo run --release -p cloudemu-server
+   
+   # Start AWS Service (Required for this example)
+   cargo run -p aws-control-facade
+   # (Port 4566)
    ```
 
 2. **Terraform**:
@@ -24,17 +27,16 @@ This example demonstrates deploying IAC modules to CloudEmu for local testing.
 
 ### 1. Start CloudEmu
 
+Open a terminal and run the AWS facade:
+
 ```bash
 # In cloudemu directory
-cargo run --release -p cloudemu-server
+cargo run -p aws-control-facade
 ```
 
 Wait for output:
 ```
-Starting CloudEmu Multi-Cloud Server...
-AWS Provider listening on 127.0.0.1:4566
-Azure Provider listening on 127.0.0.1:4567
-GCP Provider listening on 127.0.0.1:4568
+Starting CloudEmu AWS Server on 0.0.0.0:4566
 ```
 
 ### 2. Deploy Infrastructure
