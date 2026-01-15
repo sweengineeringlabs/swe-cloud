@@ -455,3 +455,18 @@ pub struct PubSubSubscriptionMetadata {
     pub ack_deadline_seconds: i32,
     pub created_at: String,
 }
+
+/// GCP Instance metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GcpInstanceMetadata {
+    pub name: String,
+    pub project_id: String,
+    pub zone: String,
+    pub machine_type: String,
+    pub image: String,
+    pub network: String,
+    pub private_ip: Option<String>,
+    pub public_ip: Option<String>,
+    pub status: String,
+    pub created_at: String,
+}

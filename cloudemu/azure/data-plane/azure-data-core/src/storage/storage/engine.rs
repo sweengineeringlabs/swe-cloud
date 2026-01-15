@@ -488,3 +488,18 @@ pub struct EventGridSubscriptionMetadata {
     pub protocol: String,
     pub created_at: String,
 }
+
+/// Azure Virtual Machine metadata
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VirtualMachineMetadata {
+    pub name: String,
+    pub location: String,
+    pub resource_group: String,
+    pub vm_size: String,
+    pub os_type: String,
+    pub admin_username: String,
+    pub private_ip: Option<String>,
+    pub public_ip: Option<String>,
+    pub status: String,
+    pub created_at: String,
+}

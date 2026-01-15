@@ -16,6 +16,7 @@ mod workflows;
 mod gcs;
 mod firestore;
 mod pubsub;
+mod compute;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -30,7 +31,8 @@ pub use engine::{
     // GCP
     GcsBucketMetadata, GcsObjectMetadata,
     FirestoreDatabaseMetadata, FirestoreDocumentMetadata,
-    PubSubTopicMetadata, PubSubSubscriptionMetadata
+    PubSubTopicMetadata, PubSubSubscriptionMetadata,
+    GcpInstanceMetadata
 };
 
 pub use lambda::CreateFunctionParams;

@@ -518,4 +518,18 @@ CREATE TABLE IF NOT EXISTS az_eventgrid_subscriptions (
     PRIMARY KEY (topic_name, name),
     FOREIGN KEY (topic_name) REFERENCES az_eventgrid_topics(name) ON DELETE CASCADE
 );
+
+-- Azure Virtual Machines
+CREATE TABLE IF NOT EXISTS az_virtual_machines (
+    name TEXT PRIMARY KEY,
+    location TEXT NOT NULL,
+    resource_group TEXT NOT NULL,
+    vm_size TEXT NOT NULL, -- e.g. Standard_DS1_v2
+    os_type TEXT NOT NULL, -- Linux or Windows
+    admin_username TEXT NOT NULL,
+    private_ip TEXT,
+    public_ip TEXT,
+    status TEXT DEFAULT 'Running',
+    created_at TEXT NOT NULL
+);
 "#;

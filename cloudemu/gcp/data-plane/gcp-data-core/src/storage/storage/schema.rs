@@ -487,4 +487,18 @@ CREATE TABLE IF NOT EXISTS pubsub_subscriptions (
     FOREIGN KEY (topic_name) REFERENCES pubsub_topics(name) ON DELETE CASCADE
 );
 
+-- GCP Instances
+CREATE TABLE IF NOT EXISTS gcp_instances (
+    name TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    zone TEXT NOT NULL,
+    machine_type TEXT NOT NULL, -- e.g. e2-medium
+    image TEXT NOT NULL,
+    network TEXT DEFAULT 'default',
+    private_ip TEXT,
+    public_ip TEXT,
+    status TEXT DEFAULT 'RUNNING',
+    created_at TEXT NOT NULL
+);
+
 "#;
