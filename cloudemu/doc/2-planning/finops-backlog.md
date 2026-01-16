@@ -15,23 +15,23 @@ This document outlines the roadmap and backlog for implementing pricing and bill
 **Protocol**: JSON 1.1 (AWS Standard)
 
 ### Phase 1: Foundation & Routing
-- [ ] **Create Service Module**: `cloudemu/aws/control-plane/aws-control-core/src/services/pricing.rs`
-- [ ] **Update Router**: Register `api.pricing.{region}.amazonaws.com` or `/pricing` routes in `aws-control-api`.
-- [ ] **Define Shapes**: Create structs for `GetServicesRequest`, `GetServicesResponse`, `GetProductsRequest`, etc.
+- [x] **Create Service Module**: `cloudemu/aws/control-plane/aws-control-core/src/services/pricing.rs`
+- [x] **Update Router**: Register `api.pricing.{region}.amazonaws.com` or `/pricing` routes in `aws-control-api`.
+- [x] **Define Shapes**: Create structs for `GetServicesRequest`, `GetServicesResponse`, `GetProductsRequest`, etc.
 
 ### Phase 2: Operations
-- [ ] **Implement `GetServices`**:
-    - [ ] Return list of available services (e.g., "AmazonEC2", "AmazonS3").
-    - [ ] Support `ServiceCode` filter.
-- [ ] **Implement `GetAttributeValues`**:
-    - [ ] Return attributes for a service (e.g., `location` = `US East (N. Virginia)`).
-- [ ] **Implement `GetProducts`**:
-    - [ ] Design SQLite schema for pricing products (or hardcode JSON responses for v1).
-    - [ ] Support filters (e.g., `PreInstalledSw`, `location`, `operatingSystem`).
-    - [ ] Return standard AWS Price List JSON format.
+- [x] **Implement `GetServices`**:
+    - [x] Return list of available services (e.g., "AmazonEC2", "AmazonS3").
+    - [x] Support `ServiceCode` filter.
+- [x] **Implement `GetAttributeValues`**:
+    - [x] Return attributes for a service (e.g., `location` = `US East (N. Virginia)`).
+- [x] **Implement `GetProducts`**:
+    - [x] Design SQLite schema for pricing products (or hardcode JSON responses for v1).
+    - [x] Support filters (e.g., `PreInstalledSw`, `location`, `operatingSystem`).
+    - [x] Return standard AWS Price List JSON format.
 
 ### Phase 3: Integration
-- [ ] **CLI Validation**: Verify using `aws pricing get-products --service-code AmazonEC2 --region us-east-1`.
+- [x] **CLI Validation**: Verify using `aws pricing get-products --service-code AmazonEC2 --region us-east-1`.
 
 ---
 
@@ -41,11 +41,11 @@ This document outlines the roadmap and backlog for implementing pricing and bill
 **Protocol**: REST / OData
 
 ### Tasks
-- [ ] **Create Facade**: `cloudemu/azure/control-plane/azure-control-core/src/services/pricing.rs`
-- [ ] **Implement `GET /api/retail/prices`**:
-    - [ ] Support OData `$filter` queries (e.g., `serviceName eq 'Virtual Machines'`).
-    - [ ] Return JSON response with retail prices.
-    - [ ] Map "Consumption" prices to internal S3/DynamoDB mocks.
+- [x] **Create Facade**: `cloudemu/azure/control-plane/azure-control-core/src/services/pricing.rs`
+- [x] **Implement `GET /api/retail/prices`**:
+    - [x] Support OData `$filter` queries (e.g., `serviceName eq 'Virtual Machines'`).
+    - [x] Return JSON response with retail prices.
+    - [x] Map "Consumption" prices to internal S3/DynamoDB mocks.
 
 ---
 
@@ -55,11 +55,11 @@ This document outlines the roadmap and backlog for implementing pricing and bill
 **Protocol**: gRPC / REST
 
 ### Tasks
-- [ ] **Create Facade**: `cloudemu/gcp/control-plane/gcp-control-core/src/services/billing.rs`
-- [ ] **Implement `ListServices`**:
-    - [ ] Return `services/6F81-5844-456A` (Compute Engine), etc.
-- [ ] **Implement `ListSkus`**:
-    - [ ] Return SKUs for a given parent service.
+- [x] **Create Facade**: `cloudemu/gcp/control-plane/gcp-control-core/src/services/billing.rs`
+- [x] **Implement `ListServices`**:
+    - [x] Return `services/6F81-5844-456A` (Compute Engine), etc.
+- [x] **Implement `ListSkus`**:
+    - [x] Return SKUs for a given parent service.
 
 ---
 
