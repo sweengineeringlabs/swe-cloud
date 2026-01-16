@@ -36,14 +36,16 @@ impl StorageEngine {
                     created_at: row.get(3)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Database {} not found", name)))
+        ).map_err(|_| EmulatorError::NotFound("FirestoreDatabase".into(), name.into()))
     }
 
     // ==================== Document Operations ====================
 
     pub fn create_document(&self, database_name: &str, collection_id: &str, document_id: &str, fields_json: &serde_json::Value) -> Result<FirestoreDocumentMetadata> {
-        // Verify database exists
-        self.get_firestore_database(database_name)?;
+        // Auto-create database if not exists (Lazy provisioning)
+        if self.get_firestore_database(database_name).is_err() {
+             self.create_firestore_database(database_name, "auto-project", "global")?;
+        }
 
         let db = self.db.lock();
         let now = chrono::Utc::now().to_rfc3339();
@@ -99,7 +101,7 @@ impl StorageEngine {
                     update_time: row.get(6)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Document {} not found", path)))
+        ).map_err(|_| EmulatorError::NotFound("FirestoreDocument".into(), path))
     }
 
     pub fn list_documents(&self, database_name: &str, collection_id: &str) -> Result<Vec<FirestoreDocumentMetadata>> {

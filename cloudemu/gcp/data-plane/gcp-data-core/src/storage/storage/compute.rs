@@ -60,7 +60,7 @@ impl StorageEngine {
                     created_at: row.get(9)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Instance {} not found in project {} zone {}", name, project_id, zone)))
+        ).map_err(|_| EmulatorError::NotFound("GcpInstance".into(), format!("Instance {} in project {} zone {}", name, project_id, zone)))
     }
 
     pub fn delete_gcp_instance(&self, name: &str, project_id: &str, zone: &str) -> Result<()> {
@@ -71,7 +71,7 @@ impl StorageEngine {
         )?;
         
         if count == 0 {
-            return Err(EmulatorError::NotFound(format!("Instance {} not found", name)));
+            return Err(EmulatorError::NotFound("GcpInstance".into(), name.to_string()));
         }
         Ok(())
     }

@@ -52,8 +52,11 @@ pub enum EmulatorError {
     #[error("JSON error: {0}")]
     Json(#[from] serde_json::Error),
 
-    #[error("{0}")]
-    NotFound(String),
+    #[error("{0} not found: {1}")]
+    NotFound(String, String),
+
+    #[error("NotImplemented: {0}")]
+    NotImplemented(String),
 
     #[error("{0} already exists")]
     AlreadyExists(String),
@@ -65,7 +68,7 @@ impl EmulatorError {
     /// Get HTTP status code
     pub fn status_code(&self) -> StatusCode {
         match self {
-            Self::NoSuchBucket(_) | Self::NoSuchKey(_) | Self::NoSuchBucketPolicy(_) | Self::NotFound(_) => {
+            Self::NoSuchBucket(_) | Self::NoSuchKey(_) | Self::NoSuchBucketPolicy(_) | Self::NotFound(..) => {
                 StatusCode::NOT_FOUND
             }
             Self::BucketAlreadyExists(_) | Self::AlreadyExists(_) => StatusCode::CONFLICT,
@@ -76,6 +79,7 @@ impl EmulatorError {
             Self::Internal(_) | Self::Database(_) | Self::Io(_) | Self::Json(_) => {
                 StatusCode::INTERNAL_SERVER_ERROR
             }
+            Self::NotImplemented(_) => StatusCode::NOT_IMPLEMENTED,
         }
     }
 
@@ -96,8 +100,9 @@ impl EmulatorError {
             Self::Database(_) => "InternalError",
             Self::Io(_) => "InternalError",
             Self::Json(_) => "InternalError",
-            Self::NotFound(_) => "ResourceNotFound",
+            Self::NotFound(..) => "ResourceNotFound",
             Self::AlreadyExists(_) => "ResourceAlreadyExists",
+            Self::NotImplemented(_) => "NotImplemented",
         }
     }
     
@@ -118,8 +123,9 @@ impl EmulatorError {
             Self::Database(msg) => msg.clone(),
             Self::Io(e) => e.to_string(),
             Self::Json(e) => e.to_string(),
-            Self::NotFound(msg) => msg.clone(),
+            Self::NotFound(type_, id) => format!("{} not found: {}", type_, id),
             Self::AlreadyExists(msg) => msg.clone(),
+            Self::NotImplemented(msg) => format!("Not implemented: {}", msg),
         }
     }
 }

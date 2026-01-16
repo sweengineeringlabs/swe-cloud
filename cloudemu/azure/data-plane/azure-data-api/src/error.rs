@@ -17,10 +17,7 @@ pub enum ApiError {
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         let (status, message) = match self {
-            ApiError::Core(EmulatorError::NotFound(msg)) => (StatusCode::NOT_FOUND, msg),
-            ApiError::Core(EmulatorError::AlreadyExists(msg)) => (StatusCode::CONFLICT, msg),
-            ApiError::Core(EmulatorError::InvalidRequest(msg)) => (StatusCode::BAD_REQUEST, msg),
-            ApiError::Core(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+            ApiError::Core(e) => (e.status_code(), e.to_string()),
             ApiError::Internal(msg) => (StatusCode::INTERNAL_SERVER_ERROR, msg),
         };
 

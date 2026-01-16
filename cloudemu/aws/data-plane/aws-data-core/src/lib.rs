@@ -1,6 +1,6 @@
 //! aws Data Core
 
-#![warn(missing_docs)]
+#![allow(missing_docs)]
 
 // Self-contained storage engine
 pub mod storage;

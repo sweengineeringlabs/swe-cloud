@@ -7,6 +7,8 @@ mod gcs;
 mod firestore;
 mod pubsub;
 mod compute;
+mod secrets;
+mod lambda;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -24,5 +26,7 @@ pub use engine::{
     PubSubTopicMetadata, PubSubSubscriptionMetadata,
     GcpInstanceMetadata
 };
+
+pub use lambda::CreateFunctionParams;
 
 

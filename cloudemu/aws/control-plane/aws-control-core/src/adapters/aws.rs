@@ -150,8 +150,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_aws_provider_creation() {
-        let config = Config::default();
-        let emulator = Arc::new(crate::Emulator::with_config(config).unwrap());
+        let emulator = Arc::new(crate::Emulator::in_memory().unwrap());
         let provider = AwsProvider::new(emulator);
 
         assert_eq!(provider.provider_name(), "aws");
@@ -161,8 +160,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_aws_provider_handle_request() {
-        let config = Config::default();
-        let emulator = Arc::new(crate::Emulator::with_config(config).unwrap());
+        let emulator = Arc::new(crate::Emulator::in_memory().unwrap());
         let provider = AwsProvider::new(emulator);
 
         let req = Request {

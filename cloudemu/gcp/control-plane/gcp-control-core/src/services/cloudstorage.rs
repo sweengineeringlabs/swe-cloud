@@ -45,37 +45,37 @@ impl CloudStorageService {
     }
 
     async fn create_bucket(&self, name: &str) -> CloudResult<Response> {
-        self.engine.create_bucket(name, "local")
+        self.engine.create_gcs_bucket(name, "gcp", "local")
             .map_err(|e| CloudError::Internal(e.to_string()))?;
         Ok(Response::created(""))
     }
 
     async fn get_bucket(&self, name: &str) -> CloudResult<Response> {
-        let _bucket = self.engine.get_bucket(name)
+        let _bucket = self.engine.get_gcs_bucket(name)
             .map_err(|_| CloudError::NotFound { resource_type: "Bucket".into(), resource_id: name.into() })?;
         Ok(Response::ok(format!(r#"{{"name":"{}"}}"#, name)))
     }
 
     async fn delete_bucket(&self, name: &str) -> CloudResult<Response> {
-        self.engine.delete_bucket(name)
+        self.engine.delete_gcs_bucket(name)
             .map_err(|e| CloudError::Internal(e.to_string()))?;
         Ok(Response::no_content())
     }
 
     async fn put_object(&self, bucket: &str, key: &str, body: &[u8]) -> CloudResult<Response> {
-        self.engine.put_object(bucket, key, body, Some("application/octet-stream"), None)
+        self.engine.insert_gcs_object(bucket, key, body, Some("application/octet-stream"))
             .map_err(|e| CloudError::Internal(e.to_string()))?;
         Ok(Response::created(""))
     }
 
     async fn get_object(&self, bucket: &str, key: &str) -> CloudResult<Response> {
-        let (_metadata, data) = self.engine.get_object(bucket, key, None)
+        let (_metadata, data) = self.engine.get_gcs_object(bucket, key, None)
             .map_err(|_| CloudError::NotFound { resource_type: "Object".into(), resource_id: key.into() })?;
         Ok(Response::ok(data))
     }
 
     async fn delete_object(&self, bucket: &str, key: &str) -> CloudResult<Response> {
-        self.engine.delete_object(bucket, key, None)
+        self.engine.delete_gcs_object(bucket, key)
             .map_err(|e| CloudError::Internal(e.to_string()))?;
         Ok(Response::no_content())
     }

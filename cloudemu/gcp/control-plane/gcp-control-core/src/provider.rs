@@ -15,6 +15,7 @@ use std::sync::Arc;
 
 /// Google Cloud Platform provider.
 pub struct GcpProvider {
+    #[allow(dead_code)]
     engine: Arc<StorageEngine>,
     storage: CloudStorageService,
     firestore: FirestoreService,
@@ -124,7 +125,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_storage_routing() {
-        let provider = GcpProvider::new();
+        let provider = GcpProvider::in_memory();
         
         let req = Request {
             method: "PUT".to_string(),

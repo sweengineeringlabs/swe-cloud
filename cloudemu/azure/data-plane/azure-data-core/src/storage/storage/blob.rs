@@ -39,14 +39,14 @@ impl StorageEngine {
                     created_at: row.get(6)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Storage account {} not found", name)))
+        ).map_err(|_| EmulatorError::NotFound("StorageAccount".into(), name.into()))
     }
 
     // ==================== Container Operations ====================
 
     pub fn create_container(&self, account_name: &str, name: &str) -> Result<()> {
         // Verify account exists or create it
-        if let Err(EmulatorError::NotFound(_)) = self.get_storage_account(account_name) {
+        if let Err(EmulatorError::NotFound(_, _)) = self.get_storage_account(account_name) {
             self.create_storage_account(account_name, "local", "default")?;
         }
 
@@ -82,7 +82,7 @@ impl StorageEngine {
                     last_modified: row.get(4)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Container {}/{} not found", account_name, name)))
+        ).map_err(|_| EmulatorError::NotFound("BlobContainer".into(), format!("Container {}/{} not found", account_name, name)))
     }
 
     pub fn list_containers(&self, account_name: &str) -> Result<Vec<BlobContainerMetadata>> {
@@ -172,7 +172,7 @@ impl StorageEngine {
                     row.get::<_, String>(9)?,
                 ))
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Blob {}/{}/{} not found", account_name, container_name, blob_name)))?;
+        ).map_err(|_| EmulatorError::NotFound("Blob".into(), format!("Blob {}/{}/{} not found", account_name, container_name, blob_name)))?;
 
         drop(db); // Release lock
 

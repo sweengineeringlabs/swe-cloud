@@ -1,0 +1,1544 @@
+warning: missing documentation for a module
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\lib.rs:6:1
+  |
+6 | pub mod storage;
+  | ^^^^^^^^^^^^^^^
+  |
+note: the lint level is defined here
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\lib.rs:3:9
+  |
+3 | #![warn(missing_docs)]
+  |         ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:11:5
+   |
+11 |     NoSuchBucket(String),
+   |     ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:14:5
+   |
+14 |     BucketAlreadyExists(String),
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:17:5
+   |
+17 |     BucketNotEmpty(String),
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:21:5
+   |
+21 |     NoSuchKey(String),
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:24:5
+   |
+24 |     InvalidObjectState(String),
+   |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:28:5
+   |
+28 |     NoSuchBucketPolicy(String),
+   |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:31:5
+   |
+31 |     MalformedPolicy(String),
+   |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:35:5
+   |
+35 |     InvalidRequest(String),
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:38:5
+   |
+38 |     InvalidArgument(String),
+   |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:41:5
+   |
+41 |     MalformedXml(String),
+   |     ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:44:5
+   |
+44 |     Internal(String),
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:47:5
+   |
+47 |     Database(String),
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:50:5
+   |
+50 |     Io(#[from] std::io::Error),
+   |     ^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:53:5
+   |
+53 |     Json(#[from] serde_json::Error),
+   |     ^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:56:5
+   |
+56 |     NotFound(String, String),
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:59:5
+   |
+59 |     NotImplemented(String),
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\error.rs:62:5
+   |
+62 |     AlreadyExists(String),
+   |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:124:5
+    |
+124 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:125:5
+    |
+125 |     pub region: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:126:5
+    |
+126 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:127:5
+    |
+127 |     pub versioning: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:128:5
+    |
+128 |     pub policy: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:129:5
+    |
+129 |     pub acl: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:135:5
+    |
+135 |     pub key: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:136:5
+    |
+136 |     pub version_id: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:137:5
+    |
+137 |     pub etag: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:138:5
+    |
+138 |     pub size: u64,
+    |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:139:5
+    |
+139 |     pub last_modified: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:140:5
+    |
+140 |     pub content_type: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:141:5
+    |
+141 |     pub storage_class: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:142:5
+    |
+142 |     pub is_delete_marker: bool,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:148:5
+    |
+148 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:149:5
+    |
+149 |     pub prefix: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:150:5
+    |
+150 |     pub delimiter: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:151:5
+    |
+151 |     pub max_keys: u32,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:152:5
+    |
+152 |     pub is_truncated: bool,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:153:5
+    |
+153 |     pub contents: Vec<ObjectMetadata>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:154:5
+    |
+154 |     pub common_prefixes: Vec<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:155:5
+    |
+155 |     pub continuation_token: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:156:5
+    |
+156 |     pub next_continuation_token: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:162:5
+    |
+162 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:163:5
+    |
+163 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:164:5
+    |
+164 |     pub description: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:165:5
+    |
+165 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:166:5
+    |
+166 |     pub last_changed_date: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:167:5
+    |
+167 |     pub tags: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:173:5
+    |
+173 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:174:5
+    |
+174 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:175:5
+    |
+175 |     pub version_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:176:5
+    |
+176 |     pub secret_string: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:177:5
+    |
+177 |     pub secret_binary: Option<Vec<u8>>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:178:5
+    |
+178 |     pub version_stages: Vec<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:179:5
+    |
+179 |     pub created_date: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:185:5
+    |
+185 |     pub id: String,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:186:5
+    |
+186 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:187:5
+    |
+187 |     pub description: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:188:5
+    |
+188 |     pub key_usage: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:189:5
+    |
+189 |     pub key_state: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:190:5
+    |
+190 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:191:5
+    |
+191 |     pub tags: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:197:5
+    |
+197 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:198:5
+    |
+198 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:199:5
+    |
+199 |     pub policy: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:205:5
+    |
+205 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:206:5
+    |
+206 |     pub event_bus_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:207:5
+    |
+207 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:208:5
+    |
+208 |     pub event_pattern: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:209:5
+    |
+209 |     pub state: String,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:210:5
+    |
+210 |     pub description: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:211:5
+    |
+211 |     pub schedule_expression: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:212:5
+    |
+212 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:218:5
+    |
+218 |     pub id: String,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:219:5
+    |
+219 |     pub rule_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:220:5
+    |
+220 |     pub event_bus_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:221:5
+    |
+221 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:222:5
+    |
+222 |     pub input: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:223:5
+    |
+223 |     pub input_path: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:229:5
+    |
+229 |     pub namespace: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:230:5
+    |
+230 |     pub metric_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:231:5
+    |
+231 |     pub dimensions: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:232:5
+    |
+232 |     pub value: f64,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:233:5
+    |
+233 |     pub unit: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:234:5
+    |
+234 |     pub timestamp: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:240:5
+    |
+240 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:241:5
+    |
+241 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:242:5
+    |
+242 |     pub retention_days: Option<i32>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:243:5
+    |
+243 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:249:5
+    |
+249 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:250:5
+    |
+250 |     pub log_group_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:251:5
+    |
+251 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:252:5
+    |
+252 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:258:5
+    |
+258 |     pub timestamp: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:259:5
+    |
+259 |     pub message: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:265:5
+    |
+265 |     pub id: String,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:266:5
+    |
+266 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:267:5
+    |
+267 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:268:5
+    |
+268 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:274:5
+    |
+274 |     pub user_pool_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:275:5
+    |
+275 |     pub group_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:276:5
+    |
+276 |     pub description: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:277:5
+    |
+277 |     pub precedence: Option<i32>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:278:5
+    |
+278 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:284:5
+    |
+284 |     pub user_pool_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:285:5
+    |
+285 |     pub username: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:286:5
+    |
+286 |     pub email: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:287:5
+    |
+287 |     pub status: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:288:5
+    |
+288 |     pub enabled: bool,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:289:5
+    |
+289 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:295:5
+    |
+295 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:296:5
+    |
+296 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:297:5
+    |
+297 |     pub definition: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:298:5
+    |
+298 |     pub role_arn: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:299:5
+    |
+299 |     pub machine_type: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:300:5
+    |
+300 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:306:5
+    |
+306 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:307:5
+    |
+307 |     pub state_machine_arn: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:308:5
+    |
+308 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:309:5
+    |
+309 |     pub status: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:310:5
+    |
+310 |     pub input: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:311:5
+    |
+311 |     pub output: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:312:5
+    |
+312 |     pub start_date: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:313:5
+    |
+313 |     pub stop_date: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:319:5
+    |
+319 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:320:5
+    |
+320 |     pub url: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:321:5
+    |
+321 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:322:5
+    |
+322 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:323:5
+    |
+323 |     pub visibility_timeout: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:324:5
+    |
+324 |     pub message_retention_period: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:325:5
+    |
+325 |     pub delay_seconds: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:326:5
+    |
+326 |     pub receive_message_wait_time_seconds: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:332:5
+    |
+332 |     pub id: String,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:333:5
+    |
+333 |     pub queue_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:334:5
+    |
+334 |     pub body: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:335:5
+    |
+335 |     pub md5_body: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:336:5
+    |
+336 |     pub sent_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:337:5
+    |
+337 |     pub visible_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:338:5
+    |
+338 |     pub receipt_handle: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:339:5
+    |
+339 |     pub receive_count: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:345:5
+    |
+345 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:346:5
+    |
+346 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:347:5
+    |
+347 |     pub status: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:348:5
+    |
+348 |     pub attribute_definitions: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:349:5
+    |
+349 |     pub key_schema: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:350:5
+    |
+350 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:356:5
+    |
+356 |     pub table_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:357:5
+    |
+357 |     pub partition_key: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:358:5
+    |
+358 |     pub sort_key: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:359:5
+    |
+359 |     pub item_json: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:365:5
+    |
+365 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:366:5
+    |
+366 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:367:5
+    |
+367 |     pub display_name: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:368:5
+    |
+368 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:374:5
+    |
+374 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:375:5
+    |
+375 |     pub topic_arn: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:376:5
+    |
+376 |     pub protocol: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:377:5
+    |
+377 |     pub endpoint: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:378:5
+    |
+378 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:384:5
+    |
+384 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:385:5
+    |
+385 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:386:5
+    |
+386 |     pub runtime: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:387:5
+    |
+387 |     pub handler: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:388:5
+    |
+388 |     pub last_modified: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:396:5
+    |
+396 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:397:5
+    |
+397 |     pub project_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:398:5
+    |
+398 |     pub location: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:399:5
+    |
+399 |     pub storage_class: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:400:5
+    |
+400 |     pub versioning_enabled: bool,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:401:5
+    |
+401 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:407:5
+    |
+407 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:408:5
+    |
+408 |     pub bucket: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:409:5
+    |
+409 |     pub generation: i64,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:410:5
+    |
+410 |     pub size: u64,
+    |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:411:5
+    |
+411 |     pub content_type: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:412:5
+    |
+412 |     pub etag: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:413:5
+    |
+413 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:414:5
+    |
+414 |     pub updated_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:420:5
+    |
+420 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:421:5
+    |
+421 |     pub project_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:422:5
+    |
+422 |     pub location_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:423:5
+    |
+423 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:429:5
+    |
+429 |     pub path: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:430:5
+    |
+430 |     pub database_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:431:5
+    |
+431 |     pub collection_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:432:5
+    |
+432 |     pub document_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:433:5
+    |
+433 |     pub fields_json: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:434:5
+    |
+434 |     pub create_time: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:435:5
+    |
+435 |     pub update_time: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:443:5
+    |
+443 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:444:5
+    |
+444 |     pub project_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:445:5
+    |
+445 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:451:5
+    |
+451 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:452:5
+    |
+452 |     pub topic_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:453:5
+    |
+453 |     pub project_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:454:5
+    |
+454 |     pub push_endpoint: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:455:5
+    |
+455 |     pub ack_deadline_seconds: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:456:5
+    |
+456 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:462:5
+    |
+462 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:463:5
+    |
+463 |     pub project_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:464:5
+    |
+464 |     pub zone: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:465:5
+    |
+465 |     pub machine_type: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:466:5
+    |
+466 |     pub image: String,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:467:5
+    |
+467 |     pub network: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:468:5
+    |
+468 |     pub private_ip: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:469:5
+    |
+469 |     pub public_ip: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:470:5
+    |
+470 |     pub status: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\engine.rs:471:5
+    |
+471 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\gcs.rs:8:5
+  |
+8 |     pub fn create_gcs_bucket(&self, name: &str, project_id: &str, location: &str) -> Result<()> {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\gcs.rs:26:5
+   |
+26 |     pub fn get_gcs_bucket(&self, name: &str) -> Result<GcsBucketMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\gcs.rs:44:5
+   |
+44 |     pub fn list_gcs_buckets(&self, project_id: &str) -> Result<Vec<GcsBucketMetadata>> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\gcs.rs:68:5
+   |
+68 |     pub fn insert_gcs_object(&self, bucket: &str, name: &str, data: &[u8], content_type: Option<&str>) -> Result<GcsObjectMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\gcs.rs:112:5
+    |
+112 |     pub fn get_gcs_object(&self, bucket: &str, name: &str, generation: Option<i64>) -> Result<(GcsObjectMetadata, Vec<u8>)> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\gcs.rs:164:5
+    |
+164 |     pub fn list_gcs_objects(&self, bucket: &str, prefix: Option<&str>) -> Result<Vec<GcsObjectMetadata>> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\firestore.rs:8:5
+  |
+8 |     pub fn create_firestore_database(&self, name: &str, project_id: &str, location_id: &str) -> Result<()> {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\firestore.rs:26:5
+   |
+26 |     pub fn get_firestore_database(&self, name: &str) -> Result<FirestoreDatabaseMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\firestore.rs:44:5
+   |
+44 |     pub fn create_document(&self, database_name: &str, collection_id: &str, document_id: &str, fields_json: &serde_json::Value) -> Result<FirestoreDocumentMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\firestore.rs:83:5
+   |
+83 |     pub fn get_document(&self, database_name: &str, collection_id: &str, document_id: &str) -> Result<FirestoreDocumentMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\firestore.rs:105:5
+    |
+105 |     pub fn list_documents(&self, database_name: &str, collection_id: &str) -> Result<Vec<FirestoreDocumentMetadata>> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\pubsub.rs:8:5
+  |
+8 |     pub fn create_pubsub_topic(&self, name: &str, project_id: &str) -> Result<PubSubTopicMetadata> {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\pubsub.rs:30:5
+   |
+30 |     pub fn get_pubsub_topic(&self, name: &str) -> Result<PubSubTopicMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\pubsub.rs:45:5
+   |
+45 |     pub fn delete_pubsub_topic(&self, name: &str) -> Result<()> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\pubsub.rs:56:5
+   |
+56 |     pub fn create_pubsub_subscription(&self, name: &str, topic_name: &str, project_id: &str, push_endpoint: Option<&str>) -> Result<PubSubSubscriptionMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\pubsub.rs:84:5
+   |
+84 |     pub fn get_pubsub_subscription(&self, name: &str) -> Result<PubSubSubscriptionMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\pubsub.rs:102:5
+    |
+102 |     pub fn delete_pubsub_subscription(&self, name: &str) -> Result<()> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\compute.rs:8:5
+  |
+8 |     pub fn create_gcp_instance(&self, name: &str, project_id: &str, zone: &str, machine_type: &str, image: &str, network: &str) -> Result<GcpInstanceMetadata> {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\compute.rs:43:5
+   |
+43 |     pub fn get_gcp_instance(&self, name: &str, project_id: &str, zone: &str) -> Result<GcpInstanceMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\compute.rs:66:5
+   |
+66 |     pub fn delete_gcp_instance(&self, name: &str, project_id: &str, zone: &str) -> Result<()> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\compute.rs:79:5
+   |
+79 |     pub fn list_gcp_instances(&self, project_id: &str, zone: Option<&str>) -> Result<Vec<GcpInstanceMetadata>> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:5:1
+  |
+5 | pub struct CreateFunctionParams<'a> {
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:6:5
+  |
+6 |     pub name: &'a str,
+  |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:7:5
+  |
+7 |     pub runtime: &'a str,
+  |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:8:5
+  |
+8 |     pub role: &'a str,
+  |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+ --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:9:5
+  |
+9 |     pub handler: &'a str,
+  |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:10:5
+   |
+10 |     pub code_hash: &'a str,
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:11:5
+   |
+11 |     pub account_id: &'a str,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:12:5
+   |
+12 |     pub region: &'a str,
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:18:5
+   |
+18 |     pub fn create_function(&self, params: CreateFunctionParams) -> Result<LambdaMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\lambda.rs:43:5
+   |
+43 |     pub fn get_function(&self, name: &str) -> Result<LambdaMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `gcp-data-core` (lib) generated 238 warnings
+warning: unused import: `StatusCode`
+ --> cloudemu\gcp\data-plane\gcp-data-api\src\handlers\gcs.rs:5:12
+  |
+5 |     http::{StatusCode, HeaderMap, header},
+  |            ^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Serialize`
+ --> cloudemu\gcp\data-plane\gcp-data-api\src\handlers\firestore.rs:6:26
+  |
+6 | use serde::{Deserialize, Serialize};
+  |                          ^^^^^^^^^
+
+warning: unused import: `post`
+ --> cloudemu\gcp\data-plane\gcp-data-api\src\router.rs:2:20
+  |
+2 |     routing::{get, post, put},
+  |                    ^^^^
+
+warning: `gcp-data-api` (lib) generated 3 warnings (run `cargo fix --lib -p gcp-data-api` to apply 3 suggestions)
+    Checking gcp-control-core v0.1.0 (C:\phd-systems\swe-labs\cloud\cloudemu\gcp\control-plane\gcp-control-core)
+error[E0599]: no method named `create_bucket` found for struct `Arc<gcp_data_core::StorageEngine>` in the current scope
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\cloudstorage.rs:48:21
+   |
+48 |         self.engine.create_bucket(name, "local")
+   |                     ^^^^^^^^^^^^^
+   |
+help: there is a method `create_gcs_bucket` with a similar name, but with different arguments
+  --> C:\phd-systems\swe-labs\cloud\cloudemu\gcp\data-plane\gcp-data-core\src\storage\storage\gcs.rs:8:5
+   |
+ 8 |     pub fn create_gcs_bucket(&self, name: &str, project_id: &str, location: &str) -> Result<()> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0599]: no method named `get_bucket` found for struct `Arc<gcp_data_core::StorageEngine>` in the current scope
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\cloudstorage.rs:54:35
+   |
+54 |         let _bucket = self.engine.get_bucket(name)
+   |                                   ^^^^^^^^^^
+   |
+help: there is a method `get_gcs_bucket` with a similar name
+   |
+54 |         let _bucket = self.engine.get_gcs_bucket(name)
+   |                                       ++++
+
+error[E0599]: no method named `delete_bucket` found for struct `Arc<gcp_data_core::StorageEngine>` in the current scope
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\cloudstorage.rs:60:21
+   |
+60 |         self.engine.delete_bucket(name)
+   |                     ^^^^^^^^^^^^^ method not found in `Arc<gcp_data_core::StorageEngine>`
+
+error[E0599]: no method named `put_object` found for struct `Arc<gcp_data_core::StorageEngine>` in the current scope
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\cloudstorage.rs:66:21
+   |
+66 |         self.engine.put_object(bucket, key, body, Some("application/octet-stream"), None)
+   |                     ^^^^^^^^^^ method not found in `Arc<gcp_data_core::StorageEngine>`
+
+error[E0599]: no method named `get_object` found for struct `Arc<gcp_data_core::StorageEngine>` in the current scope
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\cloudstorage.rs:72:45
+   |
+72 |         let (_metadata, data) = self.engine.get_object(bucket, key, None)
+   |                                             ^^^^^^^^^^
+   |
+help: there is a method `get_gcs_object` with a similar name
+   |
+72 |         let (_metadata, data) = self.engine.get_gcs_object(bucket, key, None)
+   |                                                 ++++
+
+error[E0599]: no method named `delete_object` found for struct `Arc<gcp_data_core::StorageEngine>` in the current scope
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\cloudstorage.rs:78:21
+   |
+78 |         self.engine.delete_object(bucket, key, None)
+   |                     ^^^^^^^^^^^^^ method not found in `Arc<gcp_data_core::StorageEngine>`
+
+warning: unused variable: `e`
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\pubsub.rs:67:23
+   |
+67 |             .map_err(|e| CloudError::NotFound { resource_type: "Topic".into(), resource_id: name.into() })?;
+   |                       ^ help: if this is intentional, prefix it with an underscore: `_e`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+error[E0599]: no method named `list_pubsub_topics` found for struct `Arc<gcp_data_core::StorageEngine>` in the current scope
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\pubsub.rs:79:34
+   |
+79 |         let topics = self.engine.list_pubsub_topics(project_id)
+   |                                  ^^^^^^^^^^^^^^^^^^
+   |
+help: there is a method `get_pubsub_topic` with a similar name
+   |
+79 -         let topics = self.engine.list_pubsub_topics(project_id)
+79 +         let topics = self.engine.get_pubsub_topic(project_id)
+   |
+
+warning: unused variable: `e`
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\pubsub.rs:87:23
+   |
+87 |             .map_err(|e| CloudError::NotFound { resource_type: "Topic".into(), resource_id: topic.into() })?;
+   |                       ^ help: if this is intentional, prefix it with an underscore: `_e`
+
+warning: unused variable: `project_id`
+  --> cloudemu\gcp\control-plane\gcp-control-core\src\services\pubsub.rs:84:37
+   |
+84 |     async fn publish_message(&self, project_id: &str, topic: &str, _body: &[u8]) -> CloudResult<Response> {
+   |                                     ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_project_id`
+
+For more information about this error, try `rustc --explain E0599`.
+warning: `gcp-control-core` (lib) generated 3 warnings
+error: could not compile `gcp-control-core` (lib) due to 7 previous errors; 3 warnings emitted

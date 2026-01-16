@@ -1,0 +1,1665 @@
+    Blocking waiting for file lock on build directory
+    Checking azure-data-core v0.1.0 (C:\phd-systems\swe-labs\cloud\cloudemu\azure\data-plane\azure-data-core)
+warning: unused variable: `query`
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:193:101
+    |
+193 | ...: &str, container_name: &str, query: &str) -> Result<Vec<CosmosItemMetadata>> {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_query`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: missing documentation for a module
+ --> cloudemu\azure\data-plane\azure-data-core\src\lib.rs:6:1
+  |
+6 | pub mod storage;
+  | ^^^^^^^^^^^^^^^
+  |
+note: the lint level is defined here
+ --> cloudemu\azure\data-plane\azure-data-core\src\lib.rs:3:9
+  |
+3 | #![warn(missing_docs)]
+  |         ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:11:5
+   |
+11 |     NoSuchBucket(String),
+   |     ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:14:5
+   |
+14 |     BucketAlreadyExists(String),
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:17:5
+   |
+17 |     BucketNotEmpty(String),
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:21:5
+   |
+21 |     NoSuchKey(String),
+   |     ^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:24:5
+   |
+24 |     InvalidObjectState(String),
+   |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:28:5
+   |
+28 |     NoSuchBucketPolicy(String),
+   |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:31:5
+   |
+31 |     MalformedPolicy(String),
+   |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:35:5
+   |
+35 |     InvalidRequest(String),
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:38:5
+   |
+38 |     InvalidArgument(String),
+   |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:41:5
+   |
+41 |     MalformedXml(String),
+   |     ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:44:5
+   |
+44 |     Internal(String),
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:47:5
+   |
+47 |     Database(String),
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:50:5
+   |
+50 |     Io(#[from] std::io::Error),
+   |     ^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:53:5
+   |
+53 |     Json(#[from] serde_json::Error),
+   |     ^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:56:5
+   |
+56 |     NotFound(String, String),
+   |     ^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:59:5
+   |
+59 |     NotImplemented(String),
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\error.rs:62:5
+   |
+62 |     AlreadyExists(String),
+   |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:124:5
+    |
+124 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:125:5
+    |
+125 |     pub region: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:126:5
+    |
+126 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:127:5
+    |
+127 |     pub versioning: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:128:5
+    |
+128 |     pub policy: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:129:5
+    |
+129 |     pub acl: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:135:5
+    |
+135 |     pub key: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:136:5
+    |
+136 |     pub version_id: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:137:5
+    |
+137 |     pub etag: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:138:5
+    |
+138 |     pub size: u64,
+    |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:139:5
+    |
+139 |     pub last_modified: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:140:5
+    |
+140 |     pub content_type: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:141:5
+    |
+141 |     pub storage_class: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:142:5
+    |
+142 |     pub is_delete_marker: bool,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:148:5
+    |
+148 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:149:5
+    |
+149 |     pub prefix: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:150:5
+    |
+150 |     pub delimiter: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:151:5
+    |
+151 |     pub max_keys: u32,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:152:5
+    |
+152 |     pub is_truncated: bool,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:153:5
+    |
+153 |     pub contents: Vec<ObjectMetadata>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:154:5
+    |
+154 |     pub common_prefixes: Vec<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:155:5
+    |
+155 |     pub continuation_token: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:156:5
+    |
+156 |     pub next_continuation_token: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:162:5
+    |
+162 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:163:5
+    |
+163 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:164:5
+    |
+164 |     pub description: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:165:5
+    |
+165 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:166:5
+    |
+166 |     pub last_changed_date: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:167:5
+    |
+167 |     pub tags: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:173:5
+    |
+173 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:174:5
+    |
+174 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:175:5
+    |
+175 |     pub version_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:176:5
+    |
+176 |     pub secret_string: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:177:5
+    |
+177 |     pub secret_binary: Option<Vec<u8>>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:178:5
+    |
+178 |     pub version_stages: Vec<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:179:5
+    |
+179 |     pub created_date: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:185:5
+    |
+185 |     pub id: String,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:186:5
+    |
+186 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:187:5
+    |
+187 |     pub description: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:188:5
+    |
+188 |     pub key_usage: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:189:5
+    |
+189 |     pub key_state: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:190:5
+    |
+190 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:191:5
+    |
+191 |     pub tags: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:197:5
+    |
+197 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:198:5
+    |
+198 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:199:5
+    |
+199 |     pub policy: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:205:5
+    |
+205 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:206:5
+    |
+206 |     pub event_bus_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:207:5
+    |
+207 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:208:5
+    |
+208 |     pub event_pattern: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:209:5
+    |
+209 |     pub state: String,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:210:5
+    |
+210 |     pub description: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:211:5
+    |
+211 |     pub schedule_expression: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:212:5
+    |
+212 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:218:5
+    |
+218 |     pub id: String,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:219:5
+    |
+219 |     pub rule_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:220:5
+    |
+220 |     pub event_bus_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:221:5
+    |
+221 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:222:5
+    |
+222 |     pub input: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:223:5
+    |
+223 |     pub input_path: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:229:5
+    |
+229 |     pub namespace: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:230:5
+    |
+230 |     pub metric_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:231:5
+    |
+231 |     pub dimensions: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:232:5
+    |
+232 |     pub value: f64,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:233:5
+    |
+233 |     pub unit: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:234:5
+    |
+234 |     pub timestamp: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:240:5
+    |
+240 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:241:5
+    |
+241 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:242:5
+    |
+242 |     pub retention_days: Option<i32>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:243:5
+    |
+243 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:249:5
+    |
+249 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:250:5
+    |
+250 |     pub log_group_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:251:5
+    |
+251 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:252:5
+    |
+252 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:258:5
+    |
+258 |     pub timestamp: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:259:5
+    |
+259 |     pub message: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:265:5
+    |
+265 |     pub id: String,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:266:5
+    |
+266 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:267:5
+    |
+267 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:268:5
+    |
+268 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:274:5
+    |
+274 |     pub user_pool_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:275:5
+    |
+275 |     pub group_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:276:5
+    |
+276 |     pub description: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:277:5
+    |
+277 |     pub precedence: Option<i32>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:278:5
+    |
+278 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:284:5
+    |
+284 |     pub user_pool_id: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:285:5
+    |
+285 |     pub username: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:286:5
+    |
+286 |     pub email: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:287:5
+    |
+287 |     pub status: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:288:5
+    |
+288 |     pub enabled: bool,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:289:5
+    |
+289 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:295:5
+    |
+295 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:296:5
+    |
+296 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:297:5
+    |
+297 |     pub definition: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:298:5
+    |
+298 |     pub role_arn: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:299:5
+    |
+299 |     pub machine_type: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:300:5
+    |
+300 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:306:5
+    |
+306 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:307:5
+    |
+307 |     pub state_machine_arn: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:308:5
+    |
+308 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:309:5
+    |
+309 |     pub status: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:310:5
+    |
+310 |     pub input: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:311:5
+    |
+311 |     pub output: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:312:5
+    |
+312 |     pub start_date: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:313:5
+    |
+313 |     pub stop_date: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:319:5
+    |
+319 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:320:5
+    |
+320 |     pub url: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:321:5
+    |
+321 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:322:5
+    |
+322 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:323:5
+    |
+323 |     pub visibility_timeout: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:324:5
+    |
+324 |     pub message_retention_period: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:325:5
+    |
+325 |     pub delay_seconds: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:326:5
+    |
+326 |     pub receive_message_wait_time_seconds: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:332:5
+    |
+332 |     pub id: String,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:333:5
+    |
+333 |     pub queue_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:334:5
+    |
+334 |     pub body: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:335:5
+    |
+335 |     pub md5_body: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:336:5
+    |
+336 |     pub sent_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:337:5
+    |
+337 |     pub visible_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:338:5
+    |
+338 |     pub receipt_handle: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:339:5
+    |
+339 |     pub receive_count: i32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:345:5
+    |
+345 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:346:5
+    |
+346 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:347:5
+    |
+347 |     pub status: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:348:5
+    |
+348 |     pub attribute_definitions: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:349:5
+    |
+349 |     pub key_schema: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:350:5
+    |
+350 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:356:5
+    |
+356 |     pub table_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:357:5
+    |
+357 |     pub partition_key: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:358:5
+    |
+358 |     pub sort_key: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:359:5
+    |
+359 |     pub item_json: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:365:5
+    |
+365 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:366:5
+    |
+366 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:367:5
+    |
+367 |     pub display_name: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:368:5
+    |
+368 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:374:5
+    |
+374 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:375:5
+    |
+375 |     pub topic_arn: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:376:5
+    |
+376 |     pub protocol: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:377:5
+    |
+377 |     pub endpoint: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:378:5
+    |
+378 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:384:5
+    |
+384 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:385:5
+    |
+385 |     pub arn: String,
+    |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:386:5
+    |
+386 |     pub runtime: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:387:5
+    |
+387 |     pub handler: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:388:5
+    |
+388 |     pub last_modified: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:396:5
+    |
+396 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:397:5
+    |
+397 |     pub location: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:398:5
+    |
+398 |     pub resource_group: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:399:5
+    |
+399 |     pub sku_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:400:5
+    |
+400 |     pub kind: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:401:5
+    |
+401 |     pub access_tier: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:402:5
+    |
+402 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:408:5
+    |
+408 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:409:5
+    |
+409 |     pub account_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:410:5
+    |
+410 |     pub public_access: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:411:5
+    |
+411 |     pub etag: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:412:5
+    |
+412 |     pub last_modified: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:418:5
+    |
+418 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:419:5
+    |
+419 |     pub container_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:420:5
+    |
+420 |     pub account_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:421:5
+    |
+421 |     pub blob_type: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:422:5
+    |
+422 |     pub access_tier: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:423:5
+    |
+423 |     pub size: u64,
+    |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:424:5
+    |
+424 |     pub content_type: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:425:5
+    |
+425 |     pub etag: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:426:5
+    |
+426 |     pub last_modified: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:432:5
+    |
+432 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:433:5
+    |
+433 |     pub location: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:434:5
+    |
+434 |     pub resource_group: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:435:5
+    |
+435 |     pub kind: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:436:5
+    |
+436 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:442:5
+    |
+442 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:443:5
+    |
+443 |     pub account_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:444:5
+    |
+444 |     pub throughput: Option<i32>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:445:5
+    |
+445 |     pub etag: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:451:5
+    |
+451 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:452:5
+    |
+452 |     pub database_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:453:5
+    |
+453 |     pub account_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:454:5
+    |
+454 |     pub partition_key_path: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:455:5
+    |
+455 |     pub throughput: Option<i32>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:456:5
+    |
+456 |     pub etag: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:462:5
+    |
+462 |     pub id: String,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:463:5
+    |
+463 |     pub container_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:464:5
+    |
+464 |     pub database_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:465:5
+    |
+465 |     pub account_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:466:5
+    |
+466 |     pub partition_key_value: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:467:5
+    |
+467 |     pub item_json: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:468:5
+    |
+468 |     pub last_modified: i64,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:469:5
+    |
+469 |     pub etag: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:475:5
+    |
+475 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:476:5
+    |
+476 |     pub location: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:477:5
+    |
+477 |     pub resource_group: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:478:5
+    |
+478 |     pub endpoint: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:479:5
+    |
+479 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:485:5
+    |
+485 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:486:5
+    |
+486 |     pub topic_name: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:487:5
+    |
+487 |     pub endpoint: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:488:5
+    |
+488 |     pub protocol: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:489:5
+    |
+489 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:495:5
+    |
+495 |     pub name: String,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:496:5
+    |
+496 |     pub location: String,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:497:5
+    |
+497 |     pub resource_group: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:498:5
+    |
+498 |     pub vm_size: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:499:5
+    |
+499 |     pub os_type: String,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:500:5
+    |
+500 |     pub admin_username: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:501:5
+    |
+501 |     pub private_ip: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:502:5
+    |
+502 |     pub public_ip: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:503:5
+    |
+503 |     pub status: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\engine.rs:504:5
+    |
+504 |     pub created_at: String,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+ --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\blob.rs:8:5
+  |
+8 |     pub fn create_storage_account(&self, name: &str, location: &str, resource_group: &str) -> Result<()> {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\blob.rs:26:5
+   |
+26 |     pub fn get_storage_account(&self, name: &str) -> Result<StorageAccountMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\blob.rs:47:5
+   |
+47 |     pub fn create_container(&self, account_name: &str, name: &str) -> Result<()> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\blob.rs:71:5
+   |
+71 |     pub fn get_container(&self, account_name: &str, name: &str) -> Result<BlobContainerMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\blob.rs:88:5
+   |
+88 |     pub fn list_containers(&self, account_name: &str) -> Result<Vec<BlobContainerMetadata>> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\blob.rs:111:5
+    |
+111 |     pub fn put_blob(&self, account_name: &str, container_name: &str, blob_name: &str, data: &[u8], content_type: Option<&str>) -> Result<BlobMetadata> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\blob.rs:152:5
+    |
+152 |     pub fn get_blob(&self, account_name: &str, container_name: &str, blob_name: &str) -> Result<(BlobMetadata, Vec<u8>)> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\blob.rs:183:5
+    |
+183 |     pub fn list_blobs(&self, account_name: &str, container_name: &str) -> Result<Vec<BlobMetadata>> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+ --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:8:5
+  |
+8 |     pub fn create_cosmos_account(&self, name: &str, location: &str, resource_group: &str) -> Result<()> {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:26:5
+   |
+26 |     pub fn get_cosmos_account(&self, name: &str) -> Result<CosmosAccountMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:45:5
+   |
+45 |     pub fn create_cosmos_database(&self, account_name: &str, name: &str) -> Result<()> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:67:5
+   |
+67 |     pub fn get_cosmos_database(&self, account_name: &str, name: &str) -> Result<CosmosDatabaseMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:85:5
+   |
+85 |     pub fn create_cosmos_container(&self, account_name: &str, database_name: &str, name: &str, partition_key_path: &str) -> Result<()> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:105:5
+    |
+105 |     pub fn get_cosmos_container(&self, account_name: &str, database_name: &str, name: &str) -> Result<CosmosContainerMetadata> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:125:5
+    |
+125 |     pub fn create_cosmos_item(&self, account_name: &str, database_name: &str, container_name: &str, item_json: &serde_json::Value) -> Result<CosmosItemMetadata> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:171:5
+    |
+171 |     pub fn get_cosmos_item(&self, account_name: &str, database_name: &str, container_name: &str, id: &str, partition_key: &str) -> Result<CosmosItemMetadata> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\cosmos.rs:193:5
+    |
+193 |     pub fn query_cosmos_items(&self, account_name: &str, database_name: &str, container_name: &str, query: &str) -> Result<Vec<CosmosItemMetadata>> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+ --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\eventgrid.rs:8:5
+  |
+8 |     pub fn create_eventgrid_topic(&self, name: &str, location: &str, resource_group: &str) -> Result<EventGridTopicMetadata> {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\eventgrid.rs:33:5
+   |
+33 |     pub fn get_eventgrid_topic(&self, name: &str) -> Result<EventGridTopicMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\eventgrid.rs:50:5
+   |
+50 |     pub fn delete_eventgrid_topic(&self, name: &str) -> Result<()> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\eventgrid.rs:61:5
+   |
+61 |     pub fn create_eventgrid_subscription(&self, topic_name: &str, subscription_name: &str, endpoint: &str, protocol: &str) -> Result<EventGridSubscriptionMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\eventgrid.rs:88:5
+   |
+88 |     pub fn list_eventgrid_subscriptions(&self, topic_name: &str) -> Result<Vec<EventGridSubscriptionMetadata>> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\eventgrid.rs:109:5
+    |
+109 |     pub fn delete_eventgrid_subscription(&self, topic_name: &str, subscription_name: &str) -> Result<()> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+ --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\compute.rs:8:5
+  |
+8 |     pub fn create_virtual_machine(&self, name: &str, location: &str, resource_group: &str, vm_size: &str, os_type: &str, admin_username: &str) -> Result<VirtualMachineMetadata> {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\compute.rs:43:5
+   |
+43 |     pub fn get_virtual_machine(&self, name: &str) -> Result<VirtualMachineMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\compute.rs:66:5
+   |
+66 |     pub fn delete_virtual_machine(&self, name: &str) -> Result<()> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\compute.rs:75:5
+   |
+75 |     pub fn list_virtual_machines(&self, resource_group: Option<&str>) -> Result<Vec<VirtualMachineMetadata>> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\dynamodb.rs:10:5
+   |
+10 |     pub fn create_table(&self, name: &str, attr_defs: &str, key_schema: &str, account_id: &str, region: &str) -> Result<TableMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\dynamodb.rs:36:5
+   |
+36 |     pub fn get_table(&self, name: &str) -> Result<TableMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\dynamodb.rs:52:5
+   |
+52 |     pub fn put_item(&self, table_name: &str, pk: &str, sk: Option<&str>, item_json: &str) -> Result<()> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\dynamodb.rs:71:5
+   |
+71 |     pub fn get_item(&self, table_name: &str, pk: &str, sk: Option<&str>) -> Result<Option<String>> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\dynamodb.rs:89:5
+   |
+89 |     pub fn query_items(&self, table_name: &str, pk: &str) -> Result<Vec<String>> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> cloudemu\azure\data-plane\azure-data-core\src\storage\storage\dynamodb.rs:103:5
+    |
+103 |     pub fn scan_items(&self, table_name: &str) -> Result<Vec<String>> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `azure-data-core` (lib) generated 261 warnings
+    Checking azure-data-api v0.1.0 (C:\phd-systems\swe-labs\cloud\cloudemu\azure\data-plane\azure-data-api)
+warning: unused import: `StatusCode`
+ --> cloudemu\azure\data-plane\azure-data-api\src\handlers\blob.rs:5:12
+  |
+5 |     http::{StatusCode, HeaderMap, header},
+  |            ^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Serialize`
+ --> cloudemu\azure\data-plane\azure-data-api\src\handlers\cosmos.rs:6:26
+  |
+6 | use serde::{Deserialize, Serialize};
+  |                          ^^^^^^^^^
+
+warning: unused variable: `metadata`
+  --> cloudemu\azure\data-plane\azure-data-api\src\handlers\blob.rs:33:9
+   |
+33 |     let metadata = storage.create_container(&account, &container)?;
+   |         ^^^^^^^^
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+help: if this is intentional, prefix it with an underscore
+   |
+33 |     let _metadata = storage.create_container(&account, &container)?;
+   |         +
+help: you might have meant to pattern match on the similarly named constant `_`
+   |
+33 -     let metadata = storage.create_container(&account, &container)?;
+33 +     let handlers::eventgrid::_ = storage.create_container(&account, &container)?;
+   |
+
+warning: `azure-data-api` (lib) generated 3 warnings (run `cargo fix --lib -p azure-data-api` to apply 3 suggestions)
+    Checking azure-control-core v0.1.0 (C:\phd-systems\swe-labs\cloud\cloudemu\azure\control-plane\azure-control-core)
+error[E0432]: unresolved import `azure_data_core::storage::CreateFunctionParams`
+  --> cloudemu\azure\control-plane\azure-control-core\src\services\functions.rs:42:13
+   |
+42 |         use azure_data_core::storage::CreateFunctionParams;
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ no `CreateFunctionParams` in `storage`
+
+warning: unused variable: `e`
+   --> cloudemu\azure\control-plane\azure-control-core\src\services\cosmos.rs:111:23
+    |
+111 |             .map_err(|e| CloudError::NotFound { resource_type: "Collection".into(), resource_id: coll.into() })?;
+    |                       ^ help: if this is intentional, prefix it with an underscore: `_e`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+error[E0599]: no method named `create_queue` found for struct `Arc<azure_data_core::StorageEngine>` in the current scope
+  --> cloudemu\azure\control-plane\azure-control-core\src\services\servicebus.rs:60:21
+   |
+60 |         self.engine.create_queue(name, &url, &arn)
+   |                     ^^^^^^^^^^^^
+   |
+help: there is a method `create_table` with a similar name, but with different arguments
+  --> C:\phd-systems\swe-labs\cloud\cloudemu\azure\data-plane\azure-data-core\src\storage\storage\dynamodb.rs:10:5
+   |
+10 |     pub fn create_table(&self, name: &str, attr_defs: &str, key_schema: &str, account_id: &str, region: &str) -> Result<TableMetadata> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0599]: no method named `send_message` found for struct `Arc<azure_data_core::StorageEngine>` in the current scope
+  --> cloudemu\azure\control-plane\azure-control-core\src\services\servicebus.rs:69:34
+   |
+69 |         let msg_id = self.engine.send_message(queue, &message_body)
+   |                                  ^^^^^^^^^^^^ method not found in `Arc<azure_data_core::StorageEngine>`
+
+error[E0599]: no method named `receive_message` found for struct `Arc<azure_data_core::StorageEngine>` in the current scope
+  --> cloudemu\azure\control-plane\azure-control-core\src\services\servicebus.rs:76:36
+   |
+76 |         let messages = self.engine.receive_message(queue, 1)
+   |                                    ^^^^^^^^^^^^^^^ method not found in `Arc<azure_data_core::StorageEngine>`
+
+error[E0599]: no method named `create_function` found for struct `Arc<azure_data_core::StorageEngine>` in the current scope
+  --> cloudemu\azure\control-plane\azure-control-core\src\services\functions.rs:54:32
+   |
+54 |         let func = self.engine.create_function(params)
+   |                                ^^^^^^^^^^^^^^^ method not found in `Arc<azure_data_core::StorageEngine>`
+
+error[E0599]: no method named `get_function` found for struct `Arc<azure_data_core::StorageEngine>` in the current scope
+  --> cloudemu\azure\control-plane\azure-control-core\src\services\functions.rs:62:33
+   |
+62 |         let _func = self.engine.get_function(name)
+   |                                 ^^^^^^^^^^^^ method not found in `Arc<azure_data_core::StorageEngine>`
+
+Some errors have detailed explanations: E0432, E0599.
+For more information about an error, try `rustc --explain E0432`.
+warning: `azure-control-core` (lib) generated 1 warning
+error: could not compile `azure-control-core` (lib) due to 6 previous errors; 1 warning emitted

@@ -44,14 +44,14 @@ impl StorageEngine {
                     created_at: row.get(4)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Event Grid Topic {} not found", name)))
+        ).map_err(|_| EmulatorError::NotFound("EventGridTopic".into(), format!("{}", name)))
     }
 
     pub fn delete_eventgrid_topic(&self, name: &str) -> Result<()> {
         let db = self.db.lock();
         let count = db.execute("DELETE FROM az_eventgrid_topics WHERE name = ?", params![name])?;
         if count == 0 {
-            return Err(EmulatorError::NotFound(format!("Event Grid Topic {} not found", name)));
+            return Err(EmulatorError::NotFound("EventGridTopic".into(), name.to_string()));
         }
         Ok(())
     }
@@ -114,7 +114,7 @@ impl StorageEngine {
         )?;
         
         if count == 0 {
-            return Err(EmulatorError::NotFound(format!("Subscription {} not found for topic {}", subscription_name, topic_name)));
+            return Err(EmulatorError::NotFound("EventGridSubscription".into(), format!("Subscription {} for topic {}", subscription_name, topic_name)));
         }
         Ok(())
     }

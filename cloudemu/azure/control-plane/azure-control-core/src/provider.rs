@@ -15,6 +15,7 @@ use std::sync::Arc;
 
 /// Azure cloud provider.
 pub struct AzureProvider {
+    #[allow(dead_code)]
     engine: Arc<StorageEngine>,
     blob: BlobService,
     cosmos: CosmosService,

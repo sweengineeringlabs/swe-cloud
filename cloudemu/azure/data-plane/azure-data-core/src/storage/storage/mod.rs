@@ -7,6 +7,10 @@ mod blob;
 mod cosmos;
 mod eventgrid;
 mod compute;
+mod secrets;
+mod dynamodb;
+mod lambda;
+mod sqs;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -24,5 +28,7 @@ pub use engine::{
     EventGridTopicMetadata, EventGridSubscriptionMetadata,
     VirtualMachineMetadata
 };
+
+pub use lambda::CreateFunctionParams;
 
 

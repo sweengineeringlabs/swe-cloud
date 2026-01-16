@@ -24,8 +24,8 @@ pub mod lambda;
 /// Prelude
 pub mod prelude {
     pub use super::s3::*;
-    pub use super::dynamodb::*;
-    pub use super::sqs::*;
-    pub use super::sns::*;
-    pub use super::lambda::*;
+    // pub use super::dynamodb::*;
+    // pub use super::sqs::*;
+    // pub use super::sns::*;
+    // pub use super::lambda::*;
 }

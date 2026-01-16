@@ -37,13 +37,13 @@ impl StorageEngine {
                     created_at: row.get(4)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Cosmos account {} not found", name)))
+        ).map_err(|_| EmulatorError::NotFound("CosmosAccount".into(), name.into()))
     }
 
     // ==================== Database Operations ====================
 
     pub fn create_cosmos_database(&self, account_name: &str, name: &str) -> Result<()> {
-        if let Err(EmulatorError::NotFound(_)) = self.get_cosmos_account(account_name) {
+        if let Err(EmulatorError::NotFound(_, _)) = self.get_cosmos_account(account_name) {
              self.create_cosmos_account(account_name, "local", "default")?;
         }
 
@@ -77,7 +77,7 @@ impl StorageEngine {
                     etag: row.get(3)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Database {}/{} not found", account_name, name)))
+        ).map_err(|_| EmulatorError::NotFound("CosmosDatabase".into(), format!("{} / {}", account_name, name)))
     }
 
     // ==================== Container Operations ====================
@@ -117,7 +117,7 @@ impl StorageEngine {
                     etag: row.get(5)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Container {}/{}/{} not found", account_name, database_name, name)))
+        ).map_err(|_| EmulatorError::NotFound("CosmosContainer".into(), format!("{} / {} / {}", account_name, database_name, name)))
     }
 
     // ==================== Item Operations ====================
@@ -187,7 +187,7 @@ impl StorageEngine {
                     etag: row.get(7)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Item {} not found with pk {}", id, partition_key)))
+        ).map_err(|_| EmulatorError::NotFound("CosmosItem".into(), format!("{} (pk: {})", id, partition_key)))
     }
 
     pub fn query_cosmos_items(&self, account_name: &str, database_name: &str, container_name: &str, query: &str) -> Result<Vec<CosmosItemMetadata>> {

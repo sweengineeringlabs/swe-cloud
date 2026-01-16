@@ -23,21 +23,23 @@ impl PubSubService {
         // Pub/Sub paths: /v1/projects/{project}/topics/{topic}
         // or /v1/projects/{project}/subscriptions/{subscription}
         if parts.len() >= 4 && parts[0] == "v1" && parts[1] == "projects" {
+            let project_id = parts[2];
+            
             if parts[3] == "topics" {
                 if parts.len() == 4 {
                     // List topics
-                    return self.list_topics().await;
+                    return self.list_topics(project_id).await;
                 } else {
                     let topic = parts[4];
                     if parts.len() == 5 {
                         match req.method.as_str() {
-                            "PUT" => return self.create_topic(topic).await,
-                            "GET" => return self.get_topic(topic).await,
+                            "PUT" => return self.create_topic(project_id, topic).await,
+                            "GET" => return self.get_topic(project_id, topic).await,
                             "DELETE" => return self.delete_topic(topic).await,
                             _ => {}
                         }
                     } else if parts.len() == 6 && parts[5] == "publish" {
-                        return self.publish_message(topic, &req.body).await;
+                        return self.publish_message(project_id, topic, &req.body).await;
                     }
                 }
             } else if parts[3] == "subscriptions" {
@@ -53,38 +55,36 @@ impl PubSubService {
         Err(CloudError::Validation(format!("Unsupported Pub/Sub operation: {} {}", req.method, req.path)))
     }
 
-    async fn create_topic(&self, name: &str) -> CloudResult<Response> {
-        self.engine.create_topic(name, "gcp", "local")
+    async fn create_topic(&self, project_id: &str, name: &str) -> CloudResult<Response> {
+        self.engine.create_pubsub_topic(name, project_id)
             .map_err(|e| CloudError::Internal(e.to_string()))?;
             
-        Ok(Response::created(format!(r#"{{"name":"{}"}}"#, name)))
+        Ok(Response::created(format!(r#"{{"name":"projects/{}/topics/{}"}}"#, project_id, name)))
     }
 
-    async fn get_topic(&self, name: &str) -> CloudResult<Response> {
-        // Verify exists by listing
-        let topics = self.engine.list_topics().unwrap_or_default();
-        let _found = topics.iter().find(|t| t.name == name)
-            .ok_or_else(|| CloudError::NotFound { resource_type: "Topic".into(), resource_id: name.into() })?;
+    async fn get_topic(&self, project_id: &str, name: &str) -> CloudResult<Response> {
+        self.engine.get_pubsub_topic(name)
+            .map_err(|e| CloudError::NotFound { resource_type: "Topic".into(), resource_id: name.into() })?;
             
-        Ok(Response::ok(format!(r#"{{"name":"{}"}}"#, name)))
+        Ok(Response::ok(format!(r#"{{"name":"projects/{}/topics/{}"}}"#, project_id, name)))
     }
 
-    async fn delete_topic(&self, _name: &str) -> CloudResult<Response> {
-        // Engine doesn't have delete_topic, just return success
+    async fn delete_topic(&self, name: &str) -> CloudResult<Response> {
+        self.engine.delete_pubsub_topic(name)
+            .map_err(|e| CloudError::Internal(e.to_string()))?;
         Ok(Response::no_content())
     }
 
-    async fn list_topics(&self) -> CloudResult<Response> {
-        let topics = self.engine.list_topics()
-            .unwrap_or_default();
+    async fn list_topics(&self, project_id: &str) -> CloudResult<Response> {
+        let topics = self.engine.list_pubsub_topics(project_id)
+            .map_err(|e| CloudError::Internal(e.to_string()))?;
         Ok(Response::ok(format!(r#"{{"topics":{:?}}}"#, topics)))
     }
 
-    async fn publish_message(&self, topic: &str, body: &[u8]) -> CloudResult<Response> {
-        // SNS doesn't have direct publish, we'll just verify topic exists
-        let topics = self.engine.list_topics().unwrap_or_default();
-        let _found = topics.iter().find(|t| t.name == topic)
-            .ok_or_else(|| CloudError::NotFound { resource_type: "Topic".into(), resource_id: topic.into() })?;
+    async fn publish_message(&self, project_id: &str, topic: &str, _body: &[u8]) -> CloudResult<Response> {
+        // Verify topic exists
+        self.engine.get_pubsub_topic(topic)
+            .map_err(|e| CloudError::NotFound { resource_type: "Topic".into(), resource_id: topic.into() })?;
         
         let msg_id = uuid::Uuid::new_v4().to_string();
         Ok(Response::ok(format!(r#"{{"messageIds":["{}"]}}"#, msg_id)))

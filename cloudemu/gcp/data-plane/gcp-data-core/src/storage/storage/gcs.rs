@@ -38,7 +38,7 @@ impl StorageEngine {
                     created_at: row.get(5)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Bucket {} not found", name)))
+        ).map_err(|_| EmulatorError::NotFound("GcsBucket".into(), name.into()))
     }
 
     pub fn list_gcs_buckets(&self, project_id: &str) -> Result<Vec<GcsBucketMetadata>> {
@@ -61,6 +61,15 @@ impl StorageEngine {
         .collect();
 
         Ok(buckets)
+    }
+
+    pub fn delete_gcs_bucket(&self, name: &str) -> Result<()> {
+        let db = self.db.lock();
+        let count = db.execute("DELETE FROM gcs_buckets WHERE name = ?", params![name])?;
+        if count == 0 {
+             return Err(EmulatorError::NotFound("GcsBucket".into(), name.into()));
+        }
+        Ok(())
     }
 
     // ==================== Object Operations ====================
@@ -153,7 +162,7 @@ impl StorageEngine {
             )
         };
 
-        let (metadata, content_hash) = query_result.map_err(|_| EmulatorError::NotFound(format!("Object {}/{} not found", bucket, name)))?;
+        let (metadata, content_hash) = query_result.map_err(|_| EmulatorError::NotFound("GcsObject".into(), format!("{} / {}", bucket, name)))?;
 
         drop(db); // Release lock
 
@@ -192,5 +201,14 @@ impl StorageEngine {
         .collect();
 
         Ok(objects)
+    }
+
+    pub fn delete_gcs_object(&self, bucket: &str, name: &str) -> Result<()> {
+         let db = self.db.lock();
+         let count = db.execute("DELETE FROM gcs_objects WHERE bucket = ? AND name = ?", params![bucket, name])?;
+         if count == 0 {
+             return Err(EmulatorError::NotFound("GcsObject".into(), format!("{} / {}", bucket, name)));
+         }
+         Ok(())
     }
 }

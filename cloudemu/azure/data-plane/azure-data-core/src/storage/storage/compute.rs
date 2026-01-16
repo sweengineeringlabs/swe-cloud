@@ -60,14 +60,14 @@ impl StorageEngine {
                     created_at: row.get(9)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Virtual Machine {} not found", name)))
+        ).map_err(|_| EmulatorError::NotFound("VirtualMachine".into(), name.to_string()))
     }
 
     pub fn delete_virtual_machine(&self, name: &str) -> Result<()> {
         let db = self.db.lock();
         let count = db.execute("DELETE FROM az_virtual_machines WHERE name = ?", params![name])?;
         if count == 0 {
-            return Err(EmulatorError::NotFound(format!("Virtual Machine {} not found", name)));
+            return Err(EmulatorError::NotFound("VirtualMachine".into(), name.to_string()));
         }
         Ok(())
     }

@@ -39,16 +39,31 @@ impl StorageEngine {
                     created_at: row.get(2)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Topic {} not found", name)))
+        ).map_err(|_| EmulatorError::NotFound("PubSubTopic".into(), name.into()))
     }
 
     pub fn delete_pubsub_topic(&self, name: &str) -> Result<()> {
         let db = self.db.lock();
         let count = db.execute("DELETE FROM pubsub_topics WHERE name = ?", params![name])?;
         if count == 0 {
-            return Err(EmulatorError::NotFound(format!("Topic {} not found", name)));
+            return Err(EmulatorError::NotFound("PubSubTopic".into(), name.to_string()));
         }
         Ok(())
+    }
+
+    pub fn list_pubsub_topics(&self, project_id: &str) -> Result<Vec<PubSubTopicMetadata>> {
+        let db = self.db.lock();
+        let mut stmt = db.prepare("SELECT name, project_id, created_at FROM pubsub_topics WHERE project_id = ?")?;
+        let topics = stmt.query_map(params![project_id], |row| {
+            Ok(PubSubTopicMetadata {
+                name: row.get(0)?,
+                project_id: row.get(1)?,
+                created_at: row.get(2)?,
+            })
+        })?
+        .filter_map(|r| r.ok())
+        .collect();
+        Ok(topics)
     }
 
     // ==================== Subscriptions ====================
@@ -96,14 +111,14 @@ impl StorageEngine {
                     created_at: row.get(5)?,
                 })
             },
-        ).map_err(|_| EmulatorError::NotFound(format!("Subscription {} not found", name)))
+        ).map_err(|_| EmulatorError::NotFound("PubSubSubscription".into(), name.into()))
     }
 
     pub fn delete_pubsub_subscription(&self, name: &str) -> Result<()> {
         let db = self.db.lock();
         let count = db.execute("DELETE FROM pubsub_subscriptions WHERE name = ?", params![name])?;
         if count == 0 {
-            return Err(EmulatorError::NotFound(format!("Subscription {} not found", name)));
+            return Err(EmulatorError::NotFound("PubSubSubscription".into(), name.to_string()));
         }
         Ok(())
     }
