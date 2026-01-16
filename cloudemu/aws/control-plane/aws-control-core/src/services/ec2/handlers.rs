@@ -34,7 +34,7 @@ pub async fn handle_request(
 
     match result {
         Ok(val) => (axum::http::StatusCode::OK, Json(val)).into_response(),
-        Err(e) => e.into_response(),
+        Err(e) => crate::error::ApiError(e).into_response(),
     }
 }
 

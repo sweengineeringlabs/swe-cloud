@@ -4,7 +4,7 @@ import time
 import sys
 import json
 
-AZURE_HOST = "http://127.0.0.1:4566"
+AZURE_HOST = "http://127.0.0.1:10000"
 GCP_HOST = "http://127.0.0.1:4567"
 
 def request(method, url, data=None):
@@ -203,7 +203,7 @@ def test_gcp():
     return True
 
 if __name__ == "__main__":
-    if not wait_for_port(4566):
+    if not wait_for_port(10000):
         print("Azure API not ready.")
         sys.exit(1)
     if not wait_for_port(4567):

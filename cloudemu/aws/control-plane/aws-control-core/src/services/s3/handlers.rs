@@ -327,10 +327,10 @@ pub async fn object_handler(
             // Extract user metadata
             let mut metadata = HashMap::new();
             for (name, value) in headers.iter() {
-                if let Some(meta_key) = name.as_str().strip_prefix("x-amz-meta-")
-                    && let Ok(v) = value.to_str()
-                {
-                    metadata.insert(meta_key.to_string(), v.to_string());
+                if let Some(meta_key) = name.as_str().strip_prefix("x-amz-meta-") {
+                    if let Ok(v) = value.to_str() {
+                        metadata.insert(meta_key.to_string(), v.to_string());
+                    }
                 }
             }
             let metadata_json = if metadata.is_empty() { 

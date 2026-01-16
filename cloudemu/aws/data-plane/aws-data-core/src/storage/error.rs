@@ -55,6 +55,9 @@ pub enum EmulatorError {
     #[error("{0} not found: {1}")]
     NotFound(String, String),
 
+    #[error("NotImplemented: {0}")]
+    NotImplemented(String),
+
     #[error("{0} already exists")]
     AlreadyExists(String),
 }
@@ -76,6 +79,7 @@ impl EmulatorError {
             Self::Internal(_) | Self::Database(_) | Self::Io(_) | Self::Json(_) => {
                 StatusCode::INTERNAL_SERVER_ERROR
             }
+            Self::NotImplemented(_) => StatusCode::NOT_IMPLEMENTED,
         }
     }
 
@@ -98,6 +102,7 @@ impl EmulatorError {
             Self::Json(_) => "InternalError",
             Self::NotFound(..) => "ResourceNotFound",
             Self::AlreadyExists(_) => "ResourceAlreadyExists",
+            Self::NotImplemented(_) => "NotImplemented",
         }
     }
     
@@ -120,6 +125,7 @@ impl EmulatorError {
             Self::Json(e) => e.to_string(),
             Self::NotFound(type_, id) => format!("{} not found: {}", type_, id),
             Self::AlreadyExists(msg) => msg.clone(),
+            Self::NotImplemented(msg) => format!("Not implemented: {}", msg),
         }
     }
 }

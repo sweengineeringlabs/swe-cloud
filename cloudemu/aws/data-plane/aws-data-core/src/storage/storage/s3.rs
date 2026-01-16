@@ -427,7 +427,7 @@ impl StorageEngine {
     // ==================== Object Data Storage ====================
     
     /// Store object data to filesystem, returns content hash
-    fn store_object_data(&self, data: &[u8]) -> Result<String> {
+    pub fn store_object_data(&self, data: &[u8]) -> Result<String> {
         use sha2::{Sha256, Digest};
         
         let mut hasher = Sha256::new();
@@ -447,7 +447,7 @@ impl StorageEngine {
     }
     
     /// Read object data from filesystem
-    fn read_object_data(&self, content_hash: &str) -> Result<Vec<u8>> {
+    pub fn read_object_data(&self, content_hash: &str) -> Result<Vec<u8>> {
         if content_hash.is_empty() {
             return Ok(Vec::new());
         }

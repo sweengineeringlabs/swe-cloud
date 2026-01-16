@@ -50,7 +50,7 @@ pub async fn render_dashboard(State(emulator): State<Arc<Emulator>>) -> Html<Str
     let functions = emulator.storage.list_functions().unwrap_or_default();
     let instances = emulator.storage.list_instances().unwrap_or_default();
     let vpcs = emulator.storage.list_vpcs().unwrap_or_default();
-    let queues = emulator.storage.list_queues().unwrap_or_default();
+    let _queues = emulator.storage.list_queues().unwrap_or_default();
 
     html.push_str(&format!("{}", buckets.len()));
     html.push_str(r#"</div><div class="stat-label">Buckets</div></div>

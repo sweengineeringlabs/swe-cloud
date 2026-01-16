@@ -109,6 +109,8 @@ impl Emulator {
             sns: services::sns::SnsService::new(storage.clone()),
             #[cfg(feature = "lambda")]
             lambda: services::lambda::LambdaService::new(storage.clone()),
+            #[cfg(feature = "ec2")]
+            ec2: services::ec2::Ec2Service::new(storage.clone()),
             storage,
             config,
         })

@@ -59,6 +59,7 @@ impl IntoResponse for ApiError {
             EmulatorError::Internal(_) | EmulatorError::Database(_) | EmulatorError::Io(_) | EmulatorError::Json(_) => {
                 StatusCode::INTERNAL_SERVER_ERROR
             }
+            EmulatorError::NotImplemented(_) => StatusCode::NOT_IMPLEMENTED,
         };
 
         let code = err.code();

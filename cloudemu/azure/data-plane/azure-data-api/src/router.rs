@@ -8,6 +8,9 @@ use crate::handlers;
 
 pub fn create_router(storage: Arc<StorageEngine>) -> Router {
     Router::new()
+        // Health
+        .route("/health", get(|| async { "OK" }))
+
         // Blob Storage
         .route("/blob/:account/:container", put(handlers::blob::create_container))
         .route("/blob/:account/:container/blobs", get(handlers::blob::list_blobs))

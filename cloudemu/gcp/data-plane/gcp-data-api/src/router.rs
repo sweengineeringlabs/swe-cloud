@@ -8,6 +8,9 @@ use crate::handlers;
 
 pub fn create_router(storage: Arc<StorageEngine>) -> Router {
     Router::new()
+        // Health
+        .route("/health", get(|| async { "OK" }))
+
         // GCS
         // Note: Real GCS is /storage/v1/b/{bucket}/o/{object}
         // Simplified route for now

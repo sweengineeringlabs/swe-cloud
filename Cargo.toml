@@ -35,14 +35,13 @@ members = [
     # CloudKit provider crates (nested under cloudkit_core)
     "cloudkit/crates/cloudkit_core/aws",
     "cloudkit/crates/cloudkit_core/azure",
-    "cloudkit/crates/cloudkit_core/gcp",
-    "cloudkit/crates/cloudkit_core/oracle",
+    "cloudemu/server",
 ]
 
 
 [workspace.package]
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 rust-version = "1.85"
 authors = ["SWE Engineering Labs"]
 license = "MIT OR Apache-2.0"

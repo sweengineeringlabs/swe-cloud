@@ -1,0 +1,28 @@
+[package]
+name = "cloudemu-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "CloudEmu Server - Unified Multi-Cloud Emulator"
+
+[dependencies]
+# Cloud Provider Facades/APIs
+aws-control-facade = { path = "../aws/control-plane/aws-control-facade" }
+azure-data-api = { path = "../azure/data-plane/azure-data-api" }
+gcp-data-api = { path = "../gcp/data-plane/gcp-data-api" }
+
+# Data Cores (for config/initialization if needed)
+azure-data-core = { path = "../azure/data-plane/azure-data-core" }
+gcp-data-core = { path = "../gcp/data-plane/gcp-data-core" }
+
+# Common
+tokio = { workspace = true }
+axum = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+clap = { version = "4.0", features = ["derive", "env"] }
+anyhow = { workspace = true }
+
+
+
