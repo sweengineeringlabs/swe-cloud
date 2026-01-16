@@ -11,6 +11,7 @@ mod secrets;
 mod dynamodb;
 mod lambda;
 mod sqs;
+mod pricing;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -28,6 +29,8 @@ pub use engine::{
     EventGridTopicMetadata, EventGridSubscriptionMetadata,
     VirtualMachineMetadata
 };
+
+pub use pricing::{Product, OfferTerm};
 
 pub use lambda::CreateFunctionParams;
 

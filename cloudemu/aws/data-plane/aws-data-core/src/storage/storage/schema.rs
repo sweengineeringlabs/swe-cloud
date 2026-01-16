@@ -452,4 +452,27 @@ CREATE TABLE IF NOT EXISTS ec2_key_pairs (
     key_material TEXT,
     tags TEXT
 );
+
+-- Pricing Products table
+CREATE TABLE IF NOT EXISTS pricing_products (
+    sku TEXT PRIMARY KEY,
+    service_code TEXT NOT NULL,
+    product_family TEXT,
+    attributes TEXT, -- JSON
+    version TEXT,
+    publication_date TEXT
+);
+
+-- Pricing Terms (OnDemand)
+CREATE TABLE IF NOT EXISTS pricing_terms (
+    id TEXT PRIMARY KEY, -- SKU + OfferTermCode
+    sku TEXT NOT NULL,
+    offer_term_code TEXT NOT NULL,
+    description TEXT,
+    effective_date TEXT,
+    price_dimensions TEXT, -- JSON array of price dimensions
+    
+    FOREIGN KEY (sku) REFERENCES pricing_products(sku) ON DELETE CASCADE
+);
+
 "#;

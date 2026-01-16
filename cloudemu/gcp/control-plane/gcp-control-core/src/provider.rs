@@ -6,6 +6,7 @@ use crate::services::{
     pubsub::PubSubService,
     functions::CloudFunctionsService,
     secretmanager::SecretManagerService,
+    billing::CloudBillingService,
 };
 use gcp_control_spi::{
     CloudProvider, CloudProviderTrait, CloudResult, Request, Response, ServiceType,
@@ -22,6 +23,7 @@ pub struct GcpProvider {
     pubsub: PubSubService,
     functions: CloudFunctionsService,
     secret_manager: SecretManagerService,
+    billing: CloudBillingService,
 }
 
 impl GcpProvider {
@@ -37,6 +39,7 @@ impl GcpProvider {
             pubsub: PubSubService::new(engine.clone()),
             functions: CloudFunctionsService::new(engine.clone()),
             secret_manager: SecretManagerService::new(engine.clone()),
+            billing: CloudBillingService::new(engine.clone()),
         }
     }
 
@@ -51,6 +54,7 @@ impl GcpProvider {
             pubsub: PubSubService::new(engine.clone()),
             functions: CloudFunctionsService::new(engine.clone()),
             secret_manager: SecretManagerService::new(engine.clone()),
+            billing: CloudBillingService::new(engine.clone()),
         }
     }
 }
@@ -83,8 +87,14 @@ impl CloudProviderTrait for GcpProvider {
         }
         
         // Secret Manager: /v1/projects/.../secrets/...
+        // Secret Manager: /v1/projects/.../secrets/...
         if path.contains("/secrets/") {
             return self.secret_manager.handle_request(req).await;
+        }
+
+        // Cloud Billing: /v1/services
+        if path.contains("/services") {
+             return self.billing.handle_request(req).await;
         }
         
         // Default: Cloud Storage (bucket/object operations)

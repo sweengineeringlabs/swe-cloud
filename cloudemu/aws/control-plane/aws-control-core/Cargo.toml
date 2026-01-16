@@ -20,7 +20,8 @@ cloudwatch = []
 cognito = []
 stepfunctions = []
 ec2 = []
-full = ["s3", "dynamodb", "sqs", "sns", "lambda", "secretsmanager", "eventbridge", "kms", "cloudwatch", "cognito", "stepfunctions", "ec2"]
+pricing = []
+full = ["s3", "dynamodb", "sqs", "sns", "lambda", "secretsmanager", "eventbridge", "kms", "cloudwatch", "cognito", "stepfunctions", "ec2", "pricing"]
 
 [dependencies]
 aws-control-spi = { path = "../aws-control-spi" }

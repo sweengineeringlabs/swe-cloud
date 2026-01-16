@@ -6,6 +6,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "gcp_region" {
+  description = "GCP region"
+  type        = string
+  default     = "us-central1"
+}
+
 variable "environment" {
   description = "Environment name (dev, test, local)"
   type        = string

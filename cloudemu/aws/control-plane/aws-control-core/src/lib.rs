@@ -38,6 +38,8 @@ pub struct Emulator {
     pub lambda: services::lambda::LambdaService,
     #[cfg(feature = "ec2")]
     pub ec2: services::ec2::Ec2Service,
+    #[cfg(feature = "pricing")]
+    pub pricing: services::pricing::PricingService,
 }
 
 impl Emulator {
@@ -76,6 +78,8 @@ impl Emulator {
             lambda: services::lambda::LambdaService::new(storage.clone()),
             #[cfg(feature = "ec2")]
             ec2: services::ec2::Ec2Service::new(storage.clone()),
+            #[cfg(feature = "pricing")]
+            pricing: services::pricing::PricingService::new(storage.clone()),
             storage,
             config,
         })
@@ -111,6 +115,8 @@ impl Emulator {
             lambda: services::lambda::LambdaService::new(storage.clone()),
             #[cfg(feature = "ec2")]
             ec2: services::ec2::Ec2Service::new(storage.clone()),
+            #[cfg(feature = "pricing")]
+            pricing: services::pricing::PricingService::new(storage.clone()),
             storage,
             config,
         })

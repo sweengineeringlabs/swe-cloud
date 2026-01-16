@@ -31,6 +31,7 @@ provider "aws" {
     events         = "http://localhost:4566"
     sts            = "http://localhost:4566"
     iam            = "http://localhost:4566"
+    pricing        = "http://localhost:4566"
   }
   
   # Skip AWS API validation (not needed for CloudEmu)
@@ -41,9 +42,34 @@ provider "aws" {
   # Use path-style S3 URLs (required for CloudEmu)
   s3_use_path_style = true
   
-  # Dummy credentials (CloudEmu doesn't validate)
   access_key = "test"
   secret_key = "test"
+}
+
+# Configure Azure provider for CloudEmu
+provider "azurerm" {
+  features {}
+  skip_provider_registration = true
+  storage_use_azuread        = false
+  
+  # CloudEmu Azure endpoint (standard Azurite port)
+  metadata_host = "http://localhost:10000" 
+  # Note: Terraform Azure provider requires specific endpoint overrides usually,
+  # or setting ARM_ENDPOINT env var. But we try explicit config here.
+  # Actually, for storage specifically:
+  # blob_endpoint = "http://localhost:10000/devstoreaccount1"
+}
+
+# Configure Google provider for CloudEmu
+provider "google" {
+  project     = "local-test"
+  region      = var.gcp_region
+  
+  # CloudEmu GCP endpoint
+  storage_custom_endpoint = "http://localhost:4567"
+  firestore_custom_endpoint = "http://localhost:4567/firestore/"
+  pubsub_custom_endpoint    = "http://localhost:4567/"
+  # General endpoint override if supported, else service specific
 }
 
 # Storage Facade Example

@@ -9,12 +9,17 @@ use serde_json::Value;
 use std::sync::Arc;
 use tracing::warn;
 
+use axum::body::Bytes;
+
 pub async fn dispatch(
     State(emulator): State<Arc<Emulator>>,
     headers: HeaderMap,
-    Json(body): Json<Value>,
+    body_bytes: Bytes,
 ) -> Response {
     let _ = &emulator;
+
+    // Try to deserialize body as JSON, default to empty object
+    let body: Value = serde_json::from_slice(&body_bytes).unwrap_or(serde_json::json!({}));
     let _ = &body;
 
     let target = headers
@@ -101,6 +106,14 @@ pub async fn dispatch(
         #[cfg(feature = "sns")]
         "AmazonSNS" | "" if body["Action"].as_str().is_some() => {
              crate::services::sns::handlers::handle_request(
+                State(emulator),
+                headers,
+                Json(body),
+            ).await
+        }
+        #[cfg(feature = "pricing")]
+        "AWSPriceListService" => {
+             crate::services::pricing::handlers::handle_request(
                 State(emulator),
                 headers,
                 Json(body),

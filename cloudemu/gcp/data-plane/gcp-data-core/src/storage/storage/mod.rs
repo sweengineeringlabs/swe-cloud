@@ -9,6 +9,7 @@ mod pubsub;
 mod compute;
 mod secrets;
 mod lambda;
+mod pricing;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -26,6 +27,8 @@ pub use engine::{
     PubSubTopicMetadata, PubSubSubscriptionMetadata,
     GcpInstanceMetadata
 };
+
+pub use pricing::{Product, OfferTerm};
 
 pub use lambda::CreateFunctionParams;
 

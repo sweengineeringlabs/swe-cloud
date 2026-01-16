@@ -15,6 +15,7 @@ mod identity;
 mod workflows;
 mod ec2;
 mod vpc;
+mod pricing;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -29,5 +30,7 @@ pub use engine::{
     VpcMetadata, SubnetMetadata, SecurityGroupMetadata,
     InstanceMetadata, KeyPairMetadata
 };
+
+pub use pricing::{Product, OfferTerm};
 
 pub use lambda::CreateFunctionParams;

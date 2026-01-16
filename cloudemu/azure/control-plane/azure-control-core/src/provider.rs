@@ -6,6 +6,7 @@ use crate::services::{
     servicebus::ServiceBusService,
     functions::FunctionsService,
     keyvault::KeyVaultService,
+    pricing::PricingService,
 };
 use azure_control_spi::{
     CloudProvider, CloudProviderTrait, CloudResult, Request, Response, ServiceType,
@@ -22,6 +23,7 @@ pub struct AzureProvider {
     servicebus: ServiceBusService,
     functions: FunctionsService,
     keyvault: KeyVaultService,
+    pricing: PricingService,
 }
 
 impl Default for AzureProvider {
@@ -43,6 +45,7 @@ impl AzureProvider {
             servicebus: ServiceBusService::new(engine.clone()),
             functions: FunctionsService::new(engine.clone()),
             keyvault: KeyVaultService::new(engine.clone()),
+            pricing: PricingService::new(engine.clone()),
         }
     }
 
@@ -57,6 +60,7 @@ impl AzureProvider {
             servicebus: ServiceBusService::new(engine.clone()),
             functions: FunctionsService::new(engine.clone()),
             keyvault: KeyVaultService::new(engine.clone()),
+            pricing: PricingService::new(engine.clone()),
         }
     }
 }
@@ -69,6 +73,11 @@ impl CloudProviderTrait for AzureProvider {
         // Cosmos DB (SQL API)
         if req.path.starts_with("/dbs") {
             return self.cosmos.handle_request(req).await;
+        }
+
+        // Retail Prices API (Must check before generic /api for functions)
+        if req.path.starts_with("/api/retail/prices") {
+            return self.pricing.handle_request(req).await;
         }
 
         // Azure Functions

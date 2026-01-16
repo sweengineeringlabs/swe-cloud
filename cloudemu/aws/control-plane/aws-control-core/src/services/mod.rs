@@ -35,3 +35,6 @@ pub mod workflows;
 
 #[cfg(feature = "ec2")]
 pub mod ec2;
+
+#[cfg(feature = "pricing")]
+pub mod pricing;
