@@ -43,7 +43,9 @@ impl StorageEngine {
     // ==================== Database Operations ====================
 
     pub fn create_cosmos_database(&self, account_name: &str, name: &str) -> Result<()> {
-        self.get_cosmos_account(account_name)?;
+        if let Err(EmulatorError::NotFound(_)) = self.get_cosmos_account(account_name) {
+             self.create_cosmos_account(account_name, "local", "default")?;
+        }
 
         let db = self.db.lock();
         let etag = format!("\"{}\"", uuid::Uuid::new_v4());

@@ -157,4 +157,4 @@ jobs:
           echo "- CloudEmu Version: Release build" >> $GITHUB_STEP_SUMMARY
           echo "- Terraform Version: 1.6.0" >> $GITHUB_STEP_SUMMARY
           echo "- Go Version: 1.21" >> $GITHUB_STEP_SUMMARY
-          echo "- Test Duration: ${{ job.duration }}" >> $GITHUB_STEP_SUMMARY
+

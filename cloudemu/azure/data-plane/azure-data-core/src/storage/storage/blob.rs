@@ -45,8 +45,10 @@ impl StorageEngine {
     // ==================== Container Operations ====================
 
     pub fn create_container(&self, account_name: &str, name: &str) -> Result<()> {
-        // Verify account exists
-        self.get_storage_account(account_name)?;
+        // Verify account exists or create it
+        if let Err(EmulatorError::NotFound(_)) = self.get_storage_account(account_name) {
+            self.create_storage_account(account_name, "local", "default")?;
+        }
 
         let db = self.db.lock();
         let now = chrono::Utc::now().to_rfc3339();
