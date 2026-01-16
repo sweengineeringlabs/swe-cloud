@@ -20,6 +20,16 @@ pub fn create_router(storage: Arc<StorageEngine>) -> Router {
         .route("/firestore/:project/databases/:database", put(handlers::firestore::create_database))
         .route("/firestore/:project/databases/:database/documents/:collection/:document", 
                put(handlers::firestore::create_document).get(handlers::firestore::get_document))
+               
+        // Compute (Instances)
+        .route("/compute/:project/zones/:zone/instances/:instance", 
+               put(handlers::compute::create_instance).get(handlers::compute::get_instance))
+               
+        // Pub/Sub
+        .route("/pubsub/:project/topics/:topic", 
+               put(handlers::pubsub::create_topic).get(handlers::pubsub::get_topic))
+        .route("/pubsub/:project/subscriptions/:subscription", 
+               put(handlers::pubsub::create_subscription).get(handlers::pubsub::get_subscription))
         
         .with_state(storage)
 }

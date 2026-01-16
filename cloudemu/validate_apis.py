@@ -44,11 +44,12 @@ def wait_for_port(port, retries=20):
 
 def test_azure():
     print("\n=== Testing Azure Data API ===")
+    ts = int(time.time())
     
     # Blob
-    acc = "testacc"
-    cont = "testcont"
-    blob = "testblob"
+    acc = f"testacc{ts}"
+    cont = f"testcont{ts}"
+    blob = f"testblob{ts}"
     print(f"Creating container {cont}...")
     res = request("PUT", f"{AZURE_HOST}/blob/{acc}/{cont}", {"public_access": "container"})
     print(f"Status: {res['status']}, Body: {res.get('body')}")
@@ -65,8 +66,8 @@ def test_azure():
     if res['status'] != 200 or res.get('body') != "hello_azure": return False
 
     # Cosmos
-    db = "testdb"
-    coll = "testcoll"
+    db = f"testdb{ts}"
+    coll = f"testcoll{ts}"
     print(f"Creating Cosmos DB {db}...")
     res = request("PUT", f"{AZURE_HOST}/cosmos/{acc}/{db}", {"throughput": 400})
     print(f"Status: {res['status']}, Body: {res.get('body')}")
@@ -92,14 +93,42 @@ def test_azure():
     print(f"Status: {res['status']}, Body: {res.get('body')}")
     if res['status'] != 200: return False
     
+    # Compute (VM)
+    rg = f"testrg{ts}"
+    vm = f"testvm{ts}"
+    print(f"Creating VM {vm}...")
+    res = request("PUT", f"{AZURE_HOST}/compute/{rg}/vms/{vm}", {
+        "location": "westus",
+        "vm_size": "Standard_B1s",
+        "os_type": "Linux",
+        "admin_username": "azureuser"
+    })
+    print(f"Status: {res['status']}, Body: {res.get('body')}")
+    if res['status'] != 200: return False
+
+    print(f"Getting VM {vm}...")
+    res = request("GET", f"{AZURE_HOST}/compute/{rg}/vms/{vm}")
+    print(f"Status: {res['status']}, Body: {res.get('body')}")
+    if res['status'] != 200: return False
+
+    # Event Grid
+    topic = f"testtopic{ts}"
+    print(f"Creating EventGrid Topic {topic}...")
+    res = request("PUT", f"{AZURE_HOST}/eventgrid/{rg}/topics/{topic}", {
+        "location": "westus"
+    })
+    print(f"Status: {res['status']}, Body: {res.get('body')}")
+    if res['status'] != 200: return False
+
     return True
 
 def test_gcp():
     print("\n=== Testing GCP Data API ===")
+    ts = int(time.time())
 
     # GCS
-    bucket = "testbucket"
-    obj = "testobj"
+    bucket = f"testbucket{ts}"
+    obj = f"testobj{ts}"
     print(f"Creating Bucket {bucket}...")
     res = request("PUT", f"{GCP_HOST}/storage/{bucket}", {"location": "us-east1"})
     print(f"Status: {res['status']}, Body: {res.get('body')}")
@@ -116,8 +145,8 @@ def test_gcp():
     if res['status'] != 200 or res.get('body') != "hello_gcp": return False
 
     # Firestore
-    proj = "testproj"
-    db = "testdb-fs"
+    proj = f"testproj{ts}"
+    db = f"testdb-fs{ts}"
     coll = "users"
     doc = "user1"
     
@@ -138,6 +167,39 @@ def test_gcp():
     print(f"Status: {res['status']}, Body: {res.get('body')}")
     if res['status'] != 200: return False
 
+    # Compute (Instances)
+    zone = "us-central1-a"
+    inst = f"testinst{ts}"
+    print(f"Creating Instance {inst}...")
+    res = request("PUT", f"{GCP_HOST}/compute/{proj}/zones/{zone}/instances/{inst}", {
+        "machine_type": "e2-medium",
+        "image": "debian-11",
+        "network": "default"
+    })
+    print(f"Status: {res['status']}, Body: {res.get('body')}")
+    if res['status'] != 200: return False
+
+    print(f"Getting Instance {inst}...")
+    res = request("GET", f"{GCP_HOST}/compute/{proj}/zones/{zone}/instances/{inst}")
+    print(f"Status: {res['status']}, Body: {res.get('body')}")
+    if res['status'] != 200: return False
+
+    # PubSub
+    topic = f"testtopic{ts}"
+    sub = f"testsub{ts}"
+    print(f"Creating PubSub Topic {topic}...")
+    res = request("PUT", f"{GCP_HOST}/pubsub/{proj}/topics/{topic}", {})
+    print(f"Status: {res['status']}, Body: {res.get('body')}")
+    if res['status'] != 200: return False
+
+    print(f"Creating PubSub Subscription {sub}...")
+    res = request("PUT", f"{GCP_HOST}/pubsub/{proj}/subscriptions/{sub}", {
+        "topic": topic,
+        "push_endpoint": "http://localhost/push"
+    })
+    print(f"Status: {res['status']}, Body: {res.get('body')}")
+    if res['status'] != 200: return False
+    
     return True
 
 if __name__ == "__main__":

@@ -18,6 +18,14 @@ pub fn create_router(storage: Arc<StorageEngine>) -> Router {
         .route("/cosmos/:account/:database/:container", put(handlers::cosmos::create_container))
         .route("/cosmos/:account/:database/:container/items", post(handlers::cosmos::create_item))
         .route("/cosmos/:account/:database/:container/items/:item_id/:partition_key", get(handlers::cosmos::get_item))
+
+        // Compute (VMs)
+        .route("/compute/:resource_group/vms/:vm_name", 
+               put(handlers::compute::create_vm).get(handlers::compute::get_vm))
+               
+        // Event Grid
+        .route("/eventgrid/:resource_group/topics/:topic_name", 
+               put(handlers::eventgrid::create_topic).get(handlers::eventgrid::get_topic))
         
         .with_state(storage)
 }
