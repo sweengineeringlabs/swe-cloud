@@ -6,22 +6,23 @@ CloudEmu is a lightweight, unified emulator for AWS, Azure, and Google Cloud Pla
 
 ## 🌟 Key Features
 
-- **Multi-Cloud Support**: Emulates core services from AWS, Azure, and GCP.
-- **Unified Architecture**: Uses a single "Storage Engine Architecture" (SEA) to back all three clouds.
+- **Multi-Cloud Support**: Emulates core services from AWS, Azure, GCP, and Oracle.
+- **Unified Architecture**: Uses a single "Storage Engine Architecture" (SEA) to back all four clouds.
 - **Persistence**: All data is persisted locally via SQLite and filesystem.
 - **Lightweight**: Written in Rust for high performance and low resource usage.
 - **Standalone**: Runs as a single binary (or library) handling requests on different ports.
 
 ## 🚀 Supported Services
 
-| Service Type | AWS (Port 4566) | Azure (Port 4567) | GCP (Port 4568) |
-|--------------|-----------------|-------------------|-----------------|
-| **Object Storage** | S3 | Blob Storage | Cloud Storage |
-| **NoSQL Database** | DynamoDB | Cosmos DB | Firestore |
-| **Message Queue** | SQS | Service Bus | *Pub/Sub* |
-| **Pub/Sub** | SNS | - | Pub/Sub |
-| **Functions** | Lambda | Azure Functions | Cloud Functions |
-| **Secrets** | Secrets Manager | Key Vault | Secret Manager |
+| Service Type | AWS (Port 4566) | Azure (Port 10000) | GCP (Port 4567) | Oracle (Port 4568) |
+|--------------|-----------------|-------------------|-----------------|--------------------|
+| **Object Storage** | S3 | Blob Storage | Cloud Storage | *Obj Storage* |
+| **NoSQL Database** | DynamoDB | Cosmos DB | Firestore | - |
+| **Message Queue** | SQS | Service Bus | *Pub/Sub* | - |
+| **Pub/Sub** | SNS | - | Pub/Sub | - |
+| **Functions** | Lambda | Azure Functions | Cloud Functions | - |
+| **Secrets** | Secrets Manager | Key Vault | Secret Manager | - |
+| **FinOps** | Price List | Retail Prices | Billing | Metering |
 
 *Plus AWS extras: KMS, EventBridge, CloudWatch, Cognito, Step Functions.*
 
@@ -44,8 +45,9 @@ cargo run --bin cloudemu-server
 
 The server will start listening on:
 - **AWS**: `http://localhost:4566`
-- **Azure**: `http://localhost:4567`
-- **GCP**: `http://localhost:4568`
+- **Azure**: `http://localhost:10000`
+- **GCP**: `http://localhost:4567`
+- **Oracle**: `http://localhost:4568`
 
 ### Configuration
 

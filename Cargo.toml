@@ -21,6 +21,10 @@ members = [
     "cloudemu/azure/data-plane/azure-data-api",
     "cloudemu/azure/data-plane/azure-data-core",
     "cloudemu/azure/data-plane/azure-data-facade",
+    # Oracle
+    "cloudemu/oracle/control-plane/oracle-control-spi",
+    "cloudemu/oracle/control-plane/oracle-control-core",
+    "cloudemu/oracle/data-plane/oracle-data-core",
     # GCP
     "cloudemu/gcp/control-plane/gcp-control-spi",
     "cloudemu/gcp/control-plane/gcp-control-api",
@@ -36,6 +40,7 @@ members = [
     "cloudkit/crates/cloudkit_core/aws",
     "cloudkit/crates/cloudkit_core/azure",
     "cloudemu/server",
+    "apps/cloudcost",
 ]
 
 

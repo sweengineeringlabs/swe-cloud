@@ -120,10 +120,12 @@ cargo run -p cloudemu-server
 
 Expected output:
 ```
-Starting CloudEmu Multi-Cloud Server...
-AWS Provider listening on 127.0.0.1:4566
-Azure Provider listening on 127.0.0.1:4567
-GCP Provider listening on 127.0.0.1:4568
+Starting CloudEmu Unified Server
+...
+AWS Service   : http://127.0.0.1:4566
+Azure Service : http://127.0.0.1:10000
+GCP Service   : http://127.0.0.1:4567
+Oracle Service: http://127.0.0.1:4568
 ```
 
 ## Troubleshooting
@@ -156,10 +158,9 @@ cargo build --workspace
 
 ## Next Steps
 
-- See [Installation Guide](installation.md) for deployment
 - See [Developer Guide](../4-development/developer-guide.md) for contribution workflow
 - See [Architecture](../3-design/architecture.md) for system design
 
 ---
 
-**Last Updated**: 2026-01-14
+**Last Updated**: 2026-01-16

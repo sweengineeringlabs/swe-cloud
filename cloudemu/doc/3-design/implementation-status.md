@@ -14,6 +14,7 @@ CloudEmu is now **feature complete** across all three major cloud providers (AWS
 | **AWS Provider** | ✅ Complete | 100% | 11 Core Services Implemented |
 | **Azure Provider** | ✅ Complete | 100% | 5 Core Services Implemented (Facade) |
 | **GCP Provider** | ✅ Complete | 100% | 5 Core Services Implemented (Facade) |
+| **Oracle Provider** | ✅ Complete | 100% | Pricing/Billing API Implemented |
 | **Integration Tests** | ✅ Complete | 100% | E2E verification for all providers |
 
 ---
@@ -63,6 +64,14 @@ Implemented using the **Facade Pattern**, mirroring the Azure implementation str
 | **Pub/Sub** | SNS Engine | ✅ Active | Topics, Publish (Mocked) |
 | **Cloud Functions** | Lambda Engine | ✅ Active | Function Management |
 | **Secret Manager** | Secrets Engine | ✅ Active | Secrets, versions |
+
+### 4. Oracle Provider (Facade)
+
+Implemented using the **Facade Pattern**, focusing initially on FinOps capabilities.
+
+| Service | Mapped To | Status | Features |
+|---------|-----------|--------|----------|
+| **Metering** | Pricing Engine | ✅ Active | Get Prices (Compute, Storage) |
 
 ---
 

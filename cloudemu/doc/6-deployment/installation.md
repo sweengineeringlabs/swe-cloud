@@ -47,7 +47,7 @@ cargo build --release
 ### 3. Run the Emulator
 
 ```bash
-cargo run --release -p cloudemu
+cargo run --release -p cloudemu-server
 ```
 
 Output:
@@ -59,11 +59,12 @@ Output:
  | |____| | (_) | |_| | (_| | |____| | | | | | |_| |
   \_____|_|\___/ \__,_|\__,_|______|_| |_| |_|\__,_|
                                                     
-  Production-Grade Local Cloud Emulator v0.1.0
+  CloudEmu Unified Server v1.0.0
 
-  Endpoint:    http://0.0.0.0:4566
-  Data Dir:    .cloudemu
-  Region:      us-east-1
+  AWS Service   : http://127.0.0.1:4566
+  Azure Service : http://127.0.0.1:10000
+  GCP Service   : http://127.0.0.1:4567
+  Oracle Service: http://127.0.0.1:4568
 ```
 
 ### 4. Configure Your Tools
@@ -88,11 +89,12 @@ aws s3 ls s3://my-bucket/
 
 | Variable | Default | Description |
 | :--- | :--- | :--- |
-| `CLOUDEMU_HOST` | `0.0.0.0` | Bind address |
-| `CLOUDEMU_PORT` | `4566` | HTTP port |
+| `CLOUDEMU_HOST` | `127.0.0.1` | Bind address |
+| `CLOUDEMU_AWS_PORT` | `4566` | AWS HTTP port |
+| `CLOUDEMU_AZURE_PORT` | `10000` | Azure HTTP port |
+| `CLOUDEMU_GCP_PORT` | `4567` | GCP HTTP port |
+| `CLOUDEMU_ORACLE_PORT` | `4568` | Oracle HTTP port |
 | `CLOUDEMU_DATA_DIR` | `.cloudemu` | Data directory |
-| `CLOUDEMU_REGION` | `us-east-1` | AWS region |
-| `CLOUDEMU_ACCOUNT_ID` | `000000000000` | AWS account ID |
 
 ---
 
@@ -121,5 +123,5 @@ CloudEmu installation is straightforward: clone, build, and run. For production 
 - [Overview](../overview.md)
 - [Architecture](../3-design/architecture.md)
 
-**Last Updated**: 2026-01-14  
+**Last Updated**: 2026-01-16  
 **Version**: 1.0

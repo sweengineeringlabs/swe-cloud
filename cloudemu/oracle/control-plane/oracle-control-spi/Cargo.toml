@@ -1,0 +1,11 @@
+[package]
+name = "oracle-control-spi"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Oracle Control SPI"
+
+[dependencies]
+async-trait = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+bytes = "1.0"

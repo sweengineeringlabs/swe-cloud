@@ -15,6 +15,8 @@ gcp-data-api = { path = "../gcp/data-plane/gcp-data-api" }
 # Data Cores (for config/initialization if needed)
 azure-data-core = { path = "../azure/data-plane/azure-data-core" }
 gcp-data-core = { path = "../gcp/data-plane/gcp-data-core" }
+oracle-data-core = { path = "../oracle/data-plane/oracle-data-core" }
+oracle-control-core = { path = "../oracle/control-plane/oracle-control-core" }
 
 # Common
 tokio = { workspace = true }
