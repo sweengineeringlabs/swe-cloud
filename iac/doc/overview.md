@@ -35,7 +35,8 @@ The following services are implemented as unified facades:
 
 - **[CloudEmu Integration](4-development/cloudemu-integration.md)**: Local cloud emulation for fast, cost-free testing.
 - **[Local Testing Example](../examples/local-cloudemu/)**: Complete example using CloudEmu for development.
-- **[Integration Tests](../test/integration/cloudemu_test.go)**: Automated Terratest suite.
+- **[Zero Integration Example](../examples/zero-integration/)**: Complete example using ZeroCloud.
+- **[Integration Tests](../test/integration/)**: Automated Terratest suite (AWS, Azure, GCP, Zero).
 
 ## Project Planning
 
