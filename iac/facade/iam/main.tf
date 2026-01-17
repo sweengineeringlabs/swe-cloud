@@ -70,6 +70,22 @@ module "gcp_iam" {
   project_id             = try(var.provider_config.project_id, null)
 }
 
+# ZeroCloud: ZeroID
+module "zero_iam" {
+  count  = var.provider_name == "zero" ? 1 : 0
+  source = "../../zero/core/iam"
+  
+  create_role = var.identity_type == "role"
+  role_name   = var.identity_name
+  
+  create_user = contains(["user", "service_agent"], var.identity_type)
+  user_name   = var.identity_name
+  
+  trusted_services = var.principals
+  
+  tags = local.common_tags
+}
+
 # ============================================================================
 # AGGREGATED OUTPUTS
 # ============================================================================
@@ -79,6 +95,7 @@ locals {
     var.provider_name == "aws"   ? (length(module.aws_iam) > 0 ? (var.identity_type == "role" ? module.aws_iam[0].role_id : module.aws_iam[0].user_name) : null) :
     var.provider_name == "azure" ? (length(module.azure_iam) > 0 ? module.azure_iam[0].identity_id : null) :
     var.provider_name == "gcp"   ? (length(module.gcp_iam) > 0 ? module.gcp_iam[0].service_account_email : null) :
+    var.provider_name == "zero"  ? (length(module.zero_iam) > 0 ? (var.identity_type == "role" ? module.zero_iam[0].role_id : module.zero_iam[0].user_name) : null) :
     null
   )
   
@@ -86,6 +103,7 @@ locals {
     var.provider_name == "aws"   ? (length(module.aws_iam) > 0 ? (var.identity_type == "role" ? module.aws_iam[0].role_arn : module.aws_iam[0].user_arn) : null) :
     var.provider_name == "azure" ? (length(module.azure_iam) > 0 ? module.azure_iam[0].identity_principal_id : null) :
     var.provider_name == "gcp"   ? (length(module.gcp_iam) > 0 ? module.gcp_iam[0].service_account_email : null) :
+    var.provider_name == "zero"  ? (length(module.zero_iam) > 0 ? (var.identity_type == "role" ? module.zero_iam[0].role_arn : module.zero_iam[0].user_arn) : null) :
     null
   )
 }

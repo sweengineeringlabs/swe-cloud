@@ -105,6 +105,24 @@ module "gcp_networking" {
   create_ssh_firewall      = true
 }
 
+# ZeroCloud: ZeroNet
+module "zero_networking" {
+  count  = var.provider_name == "zero" ? 1 : 0
+  source = "../../zero/core/networking"
+  
+  vpc_name            = var.network_name
+  vpc_cidr            = var.metrics.cidr
+  availability_zones  = var.metrics.azs
+  
+  public_subnet_cidrs  = var.metrics.public_subnets
+  private_subnet_cidrs = var.metrics.private_subnets
+  
+  create_internet_gateway = var.internet_access
+  create_default_security_group = true
+  
+  tags = local.common_tags
+}
+
 # ============================================================================
 # AGGREGATED OUTPUTS
 # ============================================================================
@@ -114,6 +132,7 @@ locals {
     var.provider_name == "aws"   ? (length(module.aws_networking) > 0 ? module.aws_networking[0].vpc_id : null) :
     var.provider_name == "azure" ? (length(module.azure_networking) > 0 ? module.azure_networking[0].vnet_id : null) :
     var.provider_name == "gcp"   ? (length(module.gcp_networking) > 0 ? module.gcp_networking[0].network_id : null) :
+    var.provider_name == "zero"  ? (length(module.zero_networking) > 0 ? module.zero_networking[0].vpc_id : null) :
     null
   )
 }
