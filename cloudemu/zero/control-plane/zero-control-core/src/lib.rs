@@ -123,10 +123,33 @@ impl ZeroProvider {
             ("POST", ["loadbalancers"]) => {
                 let body: serde_json::Value = serde_json::from_slice(&req.body).map_err(|e| ZeroError::Validation(e.to_string()))?;
                 let name = body["name"].as_str().ok_or_else(|| ZeroError::Validation("Missing name".into()))?;
+                let lb_type = body["type"].as_str().unwrap_or("application");
+                let status = self.lb.create_load_balancer(name, lb_type).await?;
+                Ok(ZeroResponse::json(status))
+            },
+            ("POST", ["targetgroups"]) => {
+                let body: serde_json::Value = serde_json::from_slice(&req.body).map_err(|e| ZeroError::Validation(e.to_string()))?;
+                let name = body["name"].as_str().ok_or_else(|| ZeroError::Validation("Missing name".into()))?;
                 let port = body["port"].as_i64().unwrap_or(80) as i32;
-                let target = body["target"].as_str().unwrap_or("default");
-                let dns = self.lb.create_load_balancer(name, port, target).await?;
-                Ok(ZeroResponse::json(json!({ "DNSName": dns })))
+                let protocol = body["protocol"].as_str().unwrap_or("HTTP");
+                let arn = self.lb.create_target_group(name, port, protocol).await?;
+                Ok(ZeroResponse::json(json!({ "TargetGroupArn": arn })))
+            },
+            ("POST", ["targetgroups", arn, "targets"]) => {
+                let body: serde_json::Value = serde_json::from_slice(&req.body).map_err(|e| ZeroError::Validation(e.to_string()))?;
+                let target_id = body["id"].as_str().ok_or_else(|| ZeroError::Validation("Missing target id".into()))?;
+                let port = body["port"].as_i64().unwrap_or(80) as i32;
+                self.lb.register_targets(arn, target_id, port).await?;
+                Ok(ZeroResponse::json(json!({ "status": "Registered" })))
+            },
+            ("POST", ["listeners"]) => {
+                let body: serde_json::Value = serde_json::from_slice(&req.body).map_err(|e| ZeroError::Validation(e.to_string()))?;
+                let lb_name = body["load_balancer_name"].as_str().ok_or_else(|| ZeroError::Validation("Missing lb name".into()))?;
+                let port = body["port"].as_i64().ok_or_else(|| ZeroError::Validation("Missing port".into()))? as i32;
+                let protocol = body["protocol"].as_str().unwrap_or("HTTP");
+                let tg_arn = body["target_group_arn"].as_str().ok_or_else(|| ZeroError::Validation("Missing target group arn".into()))?;
+                let arn = self.lb.create_listener(lb_name, port, protocol, tg_arn).await?;
+                Ok(ZeroResponse::json(json!({ "ListenerArn": arn })))
             },
             _ => Err(ZeroError::NotFound("Network route not found".into()))
         }
@@ -215,6 +238,10 @@ impl ZeroProvider {
             ("GET", ["queues", name, "messages"]) => {
                 let msg = self.queue.receive_message(name).await?;
                 Ok(ZeroResponse::json(json!({ "Messages": msg })))
+            },
+            ("DELETE", ["queues", name, "messages", receipt_handle]) => {
+                self.queue.delete_message(name, receipt_handle).await?;
+                Ok(ZeroResponse::json(json!({ "status": "Deleted" })))
             },
             _ => Err(ZeroError::NotFound("Queue route not found".into()))
         }

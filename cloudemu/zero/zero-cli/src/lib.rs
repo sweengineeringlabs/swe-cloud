@@ -148,6 +148,10 @@ pub enum QueueAction {
     Create { #[arg(short, long)] name: String },
     /// Send a message
     Send { #[arg(short, long)] name: String, #[arg(short, long)] body: String },
+    /// Receive messages (with Visibility Timeout)
+    Receive { #[arg(short, long)] name: String },
+    /// Delete a message (using ReceiptHandle)
+    Delete { #[arg(short, long)] name: String, #[arg(long)] handle: String },
     /// List queues
     Ls,
 }
@@ -173,7 +177,13 @@ pub enum IamAction {
 #[derive(Subcommand)]
 pub enum LbAction {
     /// Create a Load Balancer
-    Create { #[arg(short, long)] name: String, #[arg(short, long)] port: i32, #[arg(short, long)] target: String },
+    Create { #[arg(short, long)] name: String, #[arg(short, long, default_value="application")] lb_type: String },
+    /// Create a Target Group
+    CreateTargetGroup { #[arg(short, long)] name: String, #[arg(short, long, default_value_t=80)] port: i32 },
+    /// Register target to group
+    Register { #[arg(long)] group: String, #[arg(long)] id: String, #[arg(short, long, default_value_t=80)] port: i32 },
+    /// Create a Listener
+    CreateListener { #[arg(long)] lb: String, #[arg(short, long)] port: i32, #[arg(long)] target_group: String },
     /// List Load Balancers
     Ls,
 }
@@ -384,6 +394,26 @@ pub async fn execute_command(command: Commands, provider: &ZeroProvider) -> anyh
                  let resp = provider.handle_request(req).await?;
                  println!("{}", String::from_utf8_lossy(&resp.body));
             }
+            QueueAction::Receive { name } => {
+                 let req = ZeroRequest {
+                     method: "GET".into(),
+                     path: format!("/v1/queue/queues/{}/messages", name),
+                     headers: std::collections::HashMap::new(),
+                     body: vec![]
+                 };
+                 let resp = provider.handle_request(req).await?;
+                 println!("{}", String::from_utf8_lossy(&resp.body));
+            }
+            QueueAction::Delete { name, handle } => {
+                 let req = ZeroRequest {
+                     method: "DELETE".into(),
+                     path: format!("/v1/queue/queues/{}/messages/{}", name, handle),
+                     headers: std::collections::HashMap::new(),
+                     body: vec![]
+                 };
+                 let resp = provider.handle_request(req).await?;
+                 println!("{}", String::from_utf8_lossy(&resp.body));
+            }
             QueueAction::Ls => {
                  let req = ZeroRequest {
                      method: "GET".into(),
@@ -472,13 +502,46 @@ pub async fn execute_command(command: Commands, provider: &ZeroProvider) -> anyh
              }
         },
         Commands::Lb { action } => match action {
-             LbAction::Create { name, port, target } => {
-                 println!("{} LB {} on port {} -> {}...", "⚖️ Creating".white(), name, port, target);
+             LbAction::Create { name, lb_type } => {
+                 println!("{} LB {}...", "⚖️ Creating".white(), name);
                  let req = ZeroRequest {
                      method: "POST".into(),
                      path: "/v1/network/loadbalancers".into(),
                      headers: std::collections::HashMap::new(),
-                     body: json!({ "name": name, "port": port, "target": target }).to_string().into_bytes()
+                     body: json!({ "name": name, "type": lb_type }).to_string().into_bytes()
+                 };
+                 let resp = provider.handle_request(req).await?;
+                 println!("{}", String::from_utf8_lossy(&resp.body));
+             }
+             LbAction::CreateTargetGroup { name, port } => {
+                 println!("{} Target Group {} on port {}...", "🎯 Creating".white(), name, port);
+                 let req = ZeroRequest {
+                     method: "POST".into(),
+                     path: "/v1/network/targetgroups".into(),
+                     headers: std::collections::HashMap::new(),
+                     body: json!({ "name": name, "port": port }).to_string().into_bytes()
+                 };
+                 let resp = provider.handle_request(req).await?;
+                 println!("{}", String::from_utf8_lossy(&resp.body));
+             }
+             LbAction::Register { group, id, port } => {
+                 println!("{} Target {} to group {}...", "🔗 Registering".white(), id, group);
+                 let req = ZeroRequest {
+                     method: "POST".into(),
+                     path: format!("/v1/network/targetgroups/{}/targets", group),
+                     headers: std::collections::HashMap::new(),
+                     body: json!({ "id": id, "port": port }).to_string().into_bytes()
+                 };
+                 let resp = provider.handle_request(req).await?;
+                 println!("{}", String::from_utf8_lossy(&resp.body));
+             }
+             LbAction::CreateListener { lb, port, target_group } => {
+                 println!("{} Listener for {} on port {}...", "👂 Creating".white(), lb, port);
+                 let req = ZeroRequest {
+                     method: "POST".into(),
+                     path: "/v1/network/listeners".into(),
+                     headers: std::collections::HashMap::new(),
+                     body: json!({ "load_balancer_name": lb, "port": port, "target_group_arn": target_group }).to_string().into_bytes()
                  };
                  let resp = provider.handle_request(req).await?;
                  println!("{}", String::from_utf8_lossy(&resp.body));
