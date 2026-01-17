@@ -16,7 +16,8 @@ cd iac
 Run the prerequisite check to ensure your environment is ready:
 1. Ensure `terraform` is in your PATH.
 2. Ensure `go` is installed for testing.
-3. Run `go mod tidy` in the root of the `iac` folder.
+3. (Optional) Install **CloudEmu** for local ZeroCloud testing (`cargo install --path cloudemu/server`).
+4. Run `go mod tidy` in the root of the `iac` folder.
 
 ## 2. Deployment Workflow
 

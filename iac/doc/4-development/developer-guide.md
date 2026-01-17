@@ -88,7 +88,7 @@ Create a `[service]_test.go` file in the facade directory. At minimum, it must a
 
 3. **Run Integration Tests**:
    ```bash
-   cd test/integration
+   cd iac/aws/test     # or zero/test, etc.
    go test -v -timeout 10m ./...
    ```
 
