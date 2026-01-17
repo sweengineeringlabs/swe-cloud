@@ -6,6 +6,8 @@ ZeroCloud is a high-performance, functional private cloud platform offering nati
 
 -   **[3-Design](3-design/architecture.md)**: Architecture, ADRs, and system design.
     - [Cloud Plane Guide](3-design/cloudplane_guide.md): Control vs. Data Plane distinction.
+    - [Industry Control Planes](3-design/industry_control_planes.md): Market-wide management services.
+    - [Industry Data Planes](3-design/industry_data_planes.md): Market-wide execution services.
 -   **[4-Development](4-development/developer-guide.md)**: Coding standards, setup, and contribution guides.
 -   **[AWS-Zero Parity](2-planning/aws_parity_manifesto.md)**: Functional and Data-Plane comparison.
 -   **[Zero SDK Rust](../sdk/zero-sdk-rust/README.md)**: Native Rust client documentation.
