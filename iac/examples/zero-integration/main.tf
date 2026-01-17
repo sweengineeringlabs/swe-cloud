@@ -71,6 +71,7 @@ module "iam" {
   identity_type = "role"
   identity_name = "zero-app-role"
   principals    = ["lambda.amazonaws.com"] # ZeroFunc uses AWS style principals
+  roles         = ["storage_read", "nosql_write"]
   
   project_name  = "zero-test-project"
   environment   = var.environment
