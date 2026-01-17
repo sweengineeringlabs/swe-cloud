@@ -32,18 +32,63 @@ module "aws_messaging" {
   tags = local.common_tags
 }
 
-# Azure and GCP would be similar if core modules existed.
-# For now we route to AWS or provide placeholders.
-
-output "resource_arn" {
-  value = var.provider_name == "aws" ? (var.type == "queue" ? module.aws_messaging[0].queue_arn : module.aws_messaging[0].topic_arn) : "placeholder-arn"
+# Azure: Service Bus
+module "azure_messaging" {
+  count  = var.provider_name == "azure" ? 1 : 0
+  source = "../../azure/core/messaging"
+  
+  create_queue = var.type == "queue"
+  queue_name   = var.name
+  
+  create_topic = var.type == "topic"
+  topic_name   = var.name
+  
+  tags = local.common_tags
 }
 
-output "resource_name" {
-  value = var.name
+# GCP: Pub/Sub
+module "gcp_messaging" {
+  count  = var.provider_name == "gcp" ? 1 : 0
+  source = "../../gcp/core/messaging"
+  
+  create_queue = var.type == "queue"
+  queue_name   = var.name
+  
+  create_topic = var.type == "topic"
+  topic_name   = var.name
+  
+  tags = local.common_tags
+}
+
+# ZeroCloud: ZeroQueue
+module "zero_messaging" {
+  count  = var.provider_name == "zero" ? 1 : 0
+  source = "../../zero/core/messaging"
+  
+  create_queue = var.type == "queue"
+  queue_name   = var.name
+  
+  create_topic = var.type == "topic"
+  topic_name   = var.name
+  
+  tags = local.common_tags
+}
+
+output "resource_arn" {
+  value = (
+    var.provider_name == "aws" ? (var.type == "queue" ? module.aws_messaging[0].queue_arn : module.aws_messaging[0].topic_arn) : 
+    var.provider_name == "azure" ? "azure-arn-placeholder" :
+    var.provider_name == "gcp" ? "gcp-id-placeholder" :
+    var.provider_name == "zero" ? (var.type == "queue" ? module.zero_messaging[0].queue_arn : module.zero_messaging[0].topic_arn) :
+    null
+  )
 }
 
 output "resource_url" {
-  value = var.provider_name == "aws" && var.type == "queue" ? module.aws_messaging[0].queue_id : null
+  value = (
+    var.provider_name == "aws" && var.type == "queue" ? module.aws_messaging[0].queue_id :
+    var.provider_name == "zero" && var.type == "queue" ? module.zero_messaging[0].queue_id :
+    null
+  )
 }
 
