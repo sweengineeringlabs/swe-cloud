@@ -4,8 +4,10 @@
 
 ## Features
 
-- ✅ **Provider Abstraction**: Single interface for 8+ resource types across 3 major clouds.
+- ✅ **Provider Abstraction**: Single interface for 8+ resource types across **AWS, Azure, GCP, and ZeroCloud**.
+- ✅ **ZeroCloud Support**: Full local emulation support via CloudEmu (wire-compatible AWS Shim).
 - ✅ **SEA Architecture**: 5-layer design (Common, SPI, API, Core, Facade) mirrored from CloudKit SDK.
+- ✅ **Unified Identity**: Capability-based role assignment (`storage_read`, `admin`) that works across all clouds.
 - ✅ **Standardized Sizing**: Unified `small`, `medium`, `large` mappings across all providers.
 - ✅ **Quality Driven**: Integrated static validation and Go-based Terrates suite.
 
