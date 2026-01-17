@@ -1,0 +1,119 @@
+WIREMOCK ARCHITECTURE (CloudEmu Backend)
+================================================================================
+
+                            ┌─────────────────────────────────────────────────┐
+                            │                   WIREMOCK                       │
+                            │              (HTTP API Mock Server)              │
+                            └─────────────────────────────────────────────────┘
+
+┌──────────────┐                    ┌─────────────────────────────────────────────────────────┐
+│              │   HTTP Request     │                      WIREMOCK SERVER                    │
+│    CLIENT    │ ─────────────────► │  ┌─────────────────────────────────────────────────┐   │
+│  (App/Test)  │                    │  │               REQUEST MATCHING                   │   │
+│              │                    │  │                                                  │   │
+└──────────────┘                    │  │  ┌─────────┐  ┌─────────┐  ┌─────────┐         │   │
+                                    │  │  │  URL    │  │ METHOD  │  │ HEADERS │         │   │
+                                    │  │  │ Pattern │  │  Match  │  │  Match  │         │   │
+                                    │  │  └────┬────┘  └────┬────┘  └────┬────┘         │   │
+                                    │  │       │            │            │              │   │
+                                    │  │       └────────────┴────────────┘              │   │
+                                    │  │                    │                           │   │
+                                    │  └────────────────────┼───────────────────────────┘   │
+                                    │                       ▼                               │
+                                    │  ┌─────────────────────────────────────────────────┐   │
+                                    │  │              STUB MAPPINGS                       │   │
+                                    │  │                                                  │   │
+                                    │  │  ┌───────────────────────────────────────────┐  │   │
+                                    │  │  │ GET /api/users → 200 [{id:1, name:"..."}] │  │   │
+                                    │  │  ├───────────────────────────────────────────┤  │   │
+                                    │  │  │ POST /api/users → 201 {id:2}              │  │   │
+                                    │  │  ├───────────────────────────────────────────┤  │   │
+                                    │  │  │ GET /api/users/1 → 200 {id:1, name:"..."}│  │   │
+                                    │  │  ├───────────────────────────────────────────┤  │   │
+                                    │  │  │ DELETE /api/users/1 → 204                 │  │   │
+                                    │  │  └───────────────────────────────────────────┘  │   │
+                                    │  │                                                  │   │
+                                    │  └──────────────────────┬──────────────────────────┘   │
+                                    │                         │                              │
+                                    │                         ▼                              │
+                                    │  ┌─────────────────────────────────────────────────┐   │
+┌──────────────┐   HTTP Response    │  │              RESPONSE BUILDER                   │   │
+│              │ ◄───────────────── │  │                                                  │   │
+│    CLIENT    │                    │  │  • Status Code    • Body (JSON/XML)             │   │
+│              │                    │  │  • Headers        • Delay (simulate latency)    │   │
+└──────────────┘                    │  │  • Fault Inject   • Templating                  │   │
+                                    │  │                                                  │   │
+                                    │  └─────────────────────────────────────────────────┘   │
+                                    │                                                         │
+                                    │  ┌─────────────────────────────────────────────────┐   │
+                                    │  │              REQUEST JOURNAL                     │   │
+                                    │  │  • Log all requests                             │   │
+                                    │  │  • Verify expectations                          │   │
+                                    │  │  • Record/Playback                              │   │
+                                    │  └─────────────────────────────────────────────────┘   │
+                                    └─────────────────────────────────────────────────────────┘
+
+
+STUB MAPPING (JSON)
+================================================================================
+
+  {
+    "request": {                         "response": {
+      "method": "GET",                     "status": 200,
+      "urlPattern": "/api/users/.*",       "headers": {
+      "headers": {                           "Content-Type": "application/json"
+        "Accept": {                        },
+          "contains": "json"               "jsonBody": {
+        }                                    "id": 1,
+      }                                      "name": "John Doe",
+    }                                        "email": "john@example.com"
+                                           },
+                                           "fixedDelayMilliseconds": 100
+                                         }
+  }
+
+
+USE CASES
+================================================================================
+
+  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+  │   TESTING   │    │  DEVELOPMENT│    │  ISOLATION  │    │  SIMULATION │
+  │             │    │             │    │             │    │             │
+  │ Unit tests  │    │ Frontend w/o│    │ Microservice│    │ Fault/Error │
+  │ Integration │    │ backend     │    │ testing     │    │ scenarios   │
+  │ E2E tests   │    │ API design  │    │ Contract    │    │ Latency     │
+  └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+
+
+CLOUDEMU AS WIREMOCK
+================================================================================
+
+CloudEmu extends the WireMock concept to emulate cloud provider APIs:
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            CLOUDEMU SERVER                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
+│  │  AWS EMULATOR   │  │ AZURE EMULATOR  │  │  GCP EMULATOR   │             │
+│  │                 │  │                 │  │                 │             │
+│  │  S3, DynamoDB   │  │ Blob Storage    │  │ Cloud Storage   │             │
+│  │  Lambda, SQS    │  │ Cosmos DB       │  │ Cloud Functions │             │
+│  │  SNS, API GW    │  │ Functions       │  │ Pub/Sub         │             │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘             │
+│           │                    │                    │                       │
+│           └────────────────────┴────────────────────┘                       │
+│                                │                                            │
+│                    ┌───────────▼───────────┐                                │
+│                    │    REQUEST JOURNAL    │                                │
+│                    │  (Logged in CloudEmu) │                                │
+│                    └───────────────────────┘                                │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Benefits:
+- Develop locally without cloud costs
+- Test against multiple providers
+- Simulate error conditions
+- Record and replay API calls
+- Inspect all requests in real-time

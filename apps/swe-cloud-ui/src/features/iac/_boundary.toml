@@ -1,0 +1,31 @@
+[boundary]
+name = "iac"
+exports = [
+    # Layout and pages
+    "IacLayout",
+    "IacLanding",
+    "IacModules",
+    "IacDeployments",
+    "IacState",
+    "IacPlans",
+
+    # Presets
+    "ModulesPreset",
+    "DeployPreset",
+    "StatePreset",
+    "PlanReviewPreset",
+
+    # Components
+    "ModuleCard",
+    "DeploymentList",
+    "StateViewer",
+    "PlanDiffViewer",
+    "TerraformOutput",
+
+    # Hooks
+    "use_modules",
+    "use_deployments",
+    "use_state",
+    "use_terraform",
+]
+export_files = ["iac.type.rsc"]

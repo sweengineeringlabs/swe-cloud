@@ -1,0 +1,55 @@
+# IAC Feature Routes
+# Infrastructure as Code management routes
+
+feature: iac
+base_path: /iac
+
+routes:
+  - path: /
+    page: iac-landing
+    title: Infrastructure
+    layout: iac
+    role_required:
+      - devops
+      - admin
+
+  - path: /modules
+    page: iac-modules
+    title: Modules
+    layout: iac
+
+  - path: /modules/:module
+    page: iac-module-detail
+    title: "{module}"
+    layout: iac
+
+  - path: /deploy
+    page: iac-deploy
+    title: Deploy
+    layout: iac
+    workflow: deploy-infrastructure
+
+  - path: /deployments
+    page: iac-deployments
+    title: Deployments
+    layout: iac
+
+  - path: /deployments/:id
+    page: iac-deployment-detail
+    title: "Deployment #{id}"
+    layout: iac
+
+  - path: /state
+    page: iac-state
+    title: State
+    layout: iac
+
+  - path: /plans
+    page: iac-plans
+    title: Plans
+    layout: iac
+
+  - path: /plans/:id
+    page: iac-plan-detail
+    title: "Plan #{id}"
+    layout: iac

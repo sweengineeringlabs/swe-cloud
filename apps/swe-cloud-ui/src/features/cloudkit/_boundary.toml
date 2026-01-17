@@ -1,0 +1,20 @@
+[boundary]
+name = "cloudkit"
+exports = [
+    # Layout and pages
+    "CloudkitLayout",
+    "CloudkitLanding",
+    "CloudkitResources",
+    "CloudkitOperations",
+    "CloudkitExplorer",
+
+    # Components
+    "ResourceBrowser",
+    "OperationForm",
+    "ApiExplorer",
+
+    # Hooks
+    "use_resources",
+    "use_operations",
+]
+export_files = ["cloudkit.type.rsc"]

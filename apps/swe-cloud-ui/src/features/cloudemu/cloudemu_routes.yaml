@@ -1,0 +1,57 @@
+# CloudEmu Feature Routes
+# Cloud emulation service routes
+
+feature: cloudemu
+base_path: /cloudemu
+
+routes:
+  - path: /
+    page: cloudemu-landing
+    title: CloudEmu
+    layout: cloudemu
+
+  - path: /logs
+    page: cloudemu-logs
+    title: Request Logs
+    layout: cloudemu
+    context_filter:
+      provider: current
+
+  - path: /:provider
+    page: cloudemu-provider
+    title: "{provider | uppercase}"
+    layout: cloudemu
+    context:
+      set:
+        provider: ":provider"
+    params:
+      - name: provider
+        pattern: "aws|azure|gcp|zero"
+
+  - path: /:provider/:service
+    page: cloudemu-service
+    title: "{service | titlecase}"
+    layout: cloudemu
+    params:
+      - name: provider
+        pattern: "aws|azure|gcp|zero"
+      - name: service
+        required: true
+
+  - path: /:provider/:service/new
+    page: cloudemu-service-new
+    title: "New {service | titlecase}"
+    layout: cloudemu
+    workflow: create-resource
+    workflow_data:
+      resource_type: ":service"
+
+  - path: /:provider/:service/:id
+    page: cloudemu-service-detail
+    title: "{service | titlecase} Details"
+    layout: cloudemu
+
+  - path: /:provider/:service/:id/edit
+    page: cloudemu-service-edit
+    title: "Edit {service | titlecase}"
+    layout: cloudemu

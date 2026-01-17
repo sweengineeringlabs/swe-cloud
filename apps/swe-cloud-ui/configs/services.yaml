@@ -1,0 +1,252 @@
+# services.yaml - Service Configuration Details
+# Extended service metadata for CloudEmu
+version: 1
+
+# AWS Services
+aws:
+  s3:
+    name: S3
+    full_name: Simple Storage Service
+    icon: bucket
+    color: "#569A31"
+    operations:
+      - CreateBucket
+      - DeleteBucket
+      - ListBuckets
+      - PutObject
+      - GetObject
+      - DeleteObject
+      - ListObjects
+    resource_fields:
+      - name: bucket_name
+        type: string
+        required: true
+      - name: region
+        type: select
+        options: [us-east-1, us-west-2, eu-west-1, ap-southeast-1]
+        default: us-east-1
+      - name: versioning
+        type: boolean
+        default: false
+      - name: access
+        type: select
+        options: [private, public-read]
+        default: private
+
+  dynamodb:
+    name: DynamoDB
+    full_name: Amazon DynamoDB
+    icon: database
+    color: "#4053D6"
+    operations:
+      - CreateTable
+      - DeleteTable
+      - ListTables
+      - PutItem
+      - GetItem
+      - DeleteItem
+      - Query
+      - Scan
+    resource_fields:
+      - name: table_name
+        type: string
+        required: true
+      - name: partition_key
+        type: string
+        required: true
+      - name: partition_key_type
+        type: select
+        options: [S, N, B]
+        default: S
+      - name: billing_mode
+        type: select
+        options: [PAY_PER_REQUEST, PROVISIONED]
+        default: PAY_PER_REQUEST
+
+  lambda:
+    name: Lambda
+    full_name: AWS Lambda
+    icon: function
+    color: "#FF9900"
+    operations:
+      - CreateFunction
+      - DeleteFunction
+      - ListFunctions
+      - Invoke
+      - UpdateFunctionCode
+      - UpdateFunctionConfiguration
+    resource_fields:
+      - name: function_name
+        type: string
+        required: true
+      - name: runtime
+        type: select
+        options: [nodejs18.x, nodejs20.x, python3.11, python3.12, rust]
+        default: nodejs18.x
+      - name: memory
+        type: number
+        min: 128
+        max: 10240
+        default: 128
+      - name: timeout
+        type: number
+        min: 1
+        max: 900
+        default: 30
+
+  sqs:
+    name: SQS
+    full_name: Simple Queue Service
+    icon: queue
+    color: "#FF4F8B"
+    operations:
+      - CreateQueue
+      - DeleteQueue
+      - ListQueues
+      - SendMessage
+      - ReceiveMessage
+      - DeleteMessage
+    resource_fields:
+      - name: queue_name
+        type: string
+        required: true
+      - name: fifo
+        type: boolean
+        default: false
+      - name: visibility_timeout
+        type: number
+        min: 0
+        max: 43200
+        default: 30
+
+  sns:
+    name: SNS
+    full_name: Simple Notification Service
+    icon: bell
+    color: "#FF4F8B"
+    operations:
+      - CreateTopic
+      - DeleteTopic
+      - ListTopics
+      - Publish
+      - Subscribe
+      - Unsubscribe
+    resource_fields:
+      - name: topic_name
+        type: string
+        required: true
+      - name: display_name
+        type: string
+        required: false
+
+  ec2:
+    name: EC2
+    full_name: Elastic Compute Cloud
+    icon: server
+    color: "#FF9900"
+    operations:
+      - RunInstances
+      - TerminateInstances
+      - DescribeInstances
+      - StartInstances
+      - StopInstances
+    resource_fields:
+      - name: instance_name
+        type: string
+        required: true
+      - name: instance_type
+        type: select
+        options: [t2.micro, t2.small, t2.medium, t3.micro, t3.small]
+        default: t2.micro
+      - name: ami_id
+        type: string
+        required: true
+
+# Azure Services
+azure:
+  blobs:
+    name: Blob Storage
+    full_name: Azure Blob Storage
+    icon: bucket
+    color: "#0078D4"
+    operations:
+      - CreateContainer
+      - DeleteContainer
+      - ListContainers
+      - UploadBlob
+      - DownloadBlob
+      - DeleteBlob
+      - ListBlobs
+
+  keyvault:
+    name: Key Vault
+    full_name: Azure Key Vault
+    icon: key
+    color: "#0078D4"
+    operations:
+      - CreateSecret
+      - GetSecret
+      - DeleteSecret
+      - ListSecrets
+
+  functions:
+    name: Functions
+    full_name: Azure Functions
+    icon: function
+    color: "#0078D4"
+    operations:
+      - CreateFunction
+      - DeleteFunction
+      - ListFunctions
+      - InvokeFunction
+
+  queues:
+    name: Queues
+    full_name: Azure Queue Storage
+    icon: queue
+    color: "#0078D4"
+    operations:
+      - CreateQueue
+      - DeleteQueue
+      - ListQueues
+      - SendMessage
+      - ReceiveMessage
+
+# GCP Services
+gcp:
+  storage:
+    name: Cloud Storage
+    full_name: Google Cloud Storage
+    icon: bucket
+    color: "#4285F4"
+    operations:
+      - CreateBucket
+      - DeleteBucket
+      - ListBuckets
+      - UploadObject
+      - DownloadObject
+      - DeleteObject
+
+  pubsub:
+    name: Pub/Sub
+    full_name: Google Cloud Pub/Sub
+    icon: message
+    color: "#4285F4"
+    operations:
+      - CreateTopic
+      - DeleteTopic
+      - ListTopics
+      - Publish
+      - CreateSubscription
+      - Pull
+
+  functions:
+    name: Cloud Functions
+    full_name: Google Cloud Functions
+    icon: function
+    color: "#4285F4"
+    operations:
+      - CreateFunction
+      - DeleteFunction
+      - ListFunctions
+      - CallFunction

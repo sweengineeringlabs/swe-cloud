@@ -1,0 +1,131 @@
+# context-actions.yaml - Context Menu Actions
+# Defines right-click and contextual actions
+version: 1
+
+# Resource context actions
+resource:
+  - id: view
+    label: View Details
+    icon: Eye
+    action: navigate
+    target: "/cloudemu/{provider}/{service}/{id}"
+
+  - id: edit
+    label: Edit
+    icon: Edit
+    action: navigate
+    target: "/cloudemu/{provider}/{service}/{id}/edit"
+
+  - id: duplicate
+    label: Duplicate
+    icon: Copy
+    action: workflow
+    workflow: create-resource
+    prefill: true
+
+  - id: delete
+    label: Delete
+    icon: Trash
+    action: delete
+    confirm: true
+    danger: true
+
+# Provider context actions
+provider:
+  - id: switch
+    label: Switch Provider
+    icon: RefreshCw
+    action: context-switch
+    context: provider
+
+  - id: view-services
+    label: View Services
+    icon: Layers
+    action: navigate
+    target: "/cloudemu/{provider}"
+
+  - id: view-logs
+    label: View Logs
+    icon: Terminal
+    action: navigate
+    target: "/cloudemu/logs?provider={provider}"
+
+# Service context actions
+service:
+  - id: create
+    label: Create New
+    icon: Plus
+    action: workflow
+    workflow: create-resource
+
+  - id: list
+    label: List Resources
+    icon: List
+    action: navigate
+    target: "/cloudemu/{provider}/{service}"
+
+# Log entry context actions
+log:
+  - id: view
+    label: View Details
+    icon: Eye
+    action: panel
+    panel: log-details
+
+  - id: debug
+    label: Debug Request
+    icon: Bug
+    action: workflow
+    workflow: debug-request
+
+  - id: replay
+    label: Replay
+    icon: RefreshCw
+    action: replay
+
+  - id: copy-curl
+    label: Copy as cURL
+    icon: Copy
+    action: copy
+    format: curl
+
+# Deployment context actions
+deployment:
+  - id: view
+    label: View Details
+    icon: Eye
+    action: navigate
+    target: "/iac/deployments/{id}"
+
+  - id: rollback
+    label: Rollback
+    icon: RotateCcw
+    action: confirm-action
+    confirm: "Are you sure you want to rollback this deployment?"
+
+  - id: destroy
+    label: Destroy
+    icon: Trash
+    action: confirm-action
+    confirm: "This will destroy all resources. Are you sure?"
+    danger: true
+
+# Module context actions
+module:
+  - id: deploy
+    label: Deploy
+    icon: Rocket
+    action: workflow
+    workflow: deploy-infrastructure
+
+  - id: view-source
+    label: View Source
+    icon: Code
+    action: panel
+    panel: module-source
+
+  - id: edit-vars
+    label: Edit Variables
+    icon: Settings
+    action: panel
+    panel: module-variables

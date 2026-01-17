@@ -1,0 +1,27 @@
+[boundary]
+name = "cloudemu"
+exports = [
+    # Layout and pages
+    "CloudemuLayout",
+    "CloudemuLanding",
+    "CloudemuProvider",
+    "CloudemuService",
+    "CloudemuLogs",
+
+    # Presets
+    "BrowsePreset",
+    "LogsPreset",
+    "DebugPreset",
+
+    # Components
+    "ProviderCard",
+    "ServiceCard",
+    "ResourceTable",
+    "RequestLogList",
+    "LogDetailPanel",
+
+    # Hooks
+    "use_provider_services",
+    "use_request_logs",
+]
+export_files = ["cloudemu.type.rsc"]

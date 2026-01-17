@@ -1,0 +1,16 @@
+[boundary]
+name = "navigation"
+exports = [
+    # Components
+    "ContextBar",
+    "Header",
+    "Breadcrumb",
+    "ActivityBar",
+
+    # Hooks
+    "use_preset",
+    "use_navigation",
+
+    # Store
+    "NavigationStore",
+]

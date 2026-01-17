@@ -1,0 +1,81 @@
+# environments.yaml - Environment Configuration
+# Defines target environments (Local, Dev, Staging, Prod)
+version: 1
+
+# Environment context settings
+context:
+  type: switchable
+  persist: true
+  default: local
+
+# Available environments
+environments:
+  - id: local
+    label: Local
+    icon: laptop
+    color: "#10B981"
+    api_base: "http://localhost:8080"
+    confirm_actions: false
+    read_only_default: false
+    description: Local development environment
+
+  - id: dev
+    label: Development
+    icon: code
+    color: "#3B82F6"
+    api_base: "https://dev-api.swe-cloud.io"
+    confirm_actions: false
+    read_only_default: false
+    description: Development environment
+
+  - id: staging
+    label: Staging
+    icon: flask
+    color: "#F59E0B"
+    api_base: "https://staging-api.swe-cloud.io"
+    confirm_actions: true
+    read_only_default: false
+    description: Pre-production staging environment
+
+  - id: prod
+    label: Production
+    icon: shield
+    color: "#EF4444"
+    api_base: "https://api.swe-cloud.io"
+    confirm_actions: true
+    read_only_default: true
+    description: Production environment
+    warning: "This is a production environment. Proceed with caution."
+
+# Role-based access
+roles:
+  - id: developer
+    label: Developer
+    nav_filter:
+      - dashboard
+      - cloudemu
+      - cloudkit
+    actions:
+      - read
+      - create
+      - update
+
+  - id: devops
+    label: DevOps
+    nav_filter:
+      - dashboard
+      - cloudemu
+      - cloudkit
+      - iac
+    actions:
+      - read
+      - create
+      - update
+      - deploy
+
+  - id: admin
+    label: Administrator
+    nav_filter:
+      - "*"
+    actions:
+      - "*"

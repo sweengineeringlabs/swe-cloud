@@ -1,0 +1,46 @@
+# CloudKit Feature Routes
+# Cloud infrastructure toolkit routes
+
+feature: cloudkit
+base_path: /cloudkit
+
+routes:
+  - path: /
+    page: cloudkit-landing
+    title: CloudKit
+    layout: cloudkit
+    role_required:
+      - developer
+      - devops
+      - admin
+
+  - path: /resources
+    page: cloudkit-resources
+    title: Resources
+    layout: cloudkit
+
+  - path: /resources/:type
+    page: cloudkit-resource-list
+    title: "{type | titlecase}"
+    layout: cloudkit
+
+  - path: /resources/:type/:id
+    page: cloudkit-resource-detail
+    title: Resource Details
+    layout: cloudkit
+
+  - path: /operations
+    page: cloudkit-operations
+    title: Operations
+    layout: cloudkit
+
+  - path: /operations/:operationId
+    page: cloudkit-operation-detail
+    title: Operation Details
+    layout: cloudkit
+
+  - path: /explorer
+    page: cloudkit-explorer
+    title: API Explorer
+    layout: cloudkit
+    context_aware: true

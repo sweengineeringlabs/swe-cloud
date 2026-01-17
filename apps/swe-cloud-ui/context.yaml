@@ -1,0 +1,212 @@
+# Context Configuration
+# Defines application contexts and workflows
+
+contexts:
+  # Provider Context - Which cloud provider
+  provider:
+    type: "switchable"
+    persist: true
+    default: "aws"
+    options:
+      - id: "aws"
+        label: "AWS"
+        icon: "aws"
+        color: "#FF9900"
+        endpoints:
+          api: "http://localhost:4566"
+          console: "/cloudemu/aws"
+        services:
+          - { id: "s3", label: "S3", icon: "bucket" }
+          - { id: "dynamodb", label: "DynamoDB", icon: "database" }
+          - { id: "lambda", label: "Lambda", icon: "function" }
+          - { id: "sqs", label: "SQS", icon: "queue" }
+          - { id: "sns", label: "SNS", icon: "bell" }
+          - { id: "ec2", label: "EC2", icon: "server" }
+
+      - id: "azure"
+        label: "Azure"
+        icon: "azure"
+        color: "#0078D4"
+        endpoints:
+          api: "http://localhost:4567"
+          console: "/cloudemu/azure"
+        services:
+          - { id: "blobs", label: "Blob Storage", icon: "bucket" }
+          - { id: "keyvault", label: "Key Vault", icon: "key" }
+          - { id: "functions", label: "Functions", icon: "function" }
+          - { id: "queues", label: "Queues", icon: "queue" }
+
+      - id: "gcp"
+        label: "GCP"
+        icon: "gcp"
+        color: "#4285F4"
+        endpoints:
+          api: "http://localhost:4568"
+          console: "/cloudemu/gcp"
+        services:
+          - { id: "storage", label: "Cloud Storage", icon: "bucket" }
+          - { id: "pubsub", label: "Pub/Sub", icon: "message" }
+          - { id: "functions", label: "Cloud Functions", icon: "function" }
+
+      - id: "zero"
+        label: "ZeroCloud"
+        icon: "server"
+        color: "#6B7280"
+        endpoints:
+          api: "http://localhost:4569"
+          console: "/cloudemu/zero"
+        services:
+          - { id: "storage", label: "Storage", icon: "bucket" }
+          - { id: "compute", label: "Compute", icon: "server" }
+          - { id: "queue", label: "Queue", icon: "queue" }
+
+      - id: "multi"
+        label: "Multi-Cloud"
+        icon: "layers"
+        color: "#8B5CF6"
+
+  # Role Context - User permissions
+  role:
+    type: "session"
+    default: "developer"
+    options:
+      - id: "developer"
+        label: "Developer"
+        nav_filter: ["dashboard", "cloudemu", "cloudkit"]
+        actions: ["read", "create", "update"]
+      - id: "devops"
+        label: "DevOps"
+        nav_filter: ["dashboard", "cloudemu", "cloudkit", "iac"]
+        actions: ["read", "create", "update", "deploy"]
+      - id: "admin"
+        label: "Administrator"
+        nav_filter: ["*"]
+        actions: ["*"]
+
+  # Environment Context
+  environment:
+    type: "switchable"
+    persist: true
+    default: "local"
+    options:
+      - id: "local"
+        label: "Local"
+        icon: "laptop"
+        color: "#10B981"
+        api_base: "http://localhost:8080"
+      - id: "dev"
+        label: "Development"
+        icon: "code"
+        color: "#3B82F6"
+        api_base: "https://dev-api.swe-cloud.io"
+      - id: "staging"
+        label: "Staging"
+        icon: "flask"
+        color: "#F59E0B"
+        api_base: "https://staging-api.swe-cloud.io"
+        confirm_actions: true
+      - id: "prod"
+        label: "Production"
+        icon: "shield"
+        color: "#EF4444"
+        api_base: "https://api.swe-cloud.io"
+        confirm_actions: true
+        read_only_default: true
+
+# Workflow Definitions
+workflows:
+  # Create Resource Workflow
+  create-resource:
+    name: "Create Resource"
+    icon: "plus-circle"
+    description: "Create a new cloud resource"
+    context_required:
+      - provider
+    steps:
+      - id: "select-type"
+        title: "Select Resource Type"
+        component: "ResourceTypeSelector"
+        description: "Choose the type of resource to create"
+      - id: "configure"
+        title: "Configure"
+        component: "ResourceConfigurator"
+        description: "Configure resource settings"
+        dynamic: true
+      - id: "review"
+        title: "Review"
+        component: "ResourceReview"
+        description: "Review configuration before creating"
+      - id: "create"
+        title: "Create"
+        component: "ResourceCreator"
+        description: "Creating resource..."
+        action: "create_resource"
+    on_complete:
+      navigate: "/cloudemu/{context.provider}/{step_data.resource_type}"
+      toast: "Resource created successfully"
+
+  # Deploy Infrastructure Workflow
+  deploy-infrastructure:
+    name: "Deploy Infrastructure"
+    icon: "upload-cloud"
+    description: "Deploy infrastructure using Terraform"
+    role_required: ["devops", "admin"]
+    context_required:
+      - environment
+    steps:
+      - id: "select-module"
+        title: "Select Module"
+        component: "ModuleSelector"
+        description: "Choose a Terraform module to deploy"
+      - id: "configure-vars"
+        title: "Variables"
+        component: "TerraformVariables"
+        description: "Configure module variables"
+      - id: "plan"
+        title: "Plan"
+        component: "TerraformPlan"
+        description: "Running terraform plan..."
+        action: "terraform_plan"
+        async: true
+      - id: "review-plan"
+        title: "Review Changes"
+        component: "PlanDiffViewer"
+        description: "Review planned changes"
+      - id: "apply"
+        title: "Apply"
+        component: "TerraformApply"
+        description: "Applying changes..."
+        action: "terraform_apply"
+        requires_confirmation: true
+        async: true
+    on_complete:
+      navigate: "/iac/deployments/{result.deployment_id}"
+      toast: "Deployment completed"
+
+  # Debug Request Workflow
+  debug-request:
+    name: "Debug Request"
+    icon: "bug"
+    description: "Debug and replay cloud API requests"
+    steps:
+      - id: "select-request"
+        title: "Select Request"
+        component: "RequestSelector"
+        description: "Choose a request to debug"
+      - id: "view-details"
+        title: "Request Details"
+        component: "RequestDetails"
+        description: "View request and response details"
+      - id: "modify"
+        title: "Modify"
+        component: "RequestModifier"
+        description: "Modify request parameters"
+        optional: true
+      - id: "replay"
+        title: "Replay"
+        component: "RequestReplay"
+        description: "Replay the request"
+        action: "replay_request"
+        optional: true
+    on_complete:
+      toast: "Request replayed"

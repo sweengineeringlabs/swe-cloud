@@ -1,0 +1,163 @@
+# activities.yaml - UI Components Registry for SWE Cloud
+# Defines ViewModes (main content pages) and IdeViews (sidebar panels)
+version: 1
+
+# Main content pages (Activity Bar items)
+viewModes:
+  # Home
+  - id: landing
+    label: Home
+    icon: Home
+    order: 0
+    category: navigation
+
+  # CloudEmu
+  - id: cloudemu
+    label: CloudEmu
+    icon: Cloud
+    order: 1
+    category: emulation
+
+  - id: cloudemu-logs
+    label: Request Logs
+    icon: Terminal
+    order: 2
+    category: emulation
+
+  # CloudKit
+  - id: resources
+    label: Resources
+    icon: Database
+    order: 10
+    category: toolkit
+
+  - id: operations
+    label: Operations
+    icon: Activity
+    order: 11
+    category: toolkit
+
+  - id: explorer
+    label: API Explorer
+    icon: Compass
+    order: 12
+    category: toolkit
+
+  # IAC
+  - id: modules
+    label: Modules
+    icon: Box
+    order: 20
+    category: infrastructure
+
+  - id: deployments
+    label: Deployments
+    icon: Rocket
+    order: 21
+    category: infrastructure
+
+  - id: state
+    label: State
+    icon: FileText
+    order: 22
+    category: infrastructure
+
+  - id: plans
+    label: Plans
+    icon: Clipboard
+    order: 23
+    category: infrastructure
+
+  # Settings
+  - id: settings
+    label: Settings
+    icon: Settings
+    order: 90
+    category: system
+
+# Sidebar panels (IDE Views)
+ideViews:
+  - id: providers
+    label: Providers
+    icon: Cloud
+    order: 1
+
+  - id: services
+    label: Services
+    icon: Layers
+    order: 2
+
+  - id: requests
+    label: Requests
+    icon: List
+    order: 3
+
+  - id: help
+    label: Help
+    icon: HelpCircle
+    order: 10
+
+# Bottom panel tabs
+panelTabs:
+  - id: logs
+    label: Logs
+    icon: Terminal
+    order: 1
+
+  - id: output
+    label: Output
+    icon: FileOutput
+    order: 2
+
+  - id: problems
+    label: Problems
+    icon: AlertCircle
+    order: 3
+
+# Quick action buttons
+quickActions:
+  - id: new-resource
+    label: New Resource
+    icon: PlusCircle
+    shortcut: "n"
+    workflow: create-resource
+
+  - id: deploy
+    label: Deploy
+    icon: UploadCloud
+    shortcut: "d"
+    workflow: deploy-infrastructure
+    roles: [devops, admin]
+
+  - id: debug
+    label: Debug Request
+    icon: Bug
+    shortcut: "b"
+    workflow: debug-request
+
+  - id: search
+    label: Search
+    icon: Search
+    shortcut: "/"
+
+# View mode categories for grouping
+categories:
+  - id: navigation
+    label: Navigation
+    order: 0
+
+  - id: emulation
+    label: Cloud Emulation
+    order: 1
+
+  - id: toolkit
+    label: Cloud Toolkit
+    order: 2
+
+  - id: infrastructure
+    label: Infrastructure
+    order: 3
+
+  - id: system
+    label: System
+    order: 9

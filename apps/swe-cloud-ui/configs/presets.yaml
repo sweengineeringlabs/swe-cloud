@@ -1,0 +1,205 @@
+# presets.yaml - Layout Presets for Different Workflows
+# Configures panel layouts for specific tasks
+version: 1
+
+presets:
+  # CloudEmu Presets
+  - id: cloudemu-browse
+    name: Browse Resources
+    feature: cloudemu
+    description: Browse and manage cloud resources
+    layout:
+      sidebar:
+        visible: true
+        width: 280
+        panels:
+          - providers
+          - services
+      main:
+        component: ResourceBrowser
+      bottom:
+        visible: false
+
+  - id: cloudemu-logs
+    name: Request Logs
+    feature: cloudemu
+    description: View and debug API request logs
+    layout:
+      sidebar:
+        visible: true
+        width: 300
+        panels:
+          - requests
+      main:
+        component: LogViewer
+      bottom:
+        visible: true
+        height: 250
+        tabs:
+          - logs
+          - output
+
+  - id: cloudemu-debug
+    name: Debug Request
+    feature: cloudemu
+    description: Debug and replay requests
+    layout:
+      sidebar:
+        visible: true
+        width: 350
+        panels:
+          - requests
+      main:
+        component: RequestDebugger
+        split: horizontal
+        panels:
+          - RequestEditor
+          - ResponseViewer
+      bottom:
+        visible: true
+        height: 200
+        tabs:
+          - output
+
+  # CloudKit Presets
+  - id: cloudkit-resources
+    name: Resource Explorer
+    feature: cloudkit
+    description: Explore cloud resources
+    layout:
+      sidebar:
+        visible: true
+        width: 280
+        panels:
+          - providers
+          - services
+      main:
+        component: ResourceExplorer
+      bottom:
+        visible: false
+
+  - id: cloudkit-operations
+    name: Operations Console
+    feature: cloudkit
+    description: Execute cloud operations
+    layout:
+      sidebar:
+        visible: true
+        width: 300
+        panels:
+          - services
+      main:
+        component: OperationsConsole
+        split: vertical
+        ratio: 0.6
+        panels:
+          - OperationForm
+          - OperationResult
+      bottom:
+        visible: true
+        height: 200
+        tabs:
+          - output
+          - logs
+
+  - id: cloudkit-explorer
+    name: API Explorer
+    feature: cloudkit
+    description: Explore and test cloud APIs
+    layout:
+      sidebar:
+        visible: true
+        width: 320
+        panels:
+          - services
+      main:
+        component: ApiExplorer
+        split: horizontal
+        panels:
+          - ApiReference
+          - ApiTester
+      bottom:
+        visible: true
+        height: 250
+        tabs:
+          - output
+
+  # IAC Presets
+  - id: iac-modules
+    name: Module Browser
+    feature: iac
+    description: Browse Terraform modules
+    layout:
+      sidebar:
+        visible: true
+        width: 280
+        panels:
+          - modules
+      main:
+        component: ModuleBrowser
+      bottom:
+        visible: false
+
+  - id: iac-deploy
+    name: Deploy Workflow
+    feature: iac
+    description: Deploy infrastructure
+    layout:
+      sidebar:
+        visible: true
+        width: 300
+        panels:
+          - modules
+      main:
+        component: DeployWorkflow
+      bottom:
+        visible: true
+        height: 300
+        tabs:
+          - output
+          - logs
+
+  - id: iac-state
+    name: State Viewer
+    feature: iac
+    description: View infrastructure state
+    layout:
+      sidebar:
+        visible: true
+        width: 280
+        panels:
+          - resources
+      main:
+        component: StateViewer
+        split: horizontal
+        panels:
+          - StateTree
+          - ResourceDetails
+      bottom:
+        visible: false
+
+  - id: iac-plan-review
+    name: Plan Review
+    feature: iac
+    description: Review Terraform plan
+    layout:
+      sidebar:
+        visible: false
+      main:
+        component: PlanReviewer
+        split: vertical
+        ratio: 0.7
+        panels:
+          - PlanDiff
+          - ResourceChanges
+      bottom:
+        visible: true
+        height: 200
+        tabs:
+          - output
+
+# Default preset per feature
+defaults:
+  cloudemu: cloudemu-browse
+  cloudkit: cloudkit-resources
+  iac: iac-modules

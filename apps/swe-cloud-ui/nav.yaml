@@ -1,0 +1,198 @@
+# Navigation Configuration
+# Context-aware navigation for SWE Cloud Platform
+
+navigation:
+  # Top context bar
+  context_bar:
+    enabled: true
+    items:
+      - context: "provider"
+        position: "left"
+        style: "dropdown"
+        show_icon: true
+        show_color: true
+      - context: "environment"
+        position: "right"
+        style: "pills"
+        show_color: true
+        show_warning: true  # Warn on prod
+
+  # Header actions
+  header:
+    left:
+      - type: "brand"
+        label: "SWE Cloud"
+        icon: "cloud"
+        route: "/"
+    right:
+      - type: "search"
+        placeholder: "Search resources..."
+        shortcut: "/"
+      - type: "notifications"
+        icon: "bell"
+        badge_source: "/api/notifications/unread"
+      - type: "user-menu"
+        icon: "user"
+        items:
+          - label: "Profile"
+            route: "/settings/profile"
+          - label: "Preferences"
+            route: "/settings/preferences"
+          - divider: true
+          - label: "Sign Out"
+            action: "logout"
+
+  # Sidebar navigation
+  sidebar:
+    width: 240
+    collapsible: true
+    persist_state: true
+
+    sections:
+      # Main navigation
+      - id: "main"
+        items:
+          - id: "dashboard"
+            route: "/"
+            icon: "home"
+            label: "Dashboard"
+            badge:
+              type: "dot"
+              color: "context.environment"
+
+          - id: "cloudemu"
+            route: "/cloudemu"
+            icon: "cloud"
+            label: "CloudEmu"
+            expandable: true
+            expanded_default: true
+            badge:
+              type: "count"
+              source: "/api/cloudemu/active-services"
+            children:
+              # Dynamic children from provider context
+              - type: "context-children"
+                context: "provider"
+                source: "services"
+                route_template: "/cloudemu/{context.provider}/{service.id}"
+                icon_field: "icon"
+                label_field: "label"
+              # Static children
+              - id: "logs"
+                route: "/cloudemu/logs"
+                icon: "terminal"
+                label: "Request Logs"
+
+          - id: "cloudkit"
+            route: "/cloudkit"
+            icon: "package"
+            label: "CloudKit"
+            role: ["developer", "devops", "admin"]
+            expandable: true
+            children:
+              - id: "resources"
+                route: "/cloudkit/resources"
+                icon: "database"
+                label: "Resources"
+              - id: "operations"
+                route: "/cloudkit/operations"
+                icon: "activity"
+                label: "Operations"
+              - id: "explorer"
+                route: "/cloudkit/explorer"
+                icon: "compass"
+                label: "API Explorer"
+
+          - id: "iac"
+            route: "/iac"
+            icon: "git-branch"
+            label: "Infrastructure"
+            role: ["devops", "admin"]
+            expandable: true
+            badge:
+              type: "count"
+              source: "/api/iac/pending"
+              color: "warning"
+            children:
+              - id: "modules"
+                route: "/iac/modules"
+                icon: "box"
+                label: "Modules"
+              - id: "deployments"
+                route: "/iac/deployments"
+                icon: "list"
+                label: "Deployments"
+              - id: "state"
+                route: "/iac/state"
+                icon: "file-text"
+                label: "State"
+
+      # Quick actions
+      - id: "actions"
+        label: "Quick Actions"
+        collapsible: true
+        collapsed_default: false
+        items:
+          - id: "new-resource"
+            icon: "plus-circle"
+            label: "New Resource"
+            action: "start-workflow"
+            workflow: "create-resource"
+            context_required: ["provider"]
+            shortcut: "n"
+
+          - id: "deploy"
+            icon: "upload-cloud"
+            label: "Deploy"
+            action: "start-workflow"
+            workflow: "deploy-infrastructure"
+            role: ["devops", "admin"]
+            shortcut: "d"
+
+          - id: "debug"
+            icon: "bug"
+            label: "Debug Request"
+            action: "start-workflow"
+            workflow: "debug-request"
+            shortcut: "b"
+
+      # Footer
+      - id: "footer"
+        position: "bottom"
+        items:
+          - id: "settings"
+            route: "/settings"
+            icon: "settings"
+            label: "Settings"
+            role: ["admin"]
+
+          - id: "help"
+            icon: "help-circle"
+            label: "Help"
+            action: "open-help"
+
+  # Breadcrumb
+  breadcrumb:
+    enabled: true
+    show_home: true
+    home_icon: "home"
+    separator: "/"
+    show_context:
+      - provider
+      - environment
+    max_items: 5
+
+  # Keyboard shortcuts
+  shortcuts:
+    enabled: true
+    global:
+      "/": "focus-search"
+      "g h": "navigate:/"
+      "g c": "navigate:/cloudemu"
+      "g k": "navigate:/cloudkit"
+      "g i": "navigate:/iac"
+      "g s": "navigate:/settings"
+      "n": "workflow:create-resource"
+      "d": "workflow:deploy-infrastructure"
+      "?": "show-shortcuts"
+      "escape": "close-modal"

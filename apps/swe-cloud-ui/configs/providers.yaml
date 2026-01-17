@@ -1,0 +1,120 @@
+# providers.yaml - Cloud Provider Configuration
+# Defines available cloud providers and their services
+version: 1
+
+# Provider context settings
+context:
+  type: switchable
+  persist: true
+  default: aws
+
+# Available providers
+providers:
+  - id: aws
+    label: AWS
+    icon: aws
+    color: "#FF9900"
+    endpoints:
+      api: "http://localhost:4566"
+      console: "/cloudemu/aws"
+    services:
+      - id: s3
+        label: S3
+        icon: bucket
+        description: Simple Storage Service
+      - id: dynamodb
+        label: DynamoDB
+        icon: database
+        description: NoSQL Database
+      - id: lambda
+        label: Lambda
+        icon: function
+        description: Serverless Functions
+      - id: sqs
+        label: SQS
+        icon: queue
+        description: Simple Queue Service
+      - id: sns
+        label: SNS
+        icon: bell
+        description: Simple Notification Service
+      - id: ec2
+        label: EC2
+        icon: server
+        description: Elastic Compute Cloud
+
+  - id: azure
+    label: Azure
+    icon: azure
+    color: "#0078D4"
+    endpoints:
+      api: "http://localhost:4567"
+      console: "/cloudemu/azure"
+    services:
+      - id: blobs
+        label: Blob Storage
+        icon: bucket
+        description: Object Storage
+      - id: keyvault
+        label: Key Vault
+        icon: key
+        description: Secrets Management
+      - id: functions
+        label: Functions
+        icon: function
+        description: Serverless Functions
+      - id: queues
+        label: Queues
+        icon: queue
+        description: Queue Storage
+
+  - id: gcp
+    label: GCP
+    icon: gcp
+    color: "#4285F4"
+    endpoints:
+      api: "http://localhost:4568"
+      console: "/cloudemu/gcp"
+    services:
+      - id: storage
+        label: Cloud Storage
+        icon: bucket
+        description: Object Storage
+      - id: pubsub
+        label: Pub/Sub
+        icon: message
+        description: Messaging Service
+      - id: functions
+        label: Cloud Functions
+        icon: function
+        description: Serverless Functions
+
+  - id: zero
+    label: ZeroCloud
+    icon: server
+    color: "#6B7280"
+    endpoints:
+      api: "http://localhost:4569"
+      console: "/cloudemu/zero"
+    services:
+      - id: storage
+        label: Storage
+        icon: bucket
+        description: Object Storage
+      - id: compute
+        label: Compute
+        icon: server
+        description: Virtual Machines
+      - id: queue
+        label: Queue
+        icon: queue
+        description: Message Queue
+
+  - id: multi
+    label: Multi-Cloud
+    icon: layers
+    color: "#8B5CF6"
+    endpoints:
+      api: "http://localhost:8080"
+      console: "/cloudemu"
+    services: []

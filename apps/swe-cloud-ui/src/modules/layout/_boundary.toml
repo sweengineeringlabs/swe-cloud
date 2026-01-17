@@ -1,0 +1,35 @@
+[boundary]
+name = "layout"
+exports = [
+    # Core layouts
+    "WorkspaceLayout",
+    "GridLayout",
+    "ResponsiveLayout",
+
+    # Components
+    "Sidebar",
+    "BottomPanel",
+    "Toolbar",
+    "ActivityBar",
+    "StatusBar",
+
+    # Configurable components
+    "ConfigurableViewport",
+    "ConfigurableTable",
+
+    # UI components
+    "StatCard",
+    "FeatureCard",
+    "ActionCard",
+    "SectionHeader",
+    "DataTable",
+
+    # Dialogs
+    "GuideDialog",
+    "AboutDialog",
+
+    # Hooks
+    "use_layout",
+    "use_viewport_config",
+    "use_table_config",
+]

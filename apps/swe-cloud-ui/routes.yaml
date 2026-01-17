@@ -1,0 +1,160 @@
+# Routes Configuration
+# Context-aware routing for SWE Cloud Platform
+
+app:
+  name: "SWE Cloud Platform"
+  base_url: "/"
+  default_layout: "main"
+
+# Route parameter patterns
+params:
+  provider: "aws|azure|gcp|zero"
+  service: "s3|dynamodb|lambda|sqs|sns|ec2|blobs|keyvault|functions|storage|pubsub|compute|queue"
+
+routes:
+  # Dashboard
+  - path: "/"
+    page: "dashboard"
+    title: "Dashboard"
+    icon: "home"
+    nav: "main"
+    context_aware: true
+
+  # CloudEmu Section
+  - path: "/cloudemu"
+    page: "cloudemu/overview"
+    title: "CloudEmu"
+    icon: "cloud"
+    nav: "main"
+    children:
+      # Dynamic provider routes
+      - path: "/cloudemu/:provider"
+        page: "cloudemu/provider"
+        title: "{provider | uppercase}"
+        context:
+          set: { provider: ":provider" }
+        children:
+          # Service list
+          - path: "/cloudemu/:provider/:service"
+            page: "cloudemu/service"
+            title: "{service | titlecase}"
+          # Create new resource
+          - path: "/cloudemu/:provider/:service/new"
+            page: "cloudemu/service-new"
+            title: "New {service | titlecase}"
+            workflow: "create-resource"
+            workflow_data:
+              resource_type: ":service"
+          # Resource detail
+          - path: "/cloudemu/:provider/:service/:id"
+            page: "cloudemu/service-detail"
+            title: "{service | titlecase} Details"
+
+      # Request logs
+      - path: "/cloudemu/logs"
+        page: "cloudemu/logs"
+        title: "Request Logs"
+        icon: "terminal"
+        context_filter:
+          provider: "current"
+
+  # CloudKit Section
+  - path: "/cloudkit"
+    page: "cloudkit/overview"
+    title: "CloudKit"
+    icon: "package"
+    nav: "main"
+    role_required: ["developer", "devops", "admin"]
+    children:
+      - path: "/cloudkit/resources"
+        page: "cloudkit/resources"
+        title: "Resources"
+        icon: "database"
+      - path: "/cloudkit/resources/:type"
+        page: "cloudkit/resource-list"
+        title: "{type | titlecase}"
+      - path: "/cloudkit/resources/:type/:id"
+        page: "cloudkit/resource-detail"
+        title: "Resource Details"
+      - path: "/cloudkit/operations"
+        page: "cloudkit/operations"
+        title: "Operations"
+        icon: "activity"
+      - path: "/cloudkit/explorer"
+        page: "cloudkit/explorer"
+        title: "API Explorer"
+        icon: "compass"
+        context_aware: true
+
+  # IAC Section
+  - path: "/iac"
+    page: "iac/overview"
+    title: "Infrastructure"
+    icon: "git-branch"
+    nav: "main"
+    role_required: ["devops", "admin"]
+    children:
+      - path: "/iac/modules"
+        page: "iac/modules"
+        title: "Modules"
+        icon: "box"
+      - path: "/iac/modules/:module"
+        page: "iac/module-detail"
+        title: "{module}"
+      - path: "/iac/deploy"
+        page: "iac/deploy"
+        title: "Deploy"
+        icon: "upload-cloud"
+        workflow: "deploy-infrastructure"
+      - path: "/iac/deployments"
+        page: "iac/deployments"
+        title: "Deployments"
+        icon: "list"
+      - path: "/iac/deployments/:id"
+        page: "iac/deployment-detail"
+        title: "Deployment #{id}"
+      - path: "/iac/state"
+        page: "iac/state"
+        title: "State"
+        icon: "file-text"
+      - path: "/iac/plans"
+        page: "iac/plans"
+        title: "Plans"
+        icon: "clipboard"
+      - path: "/iac/plans/:id"
+        page: "iac/plan-detail"
+        title: "Plan #{id}"
+
+  # Workflow Runner
+  - path: "/workflow/:workflow_id"
+    page: "workflow/runner"
+    title: "Workflow"
+    layout: "workflow"
+    nav: false
+
+  # Settings
+  - path: "/settings"
+    page: "settings/index"
+    title: "Settings"
+    icon: "settings"
+    nav: "footer"
+    role_required: ["admin"]
+    children:
+      - path: "/settings/providers"
+        page: "settings/providers"
+        title: "Cloud Providers"
+      - path: "/settings/endpoints"
+        page: "settings/endpoints"
+        title: "Endpoints"
+      - path: "/settings/credentials"
+        page: "settings/credentials"
+        title: "Credentials"
+      - path: "/settings/users"
+        page: "settings/users"
+        title: "Users"
+
+  # Not Found
+  - path: "*"
+    page: "not-found"
+    title: "Not Found"
+    nav: false

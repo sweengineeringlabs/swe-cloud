@@ -1,0 +1,85 @@
+# RustScript Project Configuration for SWE Cloud UI
+# CloudEmu + CloudKit + IAC Management Platform
+
+[package]
+name = "swe-cloud-ui"
+version = "0.1.0"
+edition = "2024"
+description = "SWE Cloud Platform - Cloud Emulation, Infrastructure Toolkit, and IAC Management"
+license = "MIT"
+
+[build]
+target = "web"
+out_dir = "dist"
+entry = "src/main.rsc"
+
+[build.release]
+backend = "llvm"
+opt_level = 3
+minify = true
+
+[build.dev]
+backend = "cranelift"
+debug = true
+source_map = true
+
+[dev]
+port = 3000
+hmr = true
+
+# Routing configuration (unified routes with workflows/contexts/presets)
+[routing]
+config = "swe-cloud-ui_routes.yaml"
+enabled = true
+
+# Bounded context enforcement
+[boundaries]
+enforce = true
+strict = true
+containers = ["features", "modules"]
+
+# Path aliases for imports
+[imports.aliases]
+"@features" = "src/features"
+"@modules" = "src/modules"
+"@pages" = "src/pages"
+"@configs" = "configs"
+
+# YAML Configuration files
+[configs]
+activities = "configs/activities.yaml"
+providers = "configs/providers.yaml"
+environments = "configs/environments.yaml"
+services = "configs/services.yaml"
+workflows = "configs/workflows.yaml"
+context_actions = "configs/context-actions.yaml"
+presets = "configs/presets.yaml"
+landings = "configs/landings.yaml"
+
+# Context configuration
+[context]
+providers = "configs/providers.yaml"
+environments = "configs/environments.yaml"
+persist = true
+
+[lint]
+enabled = true
+
+[lint.naming]
+enforce = false
+enforce_singular = false
+enforce_kebab_case = false
+enforce_type_suffix = false
+enforce_hook_prefix = false
+
+[lint.structure]
+enforce = true
+
+[test]
+timeout = 10000
+parallel = true
+
+[dependencies]
+rsc-std = "0.1.0"
+rsc-ui = "0.1.0"
+rsc-routing = "0.1.0"

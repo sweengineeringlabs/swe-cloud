@@ -1,0 +1,163 @@
+# landings.yaml - Landing Page Configurations
+# Defines content for feature landing pages
+version: 1
+
+landings:
+  # Main Dashboard Landing
+  - id: dashboard
+    title: Welcome to SWE Cloud
+    subtitle: Manage your cloud resources across multiple providers
+    hero:
+      enabled: true
+      show_provider: true
+      show_environment: true
+    stats:
+      - id: services
+        label: Active Services
+        icon: Cloud
+        source: /api/stats/services
+      - id: resources
+        label: Resources
+        icon: Package
+        source: /api/stats/resources
+      - id: requests
+        label: Requests Today
+        icon: Activity
+        source: /api/stats/requests
+      - id: deployments
+        label: Deployments
+        icon: Rocket
+        source: /api/stats/deployments
+    sections:
+      - id: providers
+        title: Cloud Providers
+        type: provider-cards
+        columns: 4
+      - id: quick-actions
+        title: Quick Actions
+        type: action-cards
+      - id: activity
+        title: Recent Activity
+        type: activity-list
+        limit: 5
+
+  # CloudEmu Landing
+  - id: cloudemu
+    title: CloudEmu
+    subtitle: Cloud service emulation for local development
+    hero:
+      enabled: true
+      show_provider: true
+    stats:
+      - id: active
+        label: Active Services
+        icon: Cloud
+      - id: requests
+        label: Requests
+        icon: Activity
+      - id: latency
+        label: Avg Latency
+        icon: Clock
+    sections:
+      - id: providers
+        title: Active Providers
+        type: provider-overview
+      - id: requests
+        title: Recent Requests
+        type: request-table
+        limit: 10
+      - id: health
+        title: Service Health
+        type: health-grid
+
+  # CloudKit Landing
+  - id: cloudkit
+    title: CloudKit
+    subtitle: Cloud infrastructure management toolkit
+    hero:
+      enabled: true
+    stats:
+      - id: resources
+        label: Total Resources
+        icon: Database
+      - id: operations
+        label: Operations
+        icon: Activity
+      - id: api-calls
+        label: API Calls
+        icon: Zap
+    sections:
+      - id: features
+        title: Features
+        type: feature-cards
+        items:
+          - id: resources
+            title: Resources
+            description: Browse and manage cloud resources
+            icon: Database
+            href: /cloudkit/resources
+          - id: operations
+            title: Operations
+            description: Execute and monitor operations
+            icon: Activity
+            href: /cloudkit/operations
+          - id: explorer
+            title: API Explorer
+            description: Explore and test cloud APIs
+            icon: Compass
+            href: /cloudkit/explorer
+      - id: recent-ops
+        title: Recent Operations
+        type: operations-list
+        limit: 5
+
+  # IAC Landing
+  - id: iac
+    title: Infrastructure as Code
+    subtitle: Manage and deploy infrastructure with Terraform
+    hero:
+      enabled: true
+      show_environment: true
+      show_warning: true  # Show prod warning
+    stats:
+      - id: modules
+        label: Modules
+        icon: Box
+      - id: deployments
+        label: Deployments
+        icon: Rocket
+      - id: resources
+        label: Resources
+        icon: Server
+      - id: pending
+        label: Pending
+        icon: Clock
+    sections:
+      - id: actions
+        title: Quick Actions
+        type: action-cards
+        items:
+          - id: deploy
+            title: Deploy
+            description: Deploy infrastructure changes
+            icon: UploadCloud
+            workflow: deploy-infrastructure
+            primary: true
+          - id: modules
+            title: Modules
+            description: Browse Terraform modules
+            icon: Box
+            href: /iac/modules
+          - id: state
+            title: State
+            description: View infrastructure state
+            icon: FileText
+            href: /iac/state
+      - id: deployments
+        title: Recent Deployments
+        type: deployment-list
+        limit: 5
+      - id: pending
+        title: Pending Plans
+        type: plan-list
+        filter: pending
