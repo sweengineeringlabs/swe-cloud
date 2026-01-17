@@ -87,4 +87,44 @@ impl ComputeDriver for KvmDriver {
             ip_address: ip,
         })
     }
+
+    async fn list_workloads(&self) -> ZeroResult<Vec<WorkloadStatus>> {
+        let output = self.run_virsh(vec!["list", "--all", "--name"])?;
+        let mut workloads = Vec::new();
+
+        for name in output.lines() {
+            let name = name.trim();
+            if name.is_empty() { continue; }
+            
+            // For listing, we can just return IDs or do a status call per workload for richer data
+            // To keep it efficient, we'll start with just names/running state
+            workloads.push(WorkloadStatus {
+                id: name.to_string(),
+                state: "Unknown".into(), // Requires extra calls per domain
+                ip_address: None,
+            });
+        }
+
+        Ok(workloads)
+    }
+
+    async fn get_stats(&self) -> ZeroResult<zero_control_spi::NodeStats> {
+        // virsh nodeinfo gives basic cpu and memory stats
+        let output = self.run_virsh(vec!["nodeinfo"]).unwrap_or("".into());
+        
+        let mut total_kb = 0;
+        for line in output.lines() {
+            if line.contains("Memory size") {
+                total_kb = line.split_whitespace().nth(2).and_then(|s| s.parse::<u64>().ok()).unwrap_or(0);
+            }
+        }
+
+        Ok(zero_control_spi::NodeStats {
+            cpu_usage_percent: 0.0,
+            memory_used_mb: 0,
+            memory_total_mb: total_kb / 1024,
+            storage_used_gb: 0,
+            storage_total_gb: 0,
+        })
+    }
 }

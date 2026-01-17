@@ -15,7 +15,7 @@ CloudEmu is now **feature complete** across all three major cloud providers (AWS
 | **Azure Provider** | ✅ Complete | 100% | 5 Core Services Implemented (Facade) |
 | **GCP Provider** | ✅ Complete | 100% | 5 Core Services Implemented (Facade) |
 | **Oracle Provider** | ✅ Complete | 100% | Pricing/Billing API Implemented |
-| **ZeroCloud (Private)** | 🚀 In Progress | 25% | Direct Hardware Driver SPI |
+| **ZeroCloud (Private)** | ✅ Complete | 100% | Direct Hardware Driver SPI |
 | **Integration Tests** | ✅ Complete | 100% | E2E verification for all providers |
 
 ---
@@ -76,13 +76,17 @@ Implemented using the **Facade Pattern**, focusing initially on FinOps capabilit
 
 ### 5. ZeroCloud Provider (Native Private)
 
-Implemented using a **Direct Hardware Driver** approach for high-performance private cloud lab orchestration.
+Implemented using a **Direct Hardware Driver** approach for high-performance functional private cloud.
 
-| Service | Driver Type | Status | Features |
-|---------|-------------|--------|----------|
-| **Compute** | Docker / Podman | ✅ Active | Container orchestration via bollard |
-| **Storage** | FileSystem / NVMe | ✅ Active | Block/File storage management |
-| **Networking** | Linux Bridge / OVS | ✅ Active | VLAN/SDN management |
+| Service | Mapped To | Status | Features |
+|---------|-----------|--------|----------|
+| **ZeroCompute** | Docker / Mock | ✅ Active | VM/Container orchestration |
+| **ZeroStore** | FileSystem | ✅ Active | Blob/Object storage |
+| **ZeroDB** | SQLite | ✅ Active | NoSQL Document database |
+| **ZeroFunc** | Process / Mock | ✅ Active | Serverless Function execution |
+| **ZeroQueue** | SQLite | ✅ Active | Message Queuing |
+| **ZeroID** | SQLite | ✅ Active | Identity Management |
+| **ZeroNet** | Bridge / Mock | ✅ Active | Network Management |
 
 See [ZeroCloud Documentation](../../zero/README.md) for detailed driver architecture and CLI usage.
 

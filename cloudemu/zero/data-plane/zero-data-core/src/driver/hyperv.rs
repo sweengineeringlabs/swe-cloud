@@ -76,4 +76,59 @@ impl ComputeDriver for HyperVDriver {
             ip_address: ip,
         })
     }
+
+    async fn list_workloads(&self) -> ZeroResult<Vec<WorkloadStatus>> {
+        let script = "Get-VM | Select-Object Name, State | ConvertTo-Json";
+        let output = self.run_powershell(script)?;
+        if output.is_empty() {
+             return Ok(vec![]);
+        }
+
+        let vms: serde_json::Value = serde_json::from_str(&output)
+            .map_err(|e| ZeroError::Driver(format!("JSON parse error: {}", e)))?;
+
+        let mut workloads = Vec::new();
+        let items = if vms.is_array() {
+            vms.as_array().unwrap().clone()
+        } else {
+            vec![vms]
+        };
+
+        for item in items {
+            let id = item["Name"].as_str().unwrap_or("unknown").to_string();
+            let state = item["State"].as_i64().map(|s| match s {
+                2 => "Running",
+                3 => "Stopped",
+                _ => "Unknown",
+            }).unwrap_or("Unknown").to_string();
+
+            workloads.push(WorkloadStatus {
+                id,
+                state,
+                ip_address: None, // IP requires extra calls per VM
+            });
+        }
+
+        Ok(workloads)
+    }
+
+    async fn get_stats(&self) -> ZeroResult<zero_control_spi::NodeStats> {
+        let cpu_script = "(Get-Counter '\\Processor(_Total)\\% Processor Time').CounterSamples.CookedValue";
+        let mem_script = "Get-CimInstance Win32_OperatingSystem | Select-Object TotalVisibleMemorySize, FreePhysicalMemory | ConvertTo-Json";
+        
+        let cpu = self.run_powershell(cpu_script).unwrap_or("0".into()).parse::<f32>().unwrap_or(0.0);
+        let mem_json = self.run_powershell(mem_script).unwrap_or("{}".into());
+        let mem: serde_json::Value = serde_json::from_str(&mem_json).unwrap_or(serde_json::Value::Null);
+        
+        let total_mem_kb = mem["TotalVisibleMemorySize"].as_u64().unwrap_or(0);
+        let free_mem_kb = mem["FreePhysicalMemory"].as_u64().unwrap_or(0);
+        
+        Ok(zero_control_spi::NodeStats {
+            cpu_usage_percent: cpu,
+            memory_used_mb: (total_mem_kb - free_mem_kb) / 1024,
+            memory_total_mb: total_mem_kb / 1024,
+            storage_used_gb: 0, // Simplified
+            storage_total_gb: 0,
+        })
+    }
 }

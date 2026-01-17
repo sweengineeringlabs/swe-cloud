@@ -84,4 +84,22 @@ impl NetworkDriver for LinuxNetworkDriver {
 
         Ok("CONNECTED".to_string())
     }
+
+    async fn list_networks(&self) -> ZeroResult<Vec<NetworkStatus>> {
+        let output = self.run_virsh(vec!["net-list", "--all", "--name"])?;
+        let mut networks = Vec::new();
+
+        for name in output.lines() {
+            let name = name.trim();
+            if name.is_empty() { continue; }
+
+            networks.push(NetworkStatus {
+                id: name.to_string(),
+                cidr: "Unknown".into(),
+                state: "Available".into(),
+            });
+        }
+
+        Ok(networks)
+    }
 }

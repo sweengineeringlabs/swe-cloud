@@ -77,6 +77,17 @@ pub trait ComputeDriver: Send + Sync {
     async fn create_workload(&self, id: &str, image: &str, cpu: f32, mem_mb: i32) -> ZeroResult<WorkloadStatus>;
     async fn delete_workload(&self, id: &str) -> ZeroResult<()>;
     async fn get_workload_status(&self, id: &str) -> ZeroResult<WorkloadStatus>;
+    async fn list_workloads(&self) -> ZeroResult<Vec<WorkloadStatus>>;
+    async fn get_stats(&self) -> ZeroResult<NodeStats>;
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NodeStats {
+    pub cpu_usage_percent: f32,
+    pub memory_used_mb: u64,
+    pub memory_total_mb: u64,
+    pub storage_used_gb: u64,
+    pub storage_total_gb: u64,
 }
 
 /// Trait for ZeroCloud storage drivers (Local FS, NVMe, etc.)
@@ -86,6 +97,7 @@ pub trait StorageDriver: Send + Sync {
     async fn delete_volume(&self, id: &str) -> ZeroResult<()>;
     async fn write_block(&self, volume_id: &str, offset: u64, data: Vec<u8>) -> ZeroResult<()>;
     async fn read_block(&self, volume_id: &str, offset: u64, length: u32) -> ZeroResult<Vec<u8>>;
+    async fn list_volumes(&self) -> ZeroResult<Vec<VolumeStatus>>;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -108,6 +120,7 @@ pub trait NetworkDriver: Send + Sync {
     async fn create_network(&self, id: &str, cidr: &str) -> ZeroResult<NetworkStatus>;
     async fn delete_network(&self, id: &str) -> ZeroResult<()>;
     async fn connect_workload(&self, workload_id: &str, network_id: &str) -> ZeroResult<String>; // Returns assigned IP
+    async fn list_networks(&self) -> ZeroResult<Vec<NetworkStatus>>;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

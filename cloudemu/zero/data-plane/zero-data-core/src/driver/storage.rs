@@ -71,4 +71,21 @@ impl StorageDriver for FileSystemStorage {
             
         Ok(buffer)
     }
+
+    async fn list_volumes(&self) -> ZeroResult<Vec<VolumeStatus>> {
+        let mut volumes = Vec::new();
+        if let Ok(mut entries) = fs::read_dir(&self.base_path).await {
+            while let Ok(Some(entry)) = entries.next_entry().await {
+                if entry.file_type().await.map(|t| t.is_dir()).unwrap_or(false) {
+                    let id = entry.file_name().to_string_lossy().to_string();
+                    volumes.push(VolumeStatus {
+                        id,
+                        path: entry.path().to_string_lossy().to_string(),
+                        state: "Available".to_string(),
+                    });
+                }
+            }
+        }
+        Ok(volumes)
+    }
 }

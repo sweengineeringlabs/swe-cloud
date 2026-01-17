@@ -1,6 +1,6 @@
 # ZeroCloud Documentation Hub
 
-ZeroCloud is a high-performance, environment-agnostic private cloud orchestrator.
+ZeroCloud is a high-performance, functional private cloud platform offering native services for Compute, Storage, Database, Functions, and more.
 
 ## Quick Navigation
 

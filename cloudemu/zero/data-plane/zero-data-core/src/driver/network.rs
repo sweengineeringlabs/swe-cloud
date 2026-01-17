@@ -60,4 +60,33 @@ impl NetworkDriver for HyperVNetworkDriver {
         // This is a simplification; IP assignment usually happens via DHCP or static config inside VM
         Ok("DHCP_ASSIGNED".to_string())
     }
+
+    async fn list_networks(&self) -> ZeroResult<Vec<NetworkStatus>> {
+        let script = "Get-VMSwitch | Select-Object Name | ConvertTo-Json";
+        let output = self.run_powershell(script)?;
+        if output.is_empty() {
+            return Ok(vec![]);
+        }
+
+        let switches: serde_json::Value = serde_json::from_str(&output)
+            .map_err(|e| ZeroError::Driver(format!("JSON parse error: {}", e)))?;
+
+        let mut networks = Vec::new();
+        let items = if switches.is_array() {
+            switches.as_array().unwrap().clone()
+        } else {
+            vec![switches]
+        };
+
+        for item in items {
+            let id = item["Name"].as_str().unwrap_or("unknown").to_string();
+            networks.push(NetworkStatus {
+                id,
+                cidr: "Unknown".into(), // Hyper-V switches don't have intrinsic CIDRs in this context
+                state: "Available".into(),
+            });
+        }
+
+        Ok(networks)
+    }
 }

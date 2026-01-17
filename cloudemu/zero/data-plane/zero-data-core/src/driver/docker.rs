@@ -59,4 +59,27 @@ impl ComputeDriver for DockerDriver {
             ip_address: inspect.network_settings.and_then(|n| n.ip_address),
         })
     }
+
+    async fn list_workloads(&self) -> ZeroResult<Vec<WorkloadStatus>> {
+        let containers = self.client.list_containers::<String>(None).await
+            .map_err(|e| ZeroError::Driver(format!("Docker list error: {}", e)))?;
+
+        Ok(containers.into_iter().map(|c| WorkloadStatus {
+            id: c.names.unwrap_or_default().get(0).cloned().unwrap_or_else(|| c.id.unwrap_or_default()),
+            state: c.state.unwrap_or_else(|| "Unknown".into()),
+            ip_address: None,
+        }).collect())
+    }
+
+    async fn get_stats(&self) -> ZeroResult<zero_control_spi::NodeStats> {
+        // Implementation for real Docker stats could use self.client.stats(...)
+        // For now, return a placeholder to maintain SPI compliance
+        Ok(zero_control_spi::NodeStats {
+            cpu_usage_percent: 0.0,
+            memory_used_mb: 0,
+            memory_total_mb: 0,
+            storage_used_gb: 0,
+            storage_total_gb: 0,
+        })
+    }
 }

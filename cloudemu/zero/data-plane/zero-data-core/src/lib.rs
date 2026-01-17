@@ -1,6 +1,7 @@
 //! ZeroCloud Data Plane Engine
 
 pub mod driver;
+pub use rusqlite;
 
 use rusqlite::{params, Connection};
 use parking_lot::Mutex;
@@ -19,7 +20,7 @@ pub struct LocalNode {
 }
 
 pub struct ZeroEngine {
-    db: Arc<Mutex<Connection>>,
+    pub db: Arc<Mutex<Connection>>,
     pub compute: Arc<dyn ComputeDriver>,
     pub storage: Arc<dyn StorageDriver>,
     pub network: Arc<dyn NetworkDriver>,
