@@ -45,6 +45,22 @@ func TestGCPIntegration(t *testing.T) {
 	tableName := terraform.Output(t, terraformOptions, "table_name")
 	assert.NotEmpty(t, tableName)
 
+	// 3. Verify Networking (VPC)
+	vpcID := terraform.Output(t, terraformOptions, "vpc_id")
+	assert.NotEmpty(t, vpcID)
+
+	// 4. Verify Identity (Service Account)
+	saEmail := terraform.Output(t, terraformOptions, "sa_email")
+	assert.NotEmpty(t, saEmail)
+
+	// 5. Verify Compute (Cloud Function)
+	functionName := terraform.Output(t, terraformOptions, "function_name")
+	assert.NotEmpty(t, functionName)
+
+	// 6. Verify Messaging (Pub/Sub)
+	topicARN := terraform.Output(t, terraformOptions, "topic_arn")
+	assert.NotEmpty(t, topicARN)
+
 	t.Log("✓ GCP integration test successful")
 }
 

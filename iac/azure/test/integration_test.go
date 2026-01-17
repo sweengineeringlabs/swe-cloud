@@ -45,6 +45,22 @@ func TestAzureIntegration(t *testing.T) {
 	tableName := terraform.Output(t, terraformOptions, "table_name")
 	assert.NotEmpty(t, tableName)
 
+	// 3. Verify Networking (VNet)
+	vnetID := terraform.Output(t, terraformOptions, "vnet_id")
+	assert.NotEmpty(t, vnetID)
+
+	// 4. Verify Identity (Managed Identity)
+	identityID := terraform.Output(t, terraformOptions, "identity_id")
+	assert.NotEmpty(t, identityID)
+
+	// 5. Verify Compute (Function)
+	functionName := terraform.Output(t, terraformOptions, "function_name")
+	assert.NotEmpty(t, functionName)
+
+	// 6. Verify Messaging (Service Bus Queue)
+	queueURL := terraform.Output(t, terraformOptions, "queue_url")
+	assert.NotEmpty(t, queueURL)
+
 	t.Log("✓ Azure integration test successful")
 }
 
