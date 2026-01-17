@@ -27,5 +27,6 @@ wiremock = { workspace = true }
 tracing-subscriber = { workspace = true }
 cloudkit-aws = { path = "../cloudkit_core/aws" }
 cloudkit-gcp = { path = "../cloudkit_core/gcp" }
+cloudkit-zero = { path = "../cloudkit_core/zero" }
 # cloudkit-azure = { path = "../cloudkit_core/azure" } # Uncomment when Azure is ready
 
