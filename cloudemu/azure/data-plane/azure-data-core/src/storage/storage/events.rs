@@ -1,3 +1,5 @@
+use uuid::Uuid;
+use chrono::Utc;
 use super::engine::{StorageEngine, EventBusMetadata, EventRuleMetadata, EventTargetMetadata};
 use crate::error::{EmulatorError, Result};
 use rusqlite::params;

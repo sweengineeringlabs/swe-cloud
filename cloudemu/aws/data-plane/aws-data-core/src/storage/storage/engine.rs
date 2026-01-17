@@ -39,10 +39,25 @@ impl StorageEngine {
         // Create schema
         conn.execute_batch(SCHEMA)?;
         
-        Ok(Self {
+        let engine = Self {
             db: Arc::new(Mutex::new(conn)),
             objects_dir,
-        })
+        };
+
+        engine.init_ecs_tables()?;
+        engine.init_rds_tables()?;
+        engine.init_iam_tables()?;
+        engine.init_route53_tables()?;
+        engine.init_apigateway_tables()?;
+        engine.init_elb_tables()?;
+        engine.init_elasticache_tables()?;
+        engine.init_ecr_tables()?;
+
+        Ok(engine)
+    }
+
+    pub fn get_connection(&self) -> Result<parking_lot::MutexGuard<'_, Connection>> {
+        Ok(self.db.lock())
     }
     
     /// Create a new in-memory storage engine (for testing)
@@ -53,10 +68,21 @@ impl StorageEngine {
         let temp_dir = std::env::temp_dir().join(format!("cloudemu-{}", uuid::Uuid::new_v4()));
         fs::create_dir_all(&temp_dir)?;
         
-        Ok(Self {
+        let engine = Self {
             db: Arc::new(Mutex::new(conn)),
             objects_dir: temp_dir,
-        })
+        };
+
+        engine.init_ecs_tables()?;
+        engine.init_rds_tables()?;
+        engine.init_iam_tables()?;
+        engine.init_route53_tables()?;
+        engine.init_apigateway_tables()?;
+        engine.init_elb_tables()?;
+        engine.init_elasticache_tables()?;
+        engine.init_ecr_tables()?;
+
+        Ok(engine)
     }
     
     // Bucket Operations moved to s3.rs

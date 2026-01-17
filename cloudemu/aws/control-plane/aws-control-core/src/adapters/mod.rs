@@ -3,3 +3,4 @@
 mod aws;
 
 pub use aws::{AwsProvider, AwsStorageAdapter};
+pub mod aws_query;

@@ -24,6 +24,15 @@ pub struct GcpProvider {
     functions: CloudFunctionsService,
     secret_manager: SecretManagerService,
     billing: CloudBillingService,
+    compute: crate::services::compute::ComputeService,
+    sql: crate::services::sql::SqlService,
+    iam: crate::services::iam::IamService,
+    dns: crate::services::dns::DnsService,
+    monitoring: crate::services::monitoring::MonitoringService,
+    workflows: crate::services::workflows::WorkflowsService,
+    networking: crate::services::networking::NetworkingService,
+    run: crate::services::run::CloudRunService,
+    kms: crate::services::kms::KmsService,
 }
 
 impl GcpProvider {
@@ -40,6 +49,14 @@ impl GcpProvider {
             functions: CloudFunctionsService::new(engine.clone()),
             secret_manager: SecretManagerService::new(engine.clone()),
             billing: CloudBillingService::new(engine.clone()),
+            compute: crate::services::compute::ComputeService::new(engine.clone()),
+            sql: crate::services::sql::SqlService::new(engine.clone()),
+            iam: crate::services::iam::IamService::new(engine.clone()),
+            dns: crate::services::dns::DnsService::new(engine.clone()),
+            monitoring: crate::services::monitoring::MonitoringService::new(engine.clone()),
+            workflows: crate::services::workflows::WorkflowsService::new(engine.clone()),
+            networking: crate::services::networking::NetworkingService::new(engine.clone()),
+            run: crate::services::run::CloudRunService::new(engine.clone()),
         }
     }
 
@@ -55,6 +72,14 @@ impl GcpProvider {
             functions: CloudFunctionsService::new(engine.clone()),
             secret_manager: SecretManagerService::new(engine.clone()),
             billing: CloudBillingService::new(engine.clone()),
+            compute: crate::services::compute::ComputeService::new(engine.clone()),
+            sql: crate::services::sql::SqlService::new(engine.clone()),
+            iam: crate::services::iam::IamService::new(engine.clone()),
+            dns: crate::services::dns::DnsService::new(engine.clone()),
+            monitoring: crate::services::monitoring::MonitoringService::new(engine.clone()),
+            workflows: crate::services::workflows::WorkflowsService::new(engine.clone()),
+            networking: crate::services::networking::NetworkingService::new(engine.clone()),
+            run: crate::services::run::CloudRunService::new(engine.clone()),
         }
     }
 }
@@ -93,8 +118,46 @@ impl CloudProviderTrait for GcpProvider {
         }
 
         // Cloud Billing: /v1/services
-        if path.contains("/services") {
+        if path.contains("/services") && !path.contains("/locations/") {
              return self.billing.handle_request(req).await;
+        }
+        
+        // Compute Engine: /compute/v1/projects/...
+        if path.contains("/compute/v1/") {
+            return self.compute.handle_request(req).await;
+        }
+
+        // Cloud SQL: /sql/v1beta4/projects/...
+        if path.contains("/sql/") {
+            return self.sql.handle_request(req).await;
+        }
+
+        if path.contains("/serviceAccounts") {
+             return self.iam.handle_request(req).await;
+        }
+
+        if path.contains("/dns/v1") || path.contains("/managedZones") {
+             return self.dns.handle_request(req).await;
+        }
+
+        if path.contains("/timeSeries") {
+             return self.monitoring.handle_request(req).await;
+        }
+
+        if path.contains("/workflows") {
+             return self.workflows.handle_request(req).await;
+        }
+
+        if path.contains("/global/networks") || path.contains("/subnetworks") {
+             return self.networking.handle_request(req).await;
+        }
+
+        if path.contains("/locations/") && path.contains("/services") {
+             return self.run.handle_request(req).await;
+        }
+
+        if path.contains("/keyRings") {
+             return self.kms.handle_request(req).await;
         }
         
         // Default: Cloud Storage (bucket/object operations)

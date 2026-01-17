@@ -1,1 +1,13 @@
 pub mod pricing;
+pub mod compute;
+pub mod database;
+pub mod identity;
+pub mod dns;
+pub mod object_storage;
+pub mod monitoring;
+pub mod functions;
+pub mod queue;
+pub mod networking;
+pub mod containers;
+pub mod vault;
+pub mod nosql;

@@ -24,6 +24,19 @@ pub struct AzureProvider {
     functions: FunctionsService,
     keyvault: KeyVaultService,
     pricing: PricingService,
+    compute: crate::services::compute::ComputeService,
+    sql: crate::services::sql::SqlService,
+    identity: crate::services::identity::IdentityService,
+    dns: crate::services::dns::DnsService,
+    monitor: crate::services::monitor::MonitorService,
+    logicapps: crate::services::logicapps::LogicAppsService,
+    eventgrid: crate::services::eventgrid::EventGridService,
+    networking: crate::services::networking::NetworkingService,
+    containers: crate::services::containers::ContainerService,
+    apimanagement: crate::services::apimanagement::ApiManagementService,
+    loadbalancer: crate::services::loadbalancer::LoadBalancerService,
+    redis: crate::services::redis::RedisService,
+    acr: crate::services::acr::AcrService,
 }
 
 impl Default for AzureProvider {
@@ -46,6 +59,19 @@ impl AzureProvider {
             functions: FunctionsService::new(engine.clone()),
             keyvault: KeyVaultService::new(engine.clone()),
             pricing: PricingService::new(engine.clone()),
+            compute: crate::services::compute::ComputeService::new(engine.clone()),
+            sql: crate::services::sql::SqlService::new(engine.clone()),
+            identity: crate::services::identity::IdentityService::new(engine.clone()),
+            dns: crate::services::dns::DnsService::new(engine.clone()),
+            monitor: crate::services::monitor::MonitorService::new(engine.clone()),
+            logicapps: crate::services::logicapps::LogicAppsService::new(engine.clone()),
+            eventgrid: crate::services::eventgrid::EventGridService::new(engine.clone()),
+            networking: crate::services::networking::NetworkingService::new(engine.clone()),
+            containers: crate::services::containers::ContainerService::new(engine.clone()),
+            apimanagement: crate::services::apimanagement::ApiManagementService::new(engine.clone()),
+            loadbalancer: crate::services::loadbalancer::LoadBalancerService::new(engine.clone()),
+            redis: crate::services::redis::RedisService::new(engine.clone()),
+            acr: crate::services::acr::AcrService::new(engine.clone()),
         }
     }
 
@@ -61,6 +87,19 @@ impl AzureProvider {
             functions: FunctionsService::new(engine.clone()),
             keyvault: KeyVaultService::new(engine.clone()),
             pricing: PricingService::new(engine.clone()),
+            compute: crate::services::compute::ComputeService::new(engine.clone()),
+            sql: crate::services::sql::SqlService::new(engine.clone()),
+            identity: crate::services::identity::IdentityService::new(engine.clone()),
+            dns: crate::services::dns::DnsService::new(engine.clone()),
+            monitor: crate::services::monitor::MonitorService::new(engine.clone()),
+            logicapps: crate::services::logicapps::LogicAppsService::new(engine.clone()),
+            eventgrid: crate::services::eventgrid::EventGridService::new(engine.clone()),
+            networking: crate::services::networking::NetworkingService::new(engine.clone()),
+            containers: crate::services::containers::ContainerService::new(engine.clone()),
+            apimanagement: crate::services::apimanagement::ApiManagementService::new(engine.clone()),
+            loadbalancer: crate::services::loadbalancer::LoadBalancerService::new(engine.clone()),
+            redis: crate::services::redis::RedisService::new(engine.clone()),
+            acr: crate::services::acr::AcrService::new(engine.clone()),
         }
     }
 }
@@ -93,6 +132,60 @@ impl CloudProviderTrait for AzureProvider {
         // Service Bus (Simplified: /queue/messages or /topic/...)
         if req.path.contains("/messages") || req.path.starts_with("/queue") || req.path.starts_with("/topic") {
              return self.servicebus.handle_request(req).await;
+        }
+
+        // Compute (VMs)
+        if req.path.contains("/virtualMachines") {
+            return self.compute.handle_request(req).await;
+        }
+
+        // SQL Database
+        if req.path.contains("/databases") || req.path.contains("/servers") {
+            return self.sql.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/Microsoft.Authorization/") || req.path.contains("/servicePrincipals") {
+             return self.identity.handle_request(req).await;
+        }
+
+        if req.path.contains("/dnsZones") {
+             return self.dns.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/microsoft.insights/metrics") {
+             return self.monitor.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/Microsoft.Logic/workflows") {
+             return self.logicapps.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/Microsoft.EventGrid/") {
+             return self.eventgrid.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/Microsoft.Network/") {
+             return self.networking.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/Microsoft.ContainerInstance/") {
+             return self.containers.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/Microsoft.ApiManagement/") {
+             return self.apimanagement.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/Microsoft.Network/loadBalancers") {
+             return self.loadbalancer.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/Microsoft.Cache/Redis") {
+             return self.redis.handle_request(req).await;
+        }
+
+        if req.path.contains("/providers/Microsoft.ContainerRegistry/") {
+             return self.acr.handle_request(req).await;
         }
 
         // Default: Blob Storage

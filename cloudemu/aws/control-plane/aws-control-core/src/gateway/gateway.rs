@@ -40,6 +40,16 @@ pub fn create_router(emulator: Arc<Emulator>) -> Router {
             .route("/2015-03-31/functions", any(crate::services::lambda::handlers::handle_request));
     }
 
+    // API Gateway routes
+    #[cfg(feature = "apigateway")]
+    {
+        router = router
+            .route("/restapis", any(crate::services::apigateway::handlers::handle_request))
+            .route("/restapis/:api_id", any(crate::services::apigateway::handlers::handle_request))
+            .route("/restapis/:api_id/resources", any(crate::services::apigateway::handlers::handle_request))
+            .route("/restapis/:api_id/resources/:resource_id", any(crate::services::apigateway::handlers::handle_request));
+    }
+
     router
         .with_state(emulator)
         .layer(TraceLayer::new_for_http())

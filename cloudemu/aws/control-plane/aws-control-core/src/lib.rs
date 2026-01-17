@@ -38,8 +38,24 @@ pub struct Emulator {
     pub lambda: services::lambda::LambdaService,
     #[cfg(feature = "ec2")]
     pub ec2: services::ec2::Ec2Service,
+    #[cfg(feature = "ecs")]
+    pub ecs: services::ecs::EcsService,
+    #[cfg(feature = "rds")]
+    pub rds: services::rds::RdsService,
+    #[cfg(feature = "iam")]
+    pub iam: services::iam::IamService,
+    #[cfg(feature = "route53")]
+    pub route53: services::route53::Route53Service,
     #[cfg(feature = "pricing")]
     pub pricing: services::pricing::PricingService,
+    #[cfg(feature = "apigateway")]
+    pub apigateway: services::apigateway::ApiGatewayService,
+    #[cfg(feature = "elb")]
+    pub elb: services::elb::ElbService,
+    #[cfg(feature = "elasticache")]
+    pub elasticache: services::elasticache::ElastiCacheService,
+    #[cfg(feature = "ecr")]
+    pub ecr: services::ecr::EcrService,
 }
 
 impl Emulator {
@@ -78,8 +94,24 @@ impl Emulator {
             lambda: services::lambda::LambdaService::new(storage.clone()),
             #[cfg(feature = "ec2")]
             ec2: services::ec2::Ec2Service::new(storage.clone()),
+            #[cfg(feature = "ecs")]
+            ecs: services::ecs::EcsService::new(),
+            #[cfg(feature = "rds")]
+            rds: services::rds::RdsService::new(),
+            #[cfg(feature = "iam")]
+            iam: services::iam::IamService::new(),
+            #[cfg(feature = "route53")]
+            route53: services::route53::Route53Service::new(),
             #[cfg(feature = "pricing")]
             pricing: services::pricing::PricingService::new(storage.clone()),
+            #[cfg(feature = "apigateway")]
+            apigateway: services::apigateway::ApiGatewayService::new(storage.clone()),
+            #[cfg(feature = "elb")]
+            elb: services::elb::ElbService::new(storage.clone()),
+            #[cfg(feature = "elasticache")]
+            elasticache: services::elasticache::ElastiCacheService::new(storage.clone()),
+            #[cfg(feature = "ecr")]
+            ecr: services::ecr::EcrService::new(storage.clone()),
             storage,
             config,
         })
@@ -115,8 +147,24 @@ impl Emulator {
             lambda: services::lambda::LambdaService::new(storage.clone()),
             #[cfg(feature = "ec2")]
             ec2: services::ec2::Ec2Service::new(storage.clone()),
+            #[cfg(feature = "ecs")]
+            ecs: services::ecs::EcsService::new(),
+            #[cfg(feature = "rds")]
+            rds: services::rds::RdsService::new(),
+            #[cfg(feature = "iam")]
+            iam: services::iam::IamService::new(),
+            #[cfg(feature = "route53")]
+            route53: services::route53::Route53Service::new(),
             #[cfg(feature = "pricing")]
             pricing: services::pricing::PricingService::new(storage.clone()),
+            #[cfg(feature = "apigateway")]
+            apigateway: services::apigateway::ApiGatewayService::new(storage.clone()),
+            #[cfg(feature = "elb")]
+            elb: services::elb::ElbService::new(storage.clone()),
+            #[cfg(feature = "elasticache")]
+            elasticache: services::elasticache::ElastiCacheService::new(storage.clone()),
+            #[cfg(feature = "ecr")]
+            ecr: services::ecr::EcrService::new(storage.clone()),
             storage,
             config,
         })

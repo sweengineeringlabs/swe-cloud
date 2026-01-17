@@ -39,10 +39,24 @@ impl StorageEngine {
         // Create schema
         conn.execute_batch(SCHEMA)?;
         
-        Ok(Self {
+        let engine = Self {
             db: Arc::new(Mutex::new(conn)),
             objects_dir,
-        })
+        };
+
+        engine.init_iam_tables()?;
+        engine.init_dns_tables()?;
+        engine.init_monitoring_tables()?;
+        engine.init_workflows_tables()?;
+        engine.init_networking_tables()?;
+        engine.init_run_tables()?;
+        engine.init_kms_tables()?;
+
+        Ok(engine)
+    }
+
+    pub fn get_connection(&self) -> Result<parking_lot::MutexGuard<Connection>> {
+        Ok(self.db.lock())
     }
     
     /// Create a new in-memory storage engine (for testing)
@@ -53,10 +67,15 @@ impl StorageEngine {
         let temp_dir = std::env::temp_dir().join(format!("cloudemu-{}", uuid::Uuid::new_v4()));
         fs::create_dir_all(&temp_dir)?;
         
-        Ok(Self {
+        let engine = Self {
             db: Arc::new(Mutex::new(conn)),
             objects_dir: temp_dir,
-        })
+        };
+
+        engine.init_iam_tables()?;
+        engine.init_dns_tables()?;
+
+        Ok(engine)
     }
     
     // ==================== Object Data Storage ====================

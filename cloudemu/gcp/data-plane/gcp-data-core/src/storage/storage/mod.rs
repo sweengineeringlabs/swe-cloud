@@ -10,6 +10,13 @@ mod compute;
 mod secrets;
 mod lambda;
 mod pricing;
+mod iam;
+mod dns;
+mod monitoring;
+mod workflows;
+mod networking;
+mod run;
+mod kms;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -25,8 +32,12 @@ pub use engine::{
     GcsBucketMetadata, GcsObjectMetadata,
     FirestoreDatabaseMetadata, FirestoreDocumentMetadata,
     PubSubTopicMetadata, PubSubSubscriptionMetadata,
-    GcpInstanceMetadata
+    GcpInstanceMetadata,
 };
+
+pub use iam::ServiceAccount;
+pub use dns::ManagedZone;
+pub use workflows::Workflow;
 
 pub use pricing::{Product, OfferTerm};
 

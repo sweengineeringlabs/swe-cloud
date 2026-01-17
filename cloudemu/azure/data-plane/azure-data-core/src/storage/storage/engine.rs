@@ -1,5 +1,6 @@
 //! Storage engine implementation
 
+use uuid::Uuid;
 use crate::config::Config;
 use crate::error::Result;
 use rusqlite::Connection;
@@ -39,10 +40,27 @@ impl StorageEngine {
         // Create schema
         conn.execute_batch(SCHEMA)?;
         
-        Ok(Self {
+        let engine = Self {
             db: Arc::new(Mutex::new(conn)),
             objects_dir,
-        })
+        };
+
+        engine.init_identity_tables()?;
+        engine.init_dns_tables()?;
+        engine.init_monitoring_tables()?;
+        engine.init_logicapps_tables()?;
+        engine.init_networking_tables()?;
+        engine.init_containers_tables()?;
+        engine.init_apimanagement_tables()?;
+        engine.init_loadbalancer_tables()?;
+        engine.init_redis_tables()?;
+        engine.init_acr_tables()?;
+
+        Ok(engine)
+    }
+
+    pub fn get_connection(&self) -> Result<parking_lot::MutexGuard<Connection>> {
+        Ok(self.db.lock())
     }
     
     /// Create a new in-memory storage engine (for testing)
@@ -53,10 +71,15 @@ impl StorageEngine {
         let temp_dir = std::env::temp_dir().join(format!("cloudemu-{}", uuid::Uuid::new_v4()));
         fs::create_dir_all(&temp_dir)?;
         
-        Ok(Self {
+        let engine = Self {
             db: Arc::new(Mutex::new(conn)),
             objects_dir: temp_dir,
-        })
+        };
+
+        engine.init_identity_tables()?;
+        engine.init_dns_tables()?;
+
+        Ok(engine)
     }
     
     // ==================== Object Data Storage ====================
@@ -96,26 +119,6 @@ impl StorageEngine {
     // Object Operations moved to s3.rs
     
     // KMS Operations moved to kms.rs
-
-    // Step Functions Operations moved to workflows.rs
-
-    // Cognito Operations moved to identity.rs
-
-    // CloudWatch Operations moved to monitoring.rs
-
-    // EventBridge Operations moved to events.rs
-
-    // Secrets Operations moved to secrets.rs
-
-    // Object Data Storage helpers moved to s3.rs
-
-    // SQS Operations moved to sqs.rs
-
-    // DynamoDB Operations moved to dynamodb.rs
-
-    // SNS Operations moved to sns.rs
-
-    // Lambda Operations moved to lambda.rs
 }
 
 /// Bucket metadata

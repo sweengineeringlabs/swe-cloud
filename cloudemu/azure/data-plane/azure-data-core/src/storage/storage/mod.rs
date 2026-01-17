@@ -2,7 +2,6 @@
 
 mod engine;
 mod schema;
-// AWS modules removed (s3, dynamodb, etc)
 mod blob;
 mod cosmos;
 mod eventgrid;
@@ -12,6 +11,17 @@ mod dynamodb;
 mod lambda;
 mod sqs;
 mod pricing;
+mod identity;
+mod dns;
+mod monitoring;
+pub mod logicapps;
+pub mod apimanagement;
+pub mod loadbalancer;
+pub mod redis;
+pub mod acr;
+pub mod sql;
+pub mod networking;
+pub mod containers;
 
 pub use engine::{
     StorageEngine, BucketMetadata, ObjectMetadata, ListObjectsResult,
@@ -27,11 +37,14 @@ pub use engine::{
     StorageAccountMetadata, BlobContainerMetadata, BlobMetadata,
     CosmosAccountMetadata, CosmosDatabaseMetadata, CosmosContainerMetadata, CosmosItemMetadata,
     EventGridTopicMetadata, EventGridSubscriptionMetadata,
-    VirtualMachineMetadata
+    VirtualMachineMetadata,
 };
 
+pub use identity::{ServicePrincipal, RoleAssignment};
+pub use dns::{DnsZone, RecordSet};
+pub use logicapps::LogicApp;
 pub use pricing::{Product, OfferTerm};
-
 pub use lambda::CreateFunctionParams;
-
-
+pub use sql::AzureSqlDatabase;
+pub use networking::{VirtualNetwork, Subnet};
+pub use containers::ContainerGroup;

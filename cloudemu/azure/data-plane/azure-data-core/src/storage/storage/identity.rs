@@ -1,136 +1,98 @@
-use super::engine::{StorageEngine, UserPoolMetadata, UserMetadata, UserGroupMetadata};
-use crate::error::{EmulatorError, Result};
+use super::StorageEngine;
+use crate::error::Result;
+use serde::{Deserialize, Serialize};
 use rusqlite::params;
+use uuid::Uuid;
+use chrono::Utc;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ServicePrincipal {
+    pub id: String,
+    pub app_id: String,
+    pub display_name: String,
+    pub object_type: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RoleAssignment {
+    pub id: String,
+    pub name: String,
+    pub scope: String,
+    pub principal_id: String,
+    pub role_definition_id: String,
+}
 
 impl StorageEngine {
-    // ==================== Cognito Operations ====================
-    
-    pub fn create_user_pool(&self, name: &str, account_id: &str, region: &str) -> Result<UserPoolMetadata> {
-        let db = self.db.lock();
-        let pool_id = format!("{}_{}", region, uuid::Uuid::new_v4().to_string().replace("-", ""));
-        let arn = format!("arn:aws:cognito-idp:{}:{}:userpool/{}", region, account_id, pool_id);
-        let now = chrono::Utc::now().to_rfc3339();
+    const TABLE_AAD_SPS: &'static str = "azure_aad_service_principals";
+    const TABLE_AAD_ROLES: &'static str = "azure_role_assignments";
+
+    pub fn init_identity_tables(&self) -> Result<()> {
+        let conn = self.get_connection()?;
         
-        db.execute(
-            "INSERT INTO cognito_user_pools (id, name, arn, created_at) VALUES (?1, ?2, ?3, ?4)",
-            params![pool_id, name, arn, now],
+        conn.execute(&format!(
+            "CREATE TABLE IF NOT EXISTS {} (
+                id TEXT PRIMARY KEY,
+                app_id TEXT NOT NULL,
+                display_name TEXT NOT NULL,
+                object_type TEXT NOT NULL,
+                created_at INTEGER
+            )", 
+            Self::TABLE_AAD_SPS
+        ), [])?;
+
+        conn.execute(&format!(
+            "CREATE TABLE IF NOT EXISTS {} (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                scope TEXT NOT NULL,
+                principal_id TEXT NOT NULL,
+                role_definition_id TEXT NOT NULL,
+                created_at INTEGER
+            )", 
+            Self::TABLE_AAD_ROLES
+        ), [])?;
+
+        Ok(())
+    }
+
+    pub fn create_service_principal(&self, display_name: &str) -> Result<ServicePrincipal> {
+        let conn = self.get_connection()?;
+        let id = Uuid::new_v4().to_string();
+        let app_id = Uuid::new_v4().to_string();
+
+        conn.execute(
+            &format!("INSERT INTO {} (
+                id, app_id, display_name, object_type, created_at
+            ) VALUES (?1, ?2, ?3, ?4, ?5)", Self::TABLE_AAD_SPS),
+            params![id, app_id, display_name, "ServicePrincipal", Utc::now().timestamp()],
         )?;
-        
-        Ok(UserPoolMetadata {
-            id: pool_id,
-            name: name.to_string(),
-            arn,
-            created_at: now,
+
+        Ok(ServicePrincipal {
+            id,
+            app_id,
+            display_name: display_name.to_string(),
+            object_type: "ServicePrincipal".to_string(),
         })
     }
 
-    pub fn list_user_pools(&self) -> Result<Vec<UserPoolMetadata>> {
-        let db = self.db.lock();
-        let mut stmt = db.prepare("SELECT id, name, arn, created_at FROM cognito_user_pools")?;
-        let pools = stmt.query_map([], |row| Ok(UserPoolMetadata {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            arn: row.get(2)?,
-            created_at: row.get(3)?,
-        }))?
-        .filter_map(|r| r.ok())
-        .collect();
-        Ok(pools)
-    }
+    pub fn create_role_assignment(&self, scope: &str, principal_id: &str, role_id: &str) -> Result<RoleAssignment> {
+        let conn = self.get_connection()?;
+        let name = Uuid::new_v4().to_string();
+        let id = format!("{}/providers/Microsoft.Authorization/roleAssignments/{}", scope, name);
 
-    pub fn admin_create_user(&self, pool_id: &str, username: &str, attributes: Vec<(String, String)>) -> Result<UserMetadata> {
-        let db = self.db.lock();
-        let now = chrono::Utc::now().to_rfc3339();
-        
-        let email = attributes.iter().find(|(n, _)| n == "email").map(|(_, v)| v.to_string());
-        
-        db.execute(
-            "INSERT INTO cognito_users (user_pool_id, username, email, created_at) VALUES (?1, ?2, ?3, ?4)",
-            params![pool_id, username, email, now],
-        ).map_err(|e| {
-            if e.to_string().contains("UNIQUE constraint") {
-                EmulatorError::AlreadyExists(format!("User {} already exists in pool {}", username, pool_id))
-            } else {
-                EmulatorError::Database(e.to_string())
-            }
-        })?;
-        
-        for (name, value) in attributes {
-            db.execute(
-                "INSERT INTO cognito_user_attributes (user_pool_id, username, name, value) VALUES (?1, ?2, ?3, ?4)",
-                params![pool_id, username, name, value],
-            )?;
-        }
-        
-        Ok(UserMetadata {
-            user_pool_id: pool_id.to_string(),
-            username: username.to_string(),
-            email,
-            status: "CONFIRMED".to_string(),
-            enabled: true,
-            created_at: now,
+        conn.execute(
+            &format!("INSERT INTO {} (
+                id, name, scope, principal_id, role_definition_id, created_at
+            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6)", Self::TABLE_AAD_ROLES),
+            params![id, name, scope, principal_id, role_id, Utc::now().timestamp()],
+        )?;
+
+        Ok(RoleAssignment {
+            id,
+            name,
+            scope: scope.to_string(),
+            principal_id: principal_id.to_string(),
+            role_definition_id: role_id.to_string(),
         })
-    }
-
-    pub fn admin_get_user(&self, pool_id: &str, username: &str) -> Result<(UserMetadata, Vec<(String, String)>)> {
-        let db = self.db.lock();
-        let user = db.query_row(
-            "SELECT user_pool_id, username, email, status, enabled, created_at FROM cognito_users WHERE user_pool_id = ?1 AND username = ?2",
-            params![pool_id, username],
-            |row| Ok(UserMetadata {
-                user_pool_id: row.get(0)?,
-                username: row.get(1)?,
-                email: row.get(2)?,
-                status: row.get(3)?,
-                enabled: row.get(4)?,
-                created_at: row.get(5)?,
-            })
-        ).map_err(|_| EmulatorError::NotFound("User".into(), username.into()))?;
-        
-        let mut stmt = db.prepare("SELECT name, value FROM cognito_user_attributes WHERE user_pool_id = ?1 AND username = ?2")?;
-        let attrs = stmt.query_map(params![pool_id, username], |row| Ok((row.get(0)?, row.get(1)?)))?
-            .filter_map(|r| r.ok())
-            .collect();
-            
-        Ok((user, attrs))
-    }
-
-    pub fn create_group(&self, pool_id: &str, group_name: &str, description: Option<&str>, precedence: Option<i32>) -> Result<UserGroupMetadata> {
-        let db = self.db.lock();
-        let now = chrono::Utc::now().to_rfc3339();
-        
-        db.execute(
-            "INSERT INTO cognito_groups (user_pool_id, group_name, description, precedence, created_at) VALUES (?1, ?2, ?3, ?4, ?5)",
-            params![pool_id, group_name, description, precedence, now],
-        ).map_err(|e| {
-            if e.to_string().contains("UNIQUE constraint") {
-                EmulatorError::AlreadyExists(format!("Group {} already exists in pool {}", group_name, pool_id))
-            } else {
-                EmulatorError::Database(e.to_string())
-            }
-        })?;
-        
-        Ok(UserGroupMetadata {
-            user_pool_id: pool_id.to_string(),
-            group_name: group_name.to_string(),
-            description: description.map(|s| s.to_string()),
-            precedence,
-            created_at: now,
-        })
-    }
-
-    pub fn list_groups(&self, pool_id: &str) -> Result<Vec<UserGroupMetadata>> {
-        let db = self.db.lock();
-        let mut stmt = db.prepare("SELECT user_pool_id, group_name, description, precedence, created_at FROM cognito_groups WHERE user_pool_id = ?1")?;
-        let groups = stmt.query_map(params![pool_id], |row| Ok(UserGroupMetadata {
-            user_pool_id: row.get(0)?,
-            group_name: row.get(1)?,
-            description: row.get(2)?,
-            precedence: row.get(3)?,
-            created_at: row.get(4)?,
-        }))?
-        .filter_map(|r| r.ok())
-        .collect();
-        Ok(groups)
     }
 }

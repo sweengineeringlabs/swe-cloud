@@ -1,3 +1,4 @@
+use chrono::Utc;
 use super::engine::{StorageEngine, TableMetadata};
 use crate::error::{EmulatorError, Result};
 use rusqlite::params;

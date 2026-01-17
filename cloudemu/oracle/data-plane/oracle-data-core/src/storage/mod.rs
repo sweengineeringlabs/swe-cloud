@@ -9,6 +9,18 @@ pub struct StorageEngine {
 }
 
 pub mod pricing;
+pub mod compute;
+pub mod database;
+pub mod identity;
+pub mod dns;
+pub mod object_storage;
+pub mod monitoring;
+pub mod functions;
+pub mod queue;
+pub mod networking;
+pub mod containers;
+pub mod vault;
+pub mod nosql;
 
 impl StorageEngine {
     pub fn new(data_dir: PathBuf) -> Result<Self> {
@@ -50,9 +62,49 @@ impl StorageEngine {
             [],
         )?;
 
-        Ok(Self {
+        let engine = Self {
             db: Arc::new(Mutex::new(conn)),
             data_dir,
-        })
+        };
+
+        engine.init_compute_tables()?;
+        engine.init_db_tables()?;
+        engine.init_identity_tables()?;
+        engine.init_dns_tables()?;
+        engine.init_object_storage_tables()?;
+        engine.init_monitoring_tables()?;
+        engine.init_functions_tables()?;
+        engine.init_queue_tables()?;
+        engine.init_networking_tables()?;
+        engine.init_containers_tables()?;
+        engine.init_vault_tables()?;
+        engine.init_nosql_tables()?;
+        
+        Ok(engine)
+    }
+
+    pub fn in_memory() -> Result<Self> {
+        let conn = Connection::open_in_memory()?;
+        let engine = Self {
+            db: Arc::new(Mutex::new(conn)),
+            data_dir: PathBuf::from(""), // In-memory
+        };
+        engine.init_compute_tables()?;
+        engine.init_db_tables()?;
+        engine.init_identity_tables()?;
+        engine.init_dns_tables()?;
+        engine.init_object_storage_tables()?;
+        engine.init_monitoring_tables()?;
+        engine.init_monitoring_tables()?;
+        engine.init_functions_tables()?;
+        engine.init_queue_tables()?;
+        engine.init_networking_tables()?;
+        engine.init_containers_tables()?;
+        engine.init_vault_tables()?;
+        engine.init_nosql_tables()?;
+        Ok(engine)
+    }
+    pub fn get_connection(&self) -> Result<std::sync::MutexGuard<rusqlite::Connection>> {
+        Ok(self.db.lock().map_err(|_| crate::error::EmulatorError::Internal("Lock poison".into()))?)
     }
 }

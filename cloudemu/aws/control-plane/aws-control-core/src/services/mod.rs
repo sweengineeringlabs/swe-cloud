@@ -36,5 +36,29 @@ pub mod workflows;
 #[cfg(feature = "ec2")]
 pub mod ec2;
 
+#[cfg(feature = "ecs")]
+pub mod ecs;
+
+#[cfg(feature = "rds")]
+pub mod rds;
+
+#[cfg(feature = "iam")]
+pub mod iam;
+
+#[cfg(feature = "route53")]
+pub mod route53;
+
 #[cfg(feature = "pricing")]
 pub mod pricing;
+
+#[cfg(feature = "apigateway")]
+pub mod apigateway;
+
+#[cfg(feature = "elb")]
+pub mod elb;
+
+#[cfg(feature = "elasticache")]
+pub mod elasticache;
+
+#[cfg(feature = "ecr")]
+pub mod ecr;

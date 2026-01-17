@@ -1,182 +1,62 @@
-use super::engine::{StorageEngine, MetricMetadata, LogGroupMetadata, LogStreamMetadata, LogEventMetadata};
-use crate::error::{EmulatorError, Result};
+use super::StorageEngine;
+use crate::error::Result;
+use serde::{Deserialize, Serialize};
 use rusqlite::params;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GcpTimeSeries {
+    pub metric_type: String,
+    pub resource_type: String,
+    pub timestamp: String,
+    pub value: f64,
+}
+
 impl StorageEngine {
-    // ==================== CloudWatch Operations ====================
-    
-    pub fn put_metric_data(&self, namespace: &str, metrics: Vec<MetricMetadata>) -> Result<()> {
-        let db = self.db.lock();
-        for m in metrics {
-            db.execute(
-                "INSERT INTO cw_metrics (namespace, metric_name, dimensions, value, unit, timestamp) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-                params![namespace, m.metric_name, m.dimensions, m.value, m.unit, m.timestamp],
-            )?;
-        }
+    pub fn init_monitoring_tables(&self) -> Result<()> {
+        let conn = self.db.lock();
+        
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS gcp_metrics (
+                metric_type TEXT NOT NULL,
+                resource_type TEXT NOT NULL,
+                timestamp TEXT NOT NULL,
+                value REAL NOT NULL
+            )",
+            [],
+        )?;
         Ok(())
     }
 
-    pub fn list_metrics(&self, namespace: Option<&str>, metric_name: Option<&str>) -> Result<Vec<MetricMetadata>> {
-        let db = self.db.lock();
-        let mut query = "SELECT namespace, metric_name, dimensions, value, unit, timestamp FROM cw_metrics WHERE 1=1".to_string();
-        let mut args: Vec<Box<dyn rusqlite::ToSql>> = Vec::new();
-
-        if let Some(ns) = namespace {
-            query.push_str(" AND namespace = ?");
-            args.push(Box::new(ns.to_string()));
-        }
-        if let Some(name) = metric_name {
-            query.push_str(" AND metric_name = ?");
-            args.push(Box::new(name.to_string()));
-        }
-
-        let mut stmt = db.prepare(&query)?;
+    pub fn create_time_series(&self, metric_type: &str, resource_type: &str, value: f64) -> Result<()> {
+        let conn = self.db.lock();
+        let now = chrono::Utc::now().to_rfc3339();
         
-        let params_refs: Vec<&dyn rusqlite::ToSql> = args.iter().map(|b| b.as_ref()).collect();
+        conn.execute(
+            "INSERT INTO gcp_metrics (metric_type, resource_type, timestamp, value)
+             VALUES (?1, ?2, ?3, ?4)",
+            params![metric_type, resource_type, now, value],
+        )?;
 
-        let metrics = stmt.query_map(rusqlite::params_from_iter(params_refs), |row| Ok(MetricMetadata {
-            namespace: row.get(0)?,
-            metric_name: row.get(1)?,
-            dimensions: row.get(2)?,
-            value: row.get(3)?,
-            unit: row.get(4)?,
-            timestamp: row.get(5)?,
-        }))?
+        Ok(())
+    }
+
+    pub fn list_time_series(&self, _project: &str) -> Result<Vec<GcpTimeSeries>> {
+        let conn = self.db.lock();
+        let mut stmt = conn.prepare(
+            "SELECT metric_type, resource_type, timestamp, value FROM gcp_metrics"
+        )?;
+
+        let metrics = stmt.query_map([], |row| {
+            Ok(GcpTimeSeries {
+                metric_type: row.get(0)?,
+                resource_type: row.get(1)?,
+                timestamp: row.get(2)?,
+                value: row.get(3)?,
+            })
+        })?
         .filter_map(|r| r.ok())
         .collect();
 
         Ok(metrics)
     }
-
-    pub fn create_log_group(&self, name: &str, account_id: &str, region: &str) -> Result<LogGroupMetadata> {
-        let db = self.db.lock();
-        let arn = format!("arn:aws:logs:{}:{}:log-group:{}", region, account_id, name);
-        let now = chrono::Utc::now().to_rfc3339();
-        
-        db.execute(
-            "INSERT INTO cw_log_groups (name, arn, created_at) VALUES (?1, ?2, ?3)",
-            params![name, arn, now],
-        ).map_err(|e| {
-            if e.to_string().contains("UNIQUE constraint") {
-                EmulatorError::AlreadyExists(format!("Log group {} already exists", name))
-            } else {
-                EmulatorError::Database(e.to_string())
-            }
-        })?;
-        
-        Ok(LogGroupMetadata {
-            name: name.to_string(),
-            arn,
-            retention_days: None,
-            created_at: now,
-        })
-    }
-
-    pub fn delete_log_group(&self, name: &str) -> Result<()> {
-        let db = self.db.lock();
-        let rows = db.execute("DELETE FROM cw_log_groups WHERE name = ?1", params![name])?;
-        if rows == 0 {
-            return Err(EmulatorError::NotFound("LogGroup".into(), name.into()));
-        }
-        Ok(())
-    }
-
-    pub fn create_log_stream(&self, group_name: &str, stream_name: &str, account_id: &str, region: &str) -> Result<LogStreamMetadata> {
-        let db = self.db.lock();
-        let arn = format!("arn:aws:logs:{}:{}:log-group:{}:log-stream:{}", region, account_id, group_name, stream_name);
-        let now = chrono::Utc::now().to_rfc3339();
-        
-        db.execute(
-            "INSERT INTO cw_log_streams (name, log_group_name, arn, created_at) VALUES (?1, ?2, ?3, ?4)",
-            params![stream_name, group_name, arn, now],
-        ).map_err(|e| {
-            if e.to_string().contains("UNIQUE constraint") {
-                EmulatorError::AlreadyExists(format!("Log stream {} already exists in group {}", stream_name, group_name))
-            } else {
-                EmulatorError::Database(e.to_string())
-            }
-        })?;
-        
-        Ok(LogStreamMetadata {
-            name: stream_name.to_string(),
-            log_group_name: group_name.to_string(),
-            arn,
-            created_at: now,
-        })
-    }
-
-    pub fn put_log_events(&self, group_name: &str, stream_name: &str, events: Vec<LogEventMetadata>) -> Result<()> {
-        let db = self.db.lock();
-        for e in events {
-            db.execute(
-                "INSERT INTO cw_log_events (log_group_name, log_stream_name, timestamp, message) VALUES (?1, ?2, ?3, ?4)",
-                params![group_name, stream_name, e.timestamp, e.message],
-            )?;
-        }
-        Ok(())
-    }
-
-    pub fn get_log_events(&self, group_name: &str, stream_name: &str) -> Result<Vec<LogEventMetadata>> {
-        let db = self.db.lock();
-        let mut stmt = db.prepare(
-            "SELECT timestamp, message FROM cw_log_events WHERE log_group_name = ?1 AND log_stream_name = ?2 ORDER BY timestamp"
-        )?;
-        let events = stmt.query_map(params![group_name, stream_name], |row| Ok(LogEventMetadata {
-            timestamp: row.get(0)?,
-            message: row.get(1)?,
-        }))?
-        .filter_map(|r| r.ok())
-        .collect();
-        Ok(events)
-    }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_cloudwatch_metrics() {
-        let engine = StorageEngine::in_memory().unwrap();
-        
-        // Put Metric
-        let metric = MetricMetadata {
-            namespace: "MyNamespace".to_string(),
-            metric_name: "MyMetric".to_string(),
-            dimensions: None,
-            value: 100.0,
-            unit: None,
-            timestamp: "2023-01-01T00:00:00Z".to_string(),
-        };
-        engine.put_metric_data("MyNamespace", vec![metric]).unwrap();
-        
-        // List Metrics
-        let metrics = engine.list_metrics(Some("MyNamespace"), None).unwrap();
-        assert_eq!(metrics.len(), 1);
-        assert_eq!(metrics[0].value, 100.0);
-    }
-    
-    #[test]
-    fn test_cloudwatch_logs() {
-        let engine = StorageEngine::in_memory().unwrap();
-        
-        // Create Log Group
-        engine.create_log_group("my-logs", "123", "us-east-1").unwrap();
-        
-        // Create Log Stream
-        engine.create_log_stream("my-logs", "stream-1", "123", "us-east-1").unwrap();
-        
-        // Put Events
-        let events = vec![
-            LogEventMetadata { timestamp: "1000".to_string(), message: "msg1".to_string() },
-            LogEventMetadata { timestamp: "2000".to_string(), message: "msg2".to_string() },
-        ];
-        engine.put_log_events("my-logs", "stream-1", events).unwrap();
-        
-        // Get Events
-        let fetched = engine.get_log_events("my-logs", "stream-1").unwrap();
-        assert_eq!(fetched.len(), 2);
-        assert_eq!(fetched[0].message, "msg1");
-    }
-}
-
