@@ -28,6 +28,15 @@ pub async fn start_server(port: u16, native: bool, mock: bool) -> anyhow::Result
     };
     
     let provider = Arc::new(ZeroProvider::new(Arc::new(engine)));
+    
+    // 2. Initialize Data Plane services
+    let lb_provider = provider.clone();
+    tokio::spawn(async move {
+        if let Err(e) = lb_provider.lb.sync_data_plane().await {
+            tracing::error!("Failed to sync LB data plane: {}", e);
+        }
+    });
+
     let state = Arc::new(ServerState { provider });
 
     // 2. Setup CORS
