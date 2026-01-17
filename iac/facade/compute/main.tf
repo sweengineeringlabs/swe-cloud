@@ -36,6 +36,12 @@ locals {
       large  = "VM.Standard3.Flex"
       xlarge = "VM.Standard3.Flex"
     }
+    zero = {
+      small  = "zero.micro"
+      medium = "zero.medium"
+      large  = "zero.large"
+      xlarge = "zero.xlarge"
+    }
   }
 
   # Build common tags
@@ -97,12 +103,24 @@ module "gcp_compute" {
   labels         = local.common_tags
 }
 
+# Route to Zero compute module
+module "zero_compute" {
+  count  = var.provider_name == "zero" ? 1 : 0
+  source = "../../zero/core/compute"
+  
+  instance_name = var.instance_name
+  instance_type = local.compute_instance_types[var.provider_name][var.instance_size]
+  ami           = "zero-ami-latest" # Mocked in Zero
+  tags          = local.common_tags
+}
+
 # Aggregated outputs (select based on provider)
 locals {
   instance_id = (
     var.provider_name == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].instance_id : null) :
     var.provider_name == "azure" ? (length(module.azure_compute) > 0 ? module.azure_compute[0].vm_id : null) :
     var.provider_name == "gcp" ? (length(module.gcp_compute) > 0 ? module.gcp_compute[0].instance_id : null) :
+    var.provider_name == "zero" ? (length(module.zero_compute) > 0 ? module.zero_compute[0].instance_id : null) :
     null
   )
   
@@ -110,6 +128,7 @@ locals {
     var.provider_name == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].public_ip : null) :
     var.provider_name == "azure" ? (length(module.azure_compute) > 0 ? module.azure_compute[0].public_ip : null) :
     var.provider_name == "gcp" ? (length(module.gcp_compute) > 0 ? module.gcp_compute[0].public_ip : null) :
+    var.provider_name == "zero" ? (length(module.zero_compute) > 0 ? module.zero_compute[0].public_ip : null) :
     null
   )
   
@@ -117,6 +136,7 @@ locals {
     var.provider_name == "aws" ? (length(module.aws_compute) > 0 ? module.aws_compute[0].private_ip : null) :
     var.provider_name == "azure" ? (length(module.azure_compute) > 0 ? module.azure_compute[0].private_ip : null) :
     var.provider_name == "gcp" ? (length(module.gcp_compute) > 0 ? module.gcp_compute[0].private_ip : null) :
+    var.provider_name == "zero" ? (length(module.zero_compute) > 0 ? module.zero_compute[0].private_ip : null) :
     null
   )
 }
