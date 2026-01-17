@@ -29,7 +29,7 @@ locals {
 # AWS: VPC
 module "aws_networking" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/networking"
+  source = "../../aws/core/networking"
   
   vpc_name            = var.network_name
   vpc_cidr            = var.metrics.cidr
@@ -47,7 +47,7 @@ module "aws_networking" {
 # Azure: VNet
 module "azure_networking" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/networking"
+  source = "../../azure/core/networking"
   
   vnet_name           = var.network_name
   resource_group_name = try(var.provider_config.resource_group_name, "default-rg")
@@ -77,7 +77,7 @@ module "azure_networking" {
 # GCP: VPC
 module "gcp_networking" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/networking"
+  source = "../../gcp/core/networking"
   
   network_name = var.network_name
   routing_mode = "GLOBAL"

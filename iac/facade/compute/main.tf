@@ -58,7 +58,7 @@ locals {
 # Route to AWS compute module
 module "aws_compute" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/compute"
+  source = "../../aws/core/compute"
   
   ami           = lookup(var.provider_config, "ami", "ami-0c55b159cbfafe1f0")
   instance_type = local.compute_instance_types[var.provider_name][var.instance_size]
@@ -69,7 +69,7 @@ module "aws_compute" {
 # Route to Azure compute module  
 module "azure_compute" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/compute"
+  source = "../../azure/core/compute"
   
   vm_name             = var.instance_name
   vm_size             = local.compute_instance_types[var.provider_name][var.instance_size]
@@ -85,7 +85,7 @@ module "azure_compute" {
 # Route to GCP compute module
 module "gcp_compute" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/compute"
+  source = "../../gcp/core/compute"
   
   instance_name  = var.instance_name
   machine_type   = local.compute_instance_types[var.provider_name][var.instance_size]

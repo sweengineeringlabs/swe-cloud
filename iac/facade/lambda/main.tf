@@ -1,6 +1,6 @@
 module "aws_lambda" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/lambda"
+  source = "../../aws/core/lambda"
 
   function_name = var.function_name
   handler       = var.handler

@@ -21,7 +21,7 @@ locals {
 # AWS: CloudWatch
 module "aws_monitoring" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/monitoring"
+  source = "../../aws/core/monitoring"
   
   create_alarm        = true
   alarm_name          = var.alarm_name
@@ -39,7 +39,7 @@ module "aws_monitoring" {
 # Azure: Azure Monitor
 module "azure_monitoring" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/monitoring"
+  source = "../../azure/core/monitoring"
   
   alarm_name          = var.alarm_name
   resource_group_name = lookup(var.provider_config, "resource_group_name", "monitoring-rg")
@@ -56,7 +56,7 @@ module "azure_monitoring" {
 # GCP: Cloud Monitoring
 module "gcp_monitoring" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/monitoring"
+  source = "../../gcp/core/monitoring"
   
   create_alert_policy = true
   display_name        = var.alarm_name

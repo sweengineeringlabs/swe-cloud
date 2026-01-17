@@ -15,7 +15,7 @@ locals {
 # AWS: KMS
 module "aws_kms" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/encryption"
+  source = "../../aws/core/encryption"
 
   name        = var.name
   description = var.description
@@ -26,7 +26,7 @@ module "aws_kms" {
 # Azure: Key Vault Key
 module "azure_kms" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/encryption"
+  source = "../../azure/core/encryption"
 
   name         = var.name
   key_vault_id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/vault" # Placeholder
@@ -36,7 +36,7 @@ module "azure_kms" {
 # GCP: KMS
 module "gcp_kms" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/encryption"
+  source = "../../gcp/core/encryption"
 
   project_id    = var.project_name
   key_ring_name = "${var.project_name}-${var.environment}-keyring"

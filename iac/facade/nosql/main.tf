@@ -15,7 +15,7 @@ locals {
 # AWS: DynamoDB
 module "aws_nosql" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/nosql"
+  source = "../../aws/core/nosql"
 
   table_name    = var.table_name
   hash_key      = var.hash_key
@@ -33,7 +33,7 @@ module "aws_nosql" {
 # Azure: CosmosDB
 module "azure_nosql" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/nosql"
+  source = "../../azure/core/nosql"
 
   account_name        = replace(lower(var.table_name), "-", "")
   resource_group_name = "${var.project_name}-${var.environment}-rg"
@@ -47,7 +47,7 @@ module "azure_nosql" {
 # GCP: Firestore
 module "gcp_nosql" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/nosql"
+  source = "../../gcp/core/nosql"
 
   project_id  = var.project_name
   database_id = var.table_name
@@ -57,7 +57,7 @@ module "gcp_nosql" {
 # ZeroCloud: ZeroDB
 module "zero_nosql" {
   count  = var.provider_name == "zero" ? 1 : 0
-  source = "../../iac_core/zero/src/nosql"
+  source = "../../zero/core/nosql"
 
   table_name    = var.table_name
   hash_key      = var.hash_key

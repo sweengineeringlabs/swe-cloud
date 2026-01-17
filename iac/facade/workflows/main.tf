@@ -15,7 +15,7 @@ locals {
 # AWS: Step Functions
 module "aws_workflows" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/workflows"
+  source = "../../aws/core/workflows"
 
   name       = var.name
   definition = var.definition
@@ -27,7 +27,7 @@ module "aws_workflows" {
 # Azure: Logic App
 module "azure_workflows" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/workflows"
+  source = "../../azure/core/workflows"
 
   name                = var.name
   resource_group_name = "${var.project_name}-${var.environment}-rg"
@@ -40,7 +40,7 @@ module "azure_workflows" {
 # GCP: Workflows
 module "gcp_workflows" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/workflows"
+  source = "../../gcp/core/workflows"
 
   project_id      = var.project_name
   name            = var.name

@@ -52,7 +52,7 @@ locals {
 # AWS: RDS
 module "aws_database" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/database"
+  source = "../../aws/core/database"
   
   identifier             = var.identifier
   engine                 = var.engine
@@ -80,7 +80,7 @@ module "aws_database" {
 # Azure: SQL Database
 module "azure_database" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/database"
+  source = "../../azure/core/database"
   
   server_name         = var.identifier
   database_name       = var.database_name != null ? var.database_name : "main-db"
@@ -101,7 +101,7 @@ module "azure_database" {
 # GCP: Cloud SQL
 module "gcp_database" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/database"
+  source = "../../gcp/core/database"
   
   instance_name    = var.identifier
   database_name    = var.database_name != null ? var.database_name : "main-db"

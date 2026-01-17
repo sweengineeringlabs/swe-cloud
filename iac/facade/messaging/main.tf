@@ -21,7 +21,7 @@ locals {
 # AWS: SQS or SNS
 module "aws_messaging" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/messaging"
+  source = "../../aws/core/messaging"
   
   create_queue = var.type == "queue"
   queue_name   = var.name

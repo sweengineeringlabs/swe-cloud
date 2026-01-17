@@ -15,7 +15,7 @@ locals {
 # AWS: Secrets Manager
 module "aws_secrets" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/secrets"
+  source = "../../aws/core/secrets"
 
   name          = var.name
   description   = var.description
@@ -27,7 +27,7 @@ module "aws_secrets" {
 # Azure: Key Vault Secret
 module "azure_secrets" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/secrets"
+  source = "../../azure/core/secrets"
 
   name         = var.name
   secret_value = var.secret_string
@@ -38,7 +38,7 @@ module "azure_secrets" {
 # GCP: Secret Manager
 module "gcp_secrets" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/secrets"
+  source = "../../gcp/core/secrets"
 
   project_id  = var.project_name
   secret_id   = var.name

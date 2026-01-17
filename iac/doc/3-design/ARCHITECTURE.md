@@ -60,48 +60,24 @@ This document defines the 5-layer architectural pattern used to provide a unifie
 
 ## Proposed Structure
 
-```
 iac/
-├── common/                    # Layer 1: COMMON
-│   ├── variables.tf          # Shared variable definitions
-│   ├── locals.tf             # Size mappings, conventions
-│   ├── tags.tf               # Tagging standards
-│   └── README.md             # Layer documentation
-│
-├── iac_spi/                   # Layer 2: SPI (Service Provider Interface)
-│   ├── aws/
-│   │   ├── provider.tf       # AWS provider configuration
-│   │   ├── backend.tf        # State backend
-│   │   └── variables.tf      # AWS-specific variables
-│   ├── azure/
-│   └── gcp/
-│
-├── iac_api/                   # Layer 3: API (Resource Contracts)
-│   ├── compute/
-│   │   ├── outputs.tf        # Output schema
-│   │   └── variables.tf      # Input schema
-│   ├── storage/
-│   ├── database/
-│   ├── networking/
-│   └── iam/
-│
-├── iac_core/                  # Layer 4: CORE (Orchestration)
-│   ├── aws/src/              # AWS internal implementations
-│   ├── azure/src/            # Azure internal implementations
-│   └── gcp/src/              # GCP internal implementations
-│
-├── facade/                   # Layer 5: FACADE (Public Interface)
-│   ├── compute/
-│   ├── storage/
-│   ├── database/
-│   ├── networking/
-│   └── iam/
-│
-└── examples/                 # Usage examples
-    ├── web-app/
-    ├── data-pipeline/
-    └── multi-cloud/
-```
+├── common/             # Layer 1: COMMON (Shared variables)
+├── api/                # Layer 2: API (Resource Contracts)
+├── facade/             # Layer 3: FACADE (Unified Entry Points)
+├── aws/                # Layer 4 & 5: AWS Provider
+│   ├── core/           # AWS internal implementations
+│   └── spi/            # AWS credentials/auth
+├── azure/              # Azure Provider
+│   ├── core/
+│   └── spi/
+├── gcp/                # GCP Provider
+│   ├── core/
+│   └── spi/
+├── zero/               # ZeroCloud Provider
+│   ├── core/
+│   └── spi/
+├── examples/           # Blueprints & Examples
+└── test/               # Terratests
 
 ## Layer Details
 
@@ -260,13 +236,13 @@ Using Terraform's conditional logic:
 # Enable/disable features
 module "aws_compute" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../providers/aws/compute"
+  source = "../../aws/core/compute"
   # ...
 }
 
 module "azure_compute" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../providers/azure/compute"
+  source = "../../azure/core/compute"
   # ...
 }
 ```
@@ -326,28 +302,17 @@ Built-in support for:
 Current → Target structure:
 
 ```
-Current:
-iac/
-├── compute/
-│   ├── main.tf (contains facade logic)
-│   ├── aws/main.tf
-│   ├── gcp/main.tf
-│   └── azure/main.tf
-
 Target:
 iac/
-├── common/              # NEW: Shared definitions
-├── spi/                 # NEW: Provider configs
-├── api/                 # NEW: Resource contracts
-├── core/                # NEW: Orchestration
-├── facade/
+├── common/              # Shared definitions
+├── api/                 # Resource contracts
+├── facade/              # Unified Orchestration
 │   └── compute/
-│       └── main.tf     # MOVE: From iac/compute/main.tf
-└── providers/
-    ├── aws/
-    │   └── compute/    # MOVE: From iac/compute/aws/
-    ├── azure/
-    └── gcp/
+├── aws/
+│   ├── core/            # AWS Implementations
+│   └── spi/             # AWS Credentials
+├── azure/
+└── gcp/
 ```
 
 ## Summary

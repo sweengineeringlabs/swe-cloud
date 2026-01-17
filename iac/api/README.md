@@ -10,13 +10,13 @@ The `api/` layer defines **standardized resource contracts** that specify the in
 ```
 Layer 1: COMMON
     ↓
-Layer 2: SPI
+Layer 2: API ← You are here
     ↓
-Layer 3: API ← You are here
+Layer 3: FACADE
     ↓
-Layer 4: CORE
+Layer 4: [PROVIDER]/core
     ↓
-Layer 5: FACADE
+Layer 5: [PROVIDER]/spi
 ```
 
 ## Purpose

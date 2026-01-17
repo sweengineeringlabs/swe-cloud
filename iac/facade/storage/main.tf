@@ -58,7 +58,7 @@ locals {
 # Route to AWS storage module
 module "aws_storage" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/storage"
+  source = "../../aws/core/storage"
   
   bucket_name         = var.bucket_name
   versioning_enabled  = var.versioning_enabled
@@ -71,7 +71,7 @@ module "aws_storage" {
 # Route to Azure storage module  
 module "azure_storage" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/storage"
+  source = "../../azure/core/storage"
   
   storage_account_name = replace(lower(var.bucket_name), "-", "") # Azure requires alphanumeric
   resource_group_name  = "${var.project_name}-${var.environment}-rg"
@@ -86,7 +86,7 @@ module "azure_storage" {
 # Route to GCP storage module
 module "gcp_storage" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/storage"
+  source = "../../gcp/core/storage"
   
   bucket_name         = var.bucket_name
   versioning_enabled  = var.versioning_enabled
@@ -98,7 +98,7 @@ module "gcp_storage" {
 # Route to ZeroCloud storage module  
 module "zero_storage" {
   count  = var.provider_name == "zero" ? 1 : 0
-  source = "../../iac_core/zero/src/storage"
+  source = "../../zero/core/storage"
   
   bucket_name         = var.bucket_name
   versioning_enabled  = var.versioning_enabled

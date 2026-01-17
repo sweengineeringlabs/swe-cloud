@@ -15,7 +15,7 @@ locals {
 # AWS: EventBridge
 module "aws_events" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/events"
+  source = "../../aws/core/events"
 
   name = var.name
   tags = local.common_tags
@@ -24,7 +24,7 @@ module "aws_events" {
 # Azure: Event Grid
 module "azure_events" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/events"
+  source = "../../azure/core/events"
 
   name                = var.name
   resource_group_name = "${var.project_name}-${var.environment}-rg"
@@ -35,7 +35,7 @@ module "azure_events" {
 # GCP: PubSub
 module "gcp_events" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/events"
+  source = "../../gcp/core/events"
 
   project_id = var.project_name
   topic_name = var.name

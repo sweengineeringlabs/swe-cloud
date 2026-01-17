@@ -29,7 +29,7 @@ locals {
 # AWS: IAM Role or User
 module "aws_iam" {
   count  = var.provider_name == "aws" ? 1 : 0
-  source = "../../iac_core/aws/src/iam"
+  source = "../../aws/core/iam"
   
   # Map 'role' -> IAM Role, 'user'/'service_agent' -> IAM User
   create_role = var.identity_type == "role"
@@ -47,7 +47,7 @@ module "aws_iam" {
 # Azure: User Assigned Managed Identity
 module "azure_iam" {
   count  = var.provider_name == "azure" ? 1 : 0
-  source = "../../iac_core/azure/src/iam"
+  source = "../../azure/core/iam"
   
   # For Azure, we map 'service_agent'/'user' to Managed Identity
   create_identity     = contains(["user", "service_agent"], var.identity_type)
@@ -61,7 +61,7 @@ module "azure_iam" {
 # GCP: Service Account
 module "gcp_iam" {
   count  = var.provider_name == "gcp" ? 1 : 0
-  source = "../../iac_core/gcp/src/iam"
+  source = "../../gcp/core/iam"
   
   # For GCP, we map 'service_agent'/'user' to Service Account
   create_service_account = contains(["user", "service_agent"], var.identity_type)

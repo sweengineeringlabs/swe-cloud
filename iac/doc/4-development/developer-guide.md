@@ -42,14 +42,14 @@ See [Prerequisites Guide](../6-deployment/prerequisites.md) for detailed setup.
 
 ### 2. Adding a New Service (Steps)
 
-**Step 1: Define the API (`iac_api/`)**
-Create `variables.tf` and `outputs.tf` for the new service. Ensure they are provider-agnostic.
+**Step 1: Define the API (`api/`)**
+Create `variables.tf` and `outputs.tf` for the new service in the `api/` directory. Ensure they are provider-agnostic.
 
-**Step 2: Implement Core Logic (`iac_core/`)**
-Add implementations for each supported cloud provider in the respective `iac_core/[provider]/src/` directories.
+**Step 2: Implement Core Logic (`[provider]/core/`)**
+Add implementations for each supported cloud provider in the respective `[provider]/core/` directories.
 
 **Step 3: Create the Facade (`facade/`)**
-Create the public entry point that uses `count` or `for_each` and the `provider` variable to route to the correct core modules.
+Create the public entry point that uses `count` or `for_each` and the `provider` variable to route to the correct core modules in each provider directory.
 
 **Step 4: Add Documentation**
 Every facade must have:
