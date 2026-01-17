@@ -32,6 +32,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | **messaging/** | ✅ | P2 | - | SQS, SNS modules complete |
 | **lambda/** | ✅ | P3 | - | Lambda function module complete |
 | **monitoring/** | ✅ | P3 | - | CloudWatch, alarms complete |
+| **kubernetes/** | ✅ | P3 | - | EKS module complete (with ZeroCloud support) |
 
 ### Azure Core Modules (`iac_core/azure/src/`)
 
@@ -119,6 +120,7 @@ This backlog tracks the remaining implementation work for the IAC project. The a
 | AWS SPI | ✅ | P0 | - | Complete |
 | Azure SPI | ✅ | P1 | - | Azure backend & provider config complete |
 | GCP SPI | ✅ | P1 | - | GCS backend & provider config complete |
+| ZeroCloud SPI | ✅ | P1 | - | AWS Shim architecture & Control Plane mocks complete |
 | Oracle SPI | ✅ | P3 | - | Oracle OCI provider support added to facades |
 
 ---
