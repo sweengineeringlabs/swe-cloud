@@ -12,6 +12,7 @@ variable "role_name" { type = string }
 variable "create_user" { type = bool }
 variable "user_name" { type = string }
 variable "trusted_services" { type = list(string) }
+variable "managed_policy_arns" { type = list(string) }
 variable "tags" { type = map(string) }
 
 # Reuse AWS Provider for ZeroID (redirected via SPI)
@@ -33,6 +34,13 @@ resource "aws_iam_role" "this" {
   })
 
   tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "managed" {
+  count = var.create_role ? length(var.managed_policy_arns) : 0
+  
+  role       = aws_iam_role.this[0].name
+  policy_arn = var.managed_policy_arns[count.index]
 }
 
 resource "aws_iam_user" "this" {

@@ -36,6 +36,12 @@ variable "provider_config" {
   default     = {}
 }
 
+variable "roles" {
+  description = "List of high-level roles/capabilities to attach (e.g. storage_read, admin)"
+  type        = list(string)
+  default     = []
+}
+
 variable "tags" {
   description = "Resource tags"
   type        = map(string)

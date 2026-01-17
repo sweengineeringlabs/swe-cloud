@@ -9,7 +9,6 @@ terraform {
 # IMPORT COMMON LAYER
 # ============================================================================
 
-locals {
   common_tags = merge(
     var.tags,
     {
@@ -20,6 +19,54 @@ locals {
       Module       = "IAM-Facade"
     }
   )
+
+  # Unified Capability Mapping
+  # Maps abstract roles (e.g. "storage_read") to provider-specific policies/ARNs
+  capability_map = {
+    aws = {
+      storage_read   = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+      storage_write  = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      nosql_read     = "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
+      nosql_write    = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+      compute_admin  = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+      admin          = "arn:aws:iam::aws:policy/AdministratorAccess"
+    }
+    zero = {
+      # ZeroCloud reuses AWS policies (mocked in control plane)
+      storage_read   = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+      storage_write  = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      nosql_read     = "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
+      nosql_write    = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+      compute_admin  = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+      admin          = "arn:aws:iam::aws:policy/AdministratorAccess"
+    }
+    azure = {
+      storage_read   = "Storage Blob Data Reader"
+      storage_write  = "Storage Blob Data Contributor"
+      nosql_read     = "Cosmos DB Account Reader Role"
+      nosql_write    = "Cosmos DB Account Contributor" # Approximate
+      compute_admin  = "Virtual Machine Contributor"
+      admin          = "Owner"
+    }
+    gcp = {
+      storage_read   = "roles/storage.objectViewer"
+      storage_write  = "roles/storage.objectAdmin"
+      nosql_read     = "roles/datastore.viewer"
+      nosql_write    = "roles/datastore.user"
+      compute_admin  = "roles/compute.admin"
+      admin          = "roles/owner"
+    }
+  }
+
+  # Resolution Logic
+  # We gracefully handle missing capabilities by ignoring them or using a fallback if needed
+  selected_roles = [
+    for r in var.roles :
+    lookup(local.capability_map[var.provider_name], r, null)
+  ]
+  
+  # Remove nulls (unsupported roles for a provider)
+  final_roles = [for r in local.selected_roles : r if r != null]
 }
 
 # ============================================================================
@@ -40,6 +87,9 @@ module "aws_iam" {
   
   # Trust Policy (Principals)
   trusted_services = var.principals
+  
+  # Policy Attachment
+  managed_policy_arns = local.final_roles
   
   tags = local.common_tags
 }
@@ -82,6 +132,8 @@ module "zero_iam" {
   user_name   = var.identity_name
   
   trusted_services = var.principals
+  
+  managed_policy_arns = local.final_roles
   
   tags = local.common_tags
 }
