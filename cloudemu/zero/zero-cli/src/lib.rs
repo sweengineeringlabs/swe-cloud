@@ -70,6 +70,19 @@ pub enum Commands {
         #[command(subcommand)]
         action: LbAction,
     },
+    /// Manage EKS Clusters
+    Eks {
+        #[command(subcommand)]
+        action: EksAction,
+    },
+}
+
+#[derive(Subcommand)]
+pub enum EksAction {
+    /// Create a cluster
+    Create { #[arg(short, long)] name: String },
+    /// Describe a cluster
+    Describe { #[arg(short, long)] name: String },
 }
 
 #[derive(Subcommand)]
@@ -550,6 +563,29 @@ pub async fn execute_command(command: Commands, provider: &ZeroProvider) -> anyh
                  let req = ZeroRequest {
                      method: "GET".into(),
                      path: "/v1/network/loadbalancers".into(),
+                     headers: std::collections::HashMap::new(),
+                     body: vec![]
+                 };
+                 let resp = provider.handle_request(req).await?;
+                 println!("{}", String::from_utf8_lossy(&resp.body));
+             }
+        },
+        Commands::Eks { action } => match action {
+             EksAction::Create { name } => {
+                 println!("{} Cluster {}...", "☸️ Creating".cyan(), name);
+                 let req = ZeroRequest {
+                     method: "POST".into(),
+                     path: "/v1/eks/clusters".into(),
+                     headers: std::collections::HashMap::new(),
+                     body: json!({ "name": name }).to_string().into_bytes()
+                 };
+                 let resp = provider.handle_request(req).await?;
+                 println!("{}", String::from_utf8_lossy(&resp.body));
+             },
+             EksAction::Describe { name } => {
+                 let req = ZeroRequest {
+                     method: "GET".into(),
+                     path: format!("/v1/eks/clusters/{}", name),
                      headers: std::collections::HashMap::new(),
                      body: vec![]
                  };

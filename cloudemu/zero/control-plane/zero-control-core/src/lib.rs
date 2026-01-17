@@ -16,6 +16,7 @@ pub struct ZeroProvider {
     pub queue: services::queue::QueueService,
     pub iam: services::iam::IamService,
     pub lb: services::lb::LbService,
+    pub eks: services::eks::EksService,
 }
 
 impl ZeroProvider {
@@ -26,7 +27,8 @@ impl ZeroProvider {
         let queue = services::queue::QueueService::new(engine.clone());
         let iam = services::iam::IamService::new(engine.clone());
         let lb = services::lb::LbService::new(engine.clone());
-        Self { engine, store, db, func, queue, iam, lb }
+        let eks = services::eks::EksService::new(engine.clone());
+        Self { engine, store, db, func, queue, iam, lb, eks }
     }
 }
 
@@ -53,12 +55,28 @@ impl ZeroService for ZeroProvider {
             Some(&"func") => self.route_func(&parts[2..], &req).await,
             Some(&"queue") => self.route_queue(&parts[2..], &req).await,
             Some(&"iam") => self.route_iam(&parts[2..], &req).await,
+            Some(&"eks") => self.route_eks(&parts[2..], &req).await,
             _ => Err(ZeroError::NotFound(format!("Service not found: {:?}", parts.get(1)))),
         }
     }
 }
 
 impl ZeroProvider {
+    async fn route_eks(&self, parts: &[&str], req: &ZeroRequest) -> ZeroResult<ZeroResponse> {
+        match (req.method.as_str(), parts) {
+            ("POST", ["clusters"]) => self.eks.handle("CreateCluster", &req.body).await.map(ZeroResponse::json_bytes),
+            ("GET", ["clusters", _name]) => self.eks.handle("DescribeCluster", &req.body).await.map(ZeroResponse::json_bytes),
+            ("DELETE", ["clusters", _name]) => self.eks.handle("DeleteCluster", &req.body).await.map(ZeroResponse::json_bytes),
+             // Simple matching for now - AWS URLs are more complex (e.g. /clusters/{name}/nodegroups/{name})
+             // I will add a catch-all or basic pattern for now to satisfy simple calls
+             _ => {
+                 // Try to guess action based on URL structure or just handle generically
+                 // For now, let's just log and fail if not matched
+                 Err(ZeroError::NotFound(format!("EKS route not found: {:?}", parts)))
+             }
+        }
+    }
+
     async fn route_core(&self, parts: &[&str], req: &ZeroRequest) -> ZeroResult<ZeroResponse> {
         match (req.method.as_str(), parts) {
             ("GET", ["nodes"]) => {
