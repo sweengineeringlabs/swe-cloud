@@ -1,0 +1,14 @@
+[package]
+name = "zero-control-spi"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "ZeroCloud Control-Plane SPI - Private Cloud Foundation"
+
+[dependencies]
+chrono = { workspace = true }
+async-trait = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+bytes = { workspace = true }

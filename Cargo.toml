@@ -34,13 +34,17 @@ members = [
     "cloudemu/gcp/data-plane/gcp-data-api",
     "cloudemu/gcp/data-plane/gcp-data-core",
     "cloudemu/gcp/data-plane/gcp-data-facade",
+    # ZeroCloud (Private Cloud)
+    "cloudemu/zero/control-plane/zero-control-spi",
+    "cloudemu/zero/control-plane/zero-control-core",
+    "cloudemu/zero/data-plane/zero-data-core",
     # CloudKit crates
     "cloudkit/crates/cloudkit_*",
     # CloudKit provider crates (nested under cloudkit_core)
     "cloudkit/crates/cloudkit_core/aws",
     "cloudkit/crates/cloudkit_core/azure",
     "cloudemu/server",
-    "apps/cloudcost",
+    "apps/cloudcost", "cloudemu/zero/zero-cli", "cloudemu/zero/control-plane/zero-control-facade",
 ]
 
 
@@ -65,6 +69,9 @@ cloudkit-gcp = { path = "cloudkit/crates/cloudkit_core/gcp" }
 cloudkit-oracle = { path = "cloudkit/crates/cloudkit_core/oracle" }
 
 # CloudEmu modules
+zero-control-spi = { path = "cloudemu/zero/control-plane/zero-control-spi" }
+zero-control-core = { path = "cloudemu/zero/control-plane/zero-control-core" }
+zero-data-core = { path = "cloudemu/zero/data-plane/zero-data-core" }
 
 
 

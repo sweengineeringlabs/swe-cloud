@@ -15,6 +15,7 @@ CloudEmu is now **feature complete** across all three major cloud providers (AWS
 | **Azure Provider** | ✅ Complete | 100% | 5 Core Services Implemented (Facade) |
 | **GCP Provider** | ✅ Complete | 100% | 5 Core Services Implemented (Facade) |
 | **Oracle Provider** | ✅ Complete | 100% | Pricing/Billing API Implemented |
+| **ZeroCloud (Private)** | 🚀 In Progress | 25% | Direct Hardware Driver SPI |
 | **Integration Tests** | ✅ Complete | 100% | E2E verification for all providers |
 
 ---
@@ -72,6 +73,18 @@ Implemented using the **Facade Pattern**, focusing initially on FinOps capabilit
 | Service | Mapped To | Status | Features |
 |---------|-----------|--------|----------|
 | **Metering** | Pricing Engine | ✅ Active | Get Prices (Compute, Storage) |
+
+### 5. ZeroCloud Provider (Native Private)
+
+Implemented using a **Direct Hardware Driver** approach for high-performance private cloud lab orchestration.
+
+| Service | Driver Type | Status | Features |
+|---------|-------------|--------|----------|
+| **Compute** | Docker / Podman | ✅ Active | Container orchestration via bollard |
+| **Storage** | FileSystem / NVMe | ✅ Active | Block/File storage management |
+| **Networking** | Linux Bridge / OVS | ✅ Active | VLAN/SDN management |
+
+See [ZeroCloud Documentation](../../zero/README.md) for detailed driver architecture and CLI usage.
 
 ---
 

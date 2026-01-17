@@ -1,0 +1,20 @@
+[package]
+name = "zero-cli"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "ZeroCloud CLI - Private Cloud Management Tool"
+
+[dependencies]
+zero-control-spi = { path = "../control-plane/zero-control-spi" }
+zero-control-core = { path = "../control-plane/zero-control-core" }
+zero-data-core = { path = "../data-plane/zero-data-core" }
+clap = { version = "4.4", features = ["derive"] }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = "1.0"
+colored = "2.0"
+
+[dev-dependencies]
+tempfile = { workspace = true }

@@ -1,0 +1,23 @@
+[package]
+name = "zero-data-core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "ZeroCloud Data Plane - Local Resource Manager"
+
+[dependencies]
+zero-control-spi = { path = "../../control-plane/zero-control-spi" }
+rusqlite = { version = "0.32", features = ["bundled"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+thiserror = { workspace = true }
+parking_lot = "0.12"
+log = "0.4"
+bollard = "0.18"
+async-trait = { workspace = true }
+tokio = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
