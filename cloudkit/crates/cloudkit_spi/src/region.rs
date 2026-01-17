@@ -139,6 +139,20 @@ impl Region {
     pub fn oracle_af_johannesburg_1() -> Self {
         Self::new("oracle", "af-johannesburg-1", "South Africa (Johannesburg)")
     }
+
+    // =========================================================================
+    // ZeroCloud Regions
+    // =========================================================================
+
+    /// ZeroCloud Local Region
+    pub fn zero_local() -> Self {
+        Self::new("zero", "local", "ZeroCloud Local")
+    }
+
+    /// ZeroCloud Default Region
+    pub fn zero_default() -> Self {
+        Self::new("zero", "default", "ZeroCloud Default")
+    }
 }
 
 impl fmt::Display for Region {

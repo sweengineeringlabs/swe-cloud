@@ -43,6 +43,7 @@ members = [
     # CloudKit provider crates (nested under cloudkit_core)
     "cloudkit/crates/cloudkit_core/aws",
     "cloudkit/crates/cloudkit_core/azure",
+    "cloudkit/crates/cloudkit_core/zero",
     "cloudemu/server",
     "apps/cloudcost", "cloudemu/zero/zero-cli", "cloudemu/zero/control-plane/zero-control-facade",
     "cloudemu/zero/sdk/zero-sdk-rust",

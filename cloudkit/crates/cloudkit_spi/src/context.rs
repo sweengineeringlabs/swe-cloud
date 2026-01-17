@@ -15,6 +15,8 @@ pub enum ProviderType {
     Gcp,
     /// Oracle Cloud Infrastructure
     Oracle,
+    /// ZeroCloud (Private Cloud)
+    Zero,
 }
 
 impl std::fmt::Display for ProviderType {
@@ -24,6 +26,7 @@ impl std::fmt::Display for ProviderType {
             ProviderType::Azure => write!(f, "azure"),
             ProviderType::Gcp => write!(f, "gcp"),
             ProviderType::Oracle => write!(f, "oracle"),
+            ProviderType::Zero => write!(f, "zero"),
         }
     }
 }

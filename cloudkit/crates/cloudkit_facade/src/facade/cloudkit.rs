@@ -72,6 +72,7 @@ impl CloudKit {
             ProviderType::Azure => "http://localhost:4567",
             ProviderType::Gcp => "http://localhost:4568",
             ProviderType::Oracle => "http://localhost:4569", // Not yet supported
+            ProviderType::Zero => "http://localhost:8080",
         };
         
         CloudContextBuilder::new(provider)
@@ -90,6 +91,14 @@ impl CloudKit {
     /// For full Oracle Cloud functionality, use `cloudkit-oracle` crate directly.
     pub fn oracle() -> CloudContextBuilder {
         CloudContextBuilder::new(ProviderType::Oracle)
+    }
+
+    /// Create a ZeroCloud context builder.
+    ///
+    /// For full ZeroCloud functionality, use `cloudkit-zero` crate directly.
+    pub fn zero() -> CloudContextBuilder {
+        CloudContextBuilder::new(ProviderType::Zero)
+            .endpoint("http://localhost:8080")
     }
 
     /// Create a client from configuration.
@@ -124,5 +133,11 @@ mod tests {
     async fn test_cloudkit_oracle() {
         let context = CloudKit::oracle().build().await.unwrap();
         assert_eq!(context.provider(), ProviderType::Oracle);
+    }
+
+    #[tokio::test]
+    async fn test_cloudkit_zero() {
+        let context = CloudKit::zero().build().await.unwrap();
+        assert_eq!(context.provider(), ProviderType::Zero);
     }
 }

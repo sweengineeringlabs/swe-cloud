@@ -1,0 +1,20 @@
+[package]
+name = "cloudkit-zero"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "ZeroCloud provider implementation for CloudKit"
+
+[dependencies]
+cloudkit_spi = { path = "../../cloudkit_spi" }
+cloudkit_api = { path = "../../cloudkit_api" }
+zero-sdk = { path = "../../../../cloudemu/zero/sdk/zero-sdk-rust" }
+tokio = { workspace = true }
+async-trait = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+bytes = { workspace = true }
+anyhow = "1.0"
+thiserror = "2.0"
+tracing = { workspace = true }
