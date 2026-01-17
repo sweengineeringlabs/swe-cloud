@@ -31,12 +31,15 @@ CloudKit provides a unified abstraction layer for AWS, Azure, and GCP. This guid
 
 ### 1. Service Matrix (API Layer Mappings)
 
-| Service Type | AWS | Azure | GCP |
-| :--- | :--- | :--- | :--- |
-| **Object Storage** | S3 | Blob Storage | Cloud Storage |
-| **Key-Value Store** | DynamoDB | Cosmos DB | Firestore |
-| **Message Queue** | SQS | Service Bus | Cloud Tasks |
-| **Pub/Sub** | SNS | Event Grid | Pub/Sub |
+| Service Type | AWS | Azure | GCP | ZeroCloud |
+| :--- | :--- | :--- | :--- | :--- |
+| **Object Storage** | S3 | Blob Storage | Cloud Storage | ZeroStore |
+| **Key-Value Store** | DynamoDB | Cosmos DB | Firestore | ZeroDB |
+| **Message Queue** | SQS | Service Bus | Cloud Tasks | ZeroQueue |
+| **Pub/Sub** | SNS | Event Grid | Pub/Sub | - |
+| **Serverless** | Lambda | Functions | Cloud Functions | ZeroFunc |
+| **Identity** | Cognito | Azure AD | Identity Platform | ZeroID |
+| **Load Balancing** | ALB | Load Balancer | Cloud Load Balanc | ZeroLB |
 
 ### 2. Feature Flag Management
 

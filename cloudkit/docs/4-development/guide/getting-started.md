@@ -50,6 +50,9 @@ Set your environment variables:
 export AWS_ACCESS_KEY_ID=xxx
 export AWS_SECRET_ACCESS_KEY=xxx
 export AWS_REGION=us-east-1
+
+# ZeroCloud
+export ZERO_URL=http://localhost:8080
 ```
 
 ### 3. Basic Code Example

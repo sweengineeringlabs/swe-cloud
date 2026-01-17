@@ -2,7 +2,7 @@
 
 ## WHAT: The SDK Engine
 
-`cloudkit_core` is the engine layer (Layer 4) of the SDK. It implements the service contracts defined in `cloudkit_api` for AWS, Azure, and GCP. It also contains the `CloudContext` which manages client lifecycle, execution, and provider-specific configurations.
+`cloudkit_core` is the engine layer (Layer 4) of the SDK. It implements the service contracts defined in `cloudkit_api` for AWS, Azure, GCP, and ZeroCloud. It also contains the `CloudContext` which manages client lifecycle, execution, and provider-specific configurations.
 
 **Prerequisites**:
 - Must be used within the context of a `CloudKit` facade.

@@ -1,38 +1,58 @@
-# ZeroCloud Rust SDK
+# Zero SDK Rust Overview
 
-Official SDK for interacting with ZeroCloud private cloud services.
+> **Scope**: High-level overview only. Implementation details belong in [Developer Guide](../../docs/4-development/developer-guide.md).
 
-## Services Supported
+## Audience
 
-- **ZeroStore** (S3 Parity)
-- **ZeroDB** (DynamoDB Parity)
-- **ZeroFunc** (Lambda/AppRunner Parity)
-- **ZeroQueue** (SQS Parity)
-- **ZeroID** (IAM Parity)
+Rust developers who want to interact with the ZeroCloud platform programmatically using a type-safe, asynchronous client library.
 
-## Usage
+## WHAT
+
+The Zero SDK for Rust provides a comprehensive set of client implementations for all ZeroCloud services, including Store, DB, Func, Queue, IAM, and LB.
+
+Key capabilities:
+- **ZeroStore API** - High-performance object storage operations.
+- **ZeroDB API** - Document and key-value database interactions.
+- **ZeroFunc API** - Invocation and management of serverless functions.
+- **ZeroQueue API** - Reliable asynchronous messaging.
+- **ZeroID API** - Identity management for users and groups.
+- **ZeroLB API** - Load balancer and reverse proxy configuration.
+
+## WHY
+
+| Problem | Solution |
+|---------|----------|
+| Manual HTTP calls are error-prone | Type-safe wrappers for all API endpoints |
+| Complex service orchestration | Unified `ZeroClient` to access all services |
+| Async boilerplate | Built-in `tokio` support for high-concurrency apps |
+
+## HOW
 
 ```rust
 use zero_sdk::ZeroClient;
-use serde_json::json;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // Initialize client (defaults to http://localhost:8080 or ZERO_URL env)
-    let client = ZeroClient::from_env();
-
-    // 1. Create a bucket
-    client.store().create_bucket("my-assets").await?;
-
-    // 2. Insert data into a table
-    client.db().put_item("users", "user123", json!({
-        "username": "zero_dev",
-        "email": "dev@zero.local"
-    })).await?;
-
-    // 3. Send a message to a queue
-    client.queue().send_message("orders", "{\"id\": \"order-001\"}").await?;
-
+    let client = ZeroClient::new("http://localhost:8080");
+    
+    // Create a bucket in ZeroStore
+    client.store().create_bucket("my-bucket").await?;
+    
+    // Send a message to ZeroQueue
+    client.queue().send_message("my-queue", "Hello Zero!").await?;
+    
     Ok(())
 }
 ```
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Developer Guide](../../docs/4-development/developer-guide.md) | Build, test, API reference |
+| [Architecture](../../docs/3-design/architecture.md) | System design and SEA layers |
+| [Backlog](../../docs/backlog.md) | Planned features |
+
+---
+
+**Status**: Stable (v0.1.0)

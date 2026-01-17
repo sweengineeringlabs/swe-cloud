@@ -80,15 +80,16 @@ Implemented using a **Direct Hardware Driver** approach for high-performance fun
 
 | Service | Mapped To | Status | Features |
 |---------|-----------|--------|----------|
-| **ZeroCompute** | Docker / Mock | ✅ Active | VM/Container orchestration |
+| **ZeroCompute** | Docker / Hyper-V | ✅ Active | VM/Container orchestration |
 | **ZeroStore** | FileSystem | ✅ Active | Blob/Object storage |
 | **ZeroDB** | SQLite | ✅ Active | NoSQL Document database |
-| **ZeroFunc** | Process / Mock | ✅ Active | Serverless Function execution |
-| **ZeroQueue** | SQLite | ✅ Active | Message Queuing |
-| **ZeroID** | SQLite | ✅ Active | Identity Management |
+| **ZeroFunc** | Process | ✅ Active | Serverless Function execution (Python, Node.js) |
+| **ZeroQueue** | SQLite | ✅ Active | Message Queuing with Visibility Timeouts |
+| **ZeroID** | SQLite | ✅ Active | Identity Management (Users, Groups, Policies) |
+| **ZeroLB** | Reverse Proxy | ✅ Active | L7/L4 Load Balancing, Target Groups |
 | **Zero SDK** | Rust | ✅ Active | High-level Client SDK |
 | **Zero CLI** | Rust | ✅ Active | Management Tooling |
-| **ZeroNet** | Bridge / Mock | ✅ Active | Network Management |
+| **ZeroNet** | SDN | ✅ Active | Network Isolation, Listeners |
 
 See [ZeroCloud Documentation](../../zero/README.md) for detailed driver architecture and CLI usage.
 

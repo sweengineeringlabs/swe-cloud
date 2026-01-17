@@ -29,7 +29,7 @@ CloudKit is built using **SEA**, a layered architecture pattern that promotes se
    - Consequence: Difficult to debug production issues across cloud boundaries.
 
 ### Benefits
-- **Unified Interface**: Write logic once and use it across AWS, Azure, and GCP.
+- **Unified Interface**: Write logic once and use it across AWS, Azure, GCP, and ZeroCloud.
 - **Provider Agnostic**: Swap underlying providers at runtime or compile-time without changing business logic.
 - **Enhanced Reliability**: Universal retry and error handling logic applied at the Core layer.
 
@@ -63,7 +63,7 @@ Traits for `AuthProvider`, `RetryPolicy`, and `MetricsCollector`. Allows users t
 Service contracts (traits) such as `ObjectStorage`, `MessageQueue`, and `PubSub`. These define the "what" without specifying the "how".
 
 #### Layer 4: Core
-The engine of the SDK. It houses the `CloudContext` and the actual implementations for AWS, Azure, and GCP that fulfill Layer 3 traits.
+The engine of the SDK. It houses the `CloudContext` and the actual implementations for AWS, Azure, GCP, and ZeroCloud that fulfill Layer 3 traits.
 
 #### Layer 5: Facade
 The ergonomic entry point. Re-exports essential types and provides the `CloudKit` builder.

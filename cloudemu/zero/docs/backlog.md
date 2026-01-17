@@ -9,17 +9,24 @@ Planned features and technical debt for the ZeroCloud project.
 -   [x] Management CLI (`zero-cli`).
 -   [x] HTTP API Facade (`zero-control-facade`).
 
-## P1: Advanced Networking & Storage
+## P1: Advanced Services & SDK
+-   [x] **ZeroStore** (S3-compatible API).
+-   [x] **ZeroDB** (DynamoDB-compatible API).
+-   *   [x] **ZeroFunc** (Lambda-compatible API, local execution).
+-   *   [x] **ZeroQueue** (SQS-compatible API, visibility timeouts).
+-   *   [x] **ZeroID** (IAM-compatible API).
+-   *   [x] **ZeroLB** (ALB-compatible API, Reverse Proxy Data Plane).
+-   *   [x] **Zero SDK Rust**: Native client library.
+
+## P2: Multi-Cloud Integration
+-   [x] **CloudKit Integration**: ZeroCloud as a first-class provider in CloudKit.
+-   [x] **CloudKit Integration Tests**: E2E verification for ZeroCloud in CloudKit.
 -   [ ] **Open vSwitch (OVS)** integration for advanced SDN.
 -   [ ] **NVMe Pass-through** support for high-performance storage.
--   [ ] **VLAN Management** for workload isolation across physical nodes.
--   [ ] **DHCP/DNS** service managed by the orchestrator.
 
-## P2: Refinement & Developer UX
+## P3: Refinement & Scaling
 -   [x] **WSL 2 Pre-flight Check** for nested virtualization.
 -   [ ] **Workload Monitoring**: Real-time stats (CPU/RAM) via API.
 -   [ ] **Interactive Dashboard**: Full CRUD for all resources in the web UI.
-
-## P3: Multi-Node Scaling
--   [ ] **Remote Node Agent**: Manage resources on remote Linux/Windows machines.
--   [ ] **Cluster Scheduler**: Simple round-robin placement of workloads across nodes.
+-   [ ] **Remote Node Agent**: Manage resources on remote nodes.
+-   [ ] **Cluster Scheduler**: Simple round-robin placement.

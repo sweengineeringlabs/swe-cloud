@@ -16,7 +16,13 @@ ZeroCloud follows the **Stratified Encapsulation Architecture (SEA)**:
 
 1.  **SPI Layer (`zero-control-spi`)**: Defines the contracts for all drivers.
 2.  **Orchestration Layer (`zero-control-core`)**: Manages state, nodes, and high-level logic.
-3.  **Data Driver Layer (`zero-data-core`)**: Communicates with the OS (Hyper-V, KVM, Docker).
+    *   **ZeroStore**: S3-compatible object storage.
+    *   **ZeroDB**: DynamoDB-compatible NoSQL database.
+    *   **ZeroFunc**: Serverless function execution.
+    *   **ZeroQueue**: Message queuing with visibility.
+    *   **ZeroID**: Identity & Access Management.
+    *   **ZeroLB**: Reverse proxy load balancing.
+3.  **Data Driver Layer (`zero-data-core`)**: Communicates with the OS (Hyper-V, KVM, Docker, SQLite, Network Bridge).
 
 ### Key Decisions
 See the [ADR Index](adr/README.md) for detailed technical decisions.

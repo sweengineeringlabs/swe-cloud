@@ -4,10 +4,11 @@
 
 ## Features
 
-- ✅ **Unified Interface**: Same code for S3, Blob Storage, and GCS.
+- ✅ **Unified Interface**: Same code for S3, Blob Storage, GCS, and ZeroStore.
 - ✅ **Type-Safe**: Compile-time safety for all cloud operations.
 - ✅ **Async-First**: Built on the Tokio runtime for high performance.
 - ✅ **SEA Architecture**: Clean, layered design for high maintainability.
+- ✅ **ZeroCloud Support**: Native support for high-performance functional private cloud.
 
 ## Quick Start
 
@@ -16,12 +17,15 @@ use cloudkit::prelude::*;
 
 #[tokio::main]
 async fn main() -> Result<(), CloudError> {
-    // Initialize for AWS (zero-config, uses env vars)
-    let cloud = CloudKit::aws().build().await?;
+    // Initialize for ZeroCloud
+    let cloud = CloudKit::zero()
+        .endpoint("http://localhost:8080")
+        .build()
+        .await?;
 
     // Use unified API (works for any provider)
     cloud.storage()
-        .put_object("my-bucket", "hello.txt", b"Hello Rust!")
+        .put_object("my-bucket", "hello.txt", b"Hello from Zero!")
         .await?;
 
     Ok(())
@@ -37,6 +41,7 @@ Check the [examples](./crates/cloudkit_facade/examples) directory for complete, 
     *   [Local Development (CloudEmu)](./crates/cloudkit_facade/examples/04_local_development.rs)
     *   [Multi-Cloud Storage](./crates/cloudkit_facade/examples/03_multi_cloud_storage.rs)
     *   [Error Handling](./crates/cloudkit_facade/examples/02_error_handling.rs)
+    *   [ZeroCloud Integration](./crates/cloudkit_facade/tests/zero_integration.rs)
 *   **Services**
     *   [DynamoDB (Database)](./crates/cloudkit_facade/examples/07_database_dynamodb.rs)
     *   [SQS (Messaging)](./crates/cloudkit_facade/examples/08_messaging_sqs.rs)

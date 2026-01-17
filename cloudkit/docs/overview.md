@@ -4,7 +4,7 @@ Welcome to the CloudKit documentation. CloudKit is a unified multi-cloud Rust SD
 
 ## WHAT: The Unified Rust Cloud SDK
 
-CloudKit provides a single, type-safe API for interacting with AWS, Azure, and GCP. Instead of learning and maintaining separate SDKs, developers can use CloudKit's unified traits and switch providers with a single configuration change.
+CloudKit provides a single, type-safe API for interacting with AWS, Azure, GCP, and ZeroCloud. Instead of learning and maintaining separate SDKs, developers can use CloudKit's unified traits and switch providers with a single configuration change.
 
 **Scope**:
 - Unified traits for Storage, Queues, Databases, and Messaging.

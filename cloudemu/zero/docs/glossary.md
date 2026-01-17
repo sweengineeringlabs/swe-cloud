@@ -17,3 +17,19 @@ Terminology used throughout the ZeroCloud project.
 **Workload** - A generic term for a Virtual Machine or Container managed by ZeroCloud.
 
 **ZeroEngine** - The main entry point in the data plane that aggregates compute, storage, and networking capabilities.
+
+**ZeroStore** - Local high-performance object storage service.
+
+**ZeroDB** - Distributed-ready document and key-value database service.
+
+**ZeroFunc** - Event-driven serverless function execution service.
+
+**ZeroQueue** - Asynchronous message queuing service with visibility timeouts.
+
+**ZeroID** - Identity and Access Management (IAM) service for users and groups.
+
+**ZeroLB** - Layer 7 and Layer 4 load balancing service with reverse proxy capabilities.
+
+**ZeroNet** - Software-defined networking layer for workload isolation.
+
+**Zero SDK** - The native Rust client library for interacting with the ZeroCloud Control Plane.
