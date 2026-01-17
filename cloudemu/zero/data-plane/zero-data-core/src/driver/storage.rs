@@ -36,6 +36,7 @@ impl StorageDriver for FileSystemStorage {
         Ok(())
     }
 
+    #[allow(clippy::suspicious_open_options)]
     async fn write_block(&self, volume_id: &str, offset: u64, data: Vec<u8>) -> ZeroResult<()> {
         use tokio::io::{AsyncWriteExt, AsyncSeekExt};
         let file_path = self.base_path.join(volume_id).join("data.bin");

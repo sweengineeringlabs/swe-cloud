@@ -6,6 +6,12 @@ use std::process::Command;
 /// Manages Virtual Switches.
 pub struct HyperVNetworkDriver;
 
+impl Default for HyperVNetworkDriver {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl HyperVNetworkDriver {
     pub fn new() -> Self {
         Self

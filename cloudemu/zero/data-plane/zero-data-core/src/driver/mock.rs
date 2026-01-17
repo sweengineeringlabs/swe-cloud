@@ -9,6 +9,12 @@ pub struct MockComputeDriver {
     workloads: Mutex<HashMap<String, WorkloadStatus>>,
 }
 
+impl Default for MockComputeDriver {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MockComputeDriver {
     pub fn new() -> Self {
         Self {

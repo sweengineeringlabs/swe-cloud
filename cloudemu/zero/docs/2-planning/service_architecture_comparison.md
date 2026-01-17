@@ -72,3 +72,4 @@ Detailed technical comparison of ZeroCloud's native services versus their AWS co
 | **principals** | Users, Roles, Groups, Services | Users, Roles, Groups |
 
 **Insight**: ZeroID provides the *structure* of IAM (ARNs, Policies) to satisfy SDK requirements, and now supports RBAC primitives for Roles and Groups.
+**IAC Support**: ✅ Fully Supported (Roles, Policies, Policy Attachment).

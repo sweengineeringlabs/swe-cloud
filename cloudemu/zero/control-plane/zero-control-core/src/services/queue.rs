@@ -4,7 +4,6 @@ use std::sync::Arc;
 use serde_json::json;
 use base64;
 use chrono;
-use base64::Engine;
 
 pub struct QueueService {
     engine: Arc<ZeroEngine>,

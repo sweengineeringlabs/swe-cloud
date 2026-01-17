@@ -67,7 +67,7 @@ impl FuncService {
         };
 
         // 2. Write to temp file
-        let func_id = uuid::Uuid::new_v4().to_string();
+        let _func_id = uuid::Uuid::new_v4().to_string();
         let tmp_dir = std::env::temp_dir().join("zero_funcs").join(name);
         std::fs::create_dir_all(&tmp_dir).map_err(|e| ZeroError::Internal(e.to_string()))?;
         

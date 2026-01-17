@@ -1,7 +1,6 @@
-use zero_control_spi::{ZeroResult, ZeroError};
+use zero_control_spi::ZeroResult;
 use zero_data_core::ZeroEngine;
 use std::sync::Arc;
-use serde_json::json;
 
 pub struct StoreService {
     engine: Arc<ZeroEngine>,

@@ -65,7 +65,7 @@ impl ComputeDriver for DockerDriver {
             .map_err(|e| ZeroError::Driver(format!("Docker list error: {}", e)))?;
 
         Ok(containers.into_iter().map(|c| WorkloadStatus {
-            id: c.names.unwrap_or_default().get(0).cloned().unwrap_or_else(|| c.id.unwrap_or_default()),
+            id: c.names.unwrap_or_default().first().cloned().unwrap_or_else(|| c.id.unwrap_or_default()),
             state: c.state.unwrap_or_else(|| "Unknown".into()),
             ip_address: None,
         }).collect())

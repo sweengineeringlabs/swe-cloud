@@ -6,6 +6,12 @@ use std::process::Command;
 /// Uses PowerShell internally to manage Virtual Machines.
 pub struct HyperVDriver;
 
+impl Default for HyperVDriver {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl HyperVDriver {
     pub fn new() -> Self {
         Self
