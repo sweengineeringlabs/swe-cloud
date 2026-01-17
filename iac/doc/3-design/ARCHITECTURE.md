@@ -170,9 +170,12 @@ Similar to CloudKit's provider pattern:
 module "compute" {
   source = "../facade/compute"
   
-  provider_name = "aws"        # or "azure", "gcp", "oracle"
+  provider_name = "aws"        # or "azure", "gcp", "zero"
   instance_size = "medium"     # Normalized size
   instance_name = "web-server"
+  
+  # Capability-Based Policies (Cross-Cloud)
+  roles = ["storage_read", "admin"]
   
   provider_config = {
     # Provider-specific config
@@ -202,6 +205,11 @@ locals {
       small  = "e2-micro"
       medium = "e2-medium"
       large  = "n2-standard-2"
+    }
+    zero = {
+      small  = "zero.micro"
+      medium = "zero.medium"
+      large  = "zero.large"
     }
   }
 }
@@ -243,6 +251,12 @@ module "aws_compute" {
 module "azure_compute" {
   count  = var.provider_name == "azure" ? 1 : 0
   source = "../../azure/core/compute"
+  # ...
+}
+
+module "zero_compute" {
+  count  = var.provider_name == "zero" ? 1 : 0
+  source = "../../zero/core/compute"
   # ...
 }
 ```
