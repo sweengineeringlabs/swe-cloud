@@ -40,3 +40,29 @@ resource "aws_iam_user" "this" {
   name  = var.user_name
   tags  = var.tags
 }
+
+# Outputs
+output "role_arn" {
+  description = "ARN of the IAM role"
+  value       = var.create_role ? aws_iam_role.this[0].arn : null
+}
+
+output "role_name" {
+  description = "Name of the IAM role"
+  value       = var.create_role ? aws_iam_role.this[0].name : null
+}
+
+output "role_id" {
+  description = "ID of the IAM role"
+  value       = var.create_role ? aws_iam_role.this[0].id : null
+}
+
+output "user_arn" {
+  description = "ARN of the IAM user"
+  value       = var.create_user ? aws_iam_user.this[0].arn : null
+}
+
+output "user_name" {
+  description = "Name of the IAM user"
+  value       = var.create_user ? aws_iam_user.this[0].name : null
+}
