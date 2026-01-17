@@ -48,6 +48,10 @@ impl ZeroClient {
     pub fn iam(&self) -> services::iam::IamClient {
         services::iam::IamClient::new(self.inner.clone())
     }
+
+    pub fn lb(&self) -> services::lb::LbClient {
+        services::lb::LbClient::new(self.inner.clone())
+    }
 }
 
 pub(crate) mod common {

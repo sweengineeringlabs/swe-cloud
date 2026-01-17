@@ -72,4 +72,19 @@ impl QueueClient {
         ).await?;
         Ok(())
     }
+
+    pub async fn list_queues(&self) -> Result<Vec<String>, ZeroSdkError> {
+        let resp = request::<serde_json::Value>(
+            &self.inner,
+            reqwest::Method::GET,
+            "/queue/queues",
+            None,
+        ).await?;
+        
+        let urls = resp["QueueUrls"].as_array().ok_or_else(|| {
+            ZeroSdkError::Internal("Invalid response format: missing QueueUrls field".to_string())
+        })?;
+        
+        Ok(urls.iter().map(|v| v.as_str().unwrap_or_default().to_string()).collect())
+    }
 }

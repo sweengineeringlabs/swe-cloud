@@ -29,4 +29,19 @@ impl FuncClient {
             Some(payload),
         ).await
     }
+
+    pub async fn list_functions(&self) -> Result<Vec<String>, ZeroSdkError> {
+        let resp = request::<serde_json::Value>(
+            &self.inner,
+            reqwest::Method::GET,
+            "/func/functions",
+            None,
+        ).await?;
+        
+        let functions = resp["functions"].as_array().ok_or_else(|| {
+            ZeroSdkError::Internal("Invalid response format: missing functions field".to_string())
+        })?;
+        
+        Ok(functions.iter().map(|v| v.as_str().unwrap_or_default().to_string()).collect())
+    }
 }

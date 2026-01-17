@@ -50,4 +50,34 @@ impl IamClient {
         ).await?;
         Ok(())
     }
+
+    pub async fn list_users(&self) -> Result<Vec<serde_json::Value>, ZeroSdkError> {
+        let resp = request::<serde_json::Value>(
+            &self.inner,
+            reqwest::Method::GET,
+            "/iam/users",
+            None,
+        ).await?;
+        Ok(resp["Users"].as_array().cloned().unwrap_or_default())
+    }
+
+    pub async fn list_roles(&self) -> Result<Vec<serde_json::Value>, ZeroSdkError> {
+        let resp = request::<serde_json::Value>(
+            &self.inner,
+            reqwest::Method::GET,
+            "/iam/roles",
+            None,
+        ).await?;
+        Ok(resp["Roles"].as_array().cloned().unwrap_or_default())
+    }
+
+    pub async fn list_groups(&self) -> Result<Vec<serde_json::Value>, ZeroSdkError> {
+        let resp = request::<serde_json::Value>(
+            &self.inner,
+            reqwest::Method::GET,
+            "/iam/groups",
+            None,
+        ).await?;
+        Ok(resp["Groups"].as_array().cloned().unwrap_or_default())
+    }
 }
