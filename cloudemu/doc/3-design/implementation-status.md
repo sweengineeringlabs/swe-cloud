@@ -86,6 +86,8 @@ Implemented using a **Direct Hardware Driver** approach for high-performance fun
 | **ZeroFunc** | Process / Mock | ✅ Active | Serverless Function execution |
 | **ZeroQueue** | SQLite | ✅ Active | Message Queuing |
 | **ZeroID** | SQLite | ✅ Active | Identity Management |
+| **Zero SDK** | Rust | ✅ Active | High-level Client SDK |
+| **Zero CLI** | Rust | ✅ Active | Management Tooling |
 | **ZeroNet** | Bridge / Mock | ✅ Active | Network Management |
 
 See [ZeroCloud Documentation](../../zero/README.md) for detailed driver architecture and CLI usage.

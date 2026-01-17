@@ -45,6 +45,7 @@ members = [
     "cloudkit/crates/cloudkit_core/azure",
     "cloudemu/server",
     "apps/cloudcost", "cloudemu/zero/zero-cli", "cloudemu/zero/control-plane/zero-control-facade",
+    "cloudemu/zero/sdk/zero-sdk-rust",
 ]
 
 

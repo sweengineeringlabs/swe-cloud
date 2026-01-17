@@ -1,0 +1,19 @@
+[package]
+name = "zero-sdk"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Official Rust SDK for ZeroCloud - Private Cloud Services"
+
+[dependencies]
+reqwest = { workspace = true, features = ["json", "rustls-tls"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+anyhow = "1.0"
+thiserror = "2.0"
+async-trait = { workspace = true }
+url = "2.5"
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros"] }
