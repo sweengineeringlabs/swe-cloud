@@ -36,9 +36,19 @@ module "aws_eks" {
 # module "azure_aks" { ... }
 
 # --------------------------------------------------------------------------------
-# GCP GKE (Placeholder)
+# ZeroCloud EKS (via AWS Shim)
 # --------------------------------------------------------------------------------
-# module "gcp_gke" { ... }
+module "zero_eks" {
+  count  = var.provider_name == "zero" ? 1 : 0
+  source = "../../aws/core/kubernetes"
+
+  cluster_name  = var.cluster_name
+  node_count    = var.node_count
+  instance_size = var.instance_size
+  vpc_id        = var.vpc_id
+  subnet_ids    = var.subnet_ids
+  tags          = local.common_tags
+}
 
 # --------------------------------------------------------------------------------
 # Outputs Logic
@@ -46,13 +56,13 @@ module "aws_eks" {
 locals {
   cluster_endpoint = (
     var.provider_name == "aws" && length(module.aws_eks) > 0 ? module.aws_eks[0].cluster_endpoint :
-    var.provider_name == "zero" ? "https://localhost:6443" :
+    var.provider_name == "zero" && length(module.zero_eks) > 0 ? module.zero_eks[0].cluster_endpoint :
     "pending-implementation"
   )
 
   kubeconfig_command = (
     var.provider_name == "aws" ? "aws eks update-kubeconfig --name ${var.cluster_name}" :
-    var.provider_name == "zero" ? "echo 'ZeroCloud Kubernetes Mock Configured'" :
+    var.provider_name == "zero" ? "aws --endpoint-url http://localhost:8080 eks update-kubeconfig --name ${var.cluster_name}" :
     "echo 'Provider not supported'"
   )
 }
