@@ -1,6 +1,10 @@
 variable "provider_name" {
-  description = "Cloud provider (aws, azure, gcp)"
+  description = "Cloud provider (aws, azure, gcp, zero)"
   type        = string
+  validation {
+    condition     = contains(["aws", "azure", "gcp", "zero"], var.provider_name)
+    error_message = "Provider must be one of: aws, azure, gcp, zero"
+  }
 }
 
 variable "function_name" {

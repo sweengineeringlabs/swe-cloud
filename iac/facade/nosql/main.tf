@@ -54,11 +54,26 @@ module "gcp_nosql" {
   location_id = "us-east1"
 }
 
+# ZeroCloud: ZeroDB
+module "zero_nosql" {
+  count  = var.provider_name == "zero" ? 1 : 0
+  source = "../../iac_core/zero/src/nosql"
+
+  table_name    = var.table_name
+  hash_key      = var.hash_key
+  hash_key_type = var.hash_key_type
+  range_key     = var.range_key
+  range_key_type = var.range_key_type
+
+  tags = local.common_tags
+}
+
 output "table_id" {
   value = (
     var.provider_name == "aws" ? (length(module.aws_nosql) > 0 ? module.aws_nosql[0].table_id : null) :
     var.provider_name == "azure" ? (length(module.azure_nosql) > 0 ? module.azure_nosql[0].account_id : null) :
     var.provider_name == "gcp" ? (length(module.gcp_nosql) > 0 ? module.gcp_nosql[0].database_id : null) :
+    var.provider_name == "zero" ? (length(module.zero_nosql) > 0 ? module.zero_nosql[0].table_id : null) :
     null
   )
 }
@@ -68,6 +83,7 @@ output "table_arn" {
     var.provider_name == "aws" ? (length(module.aws_nosql) > 0 ? module.aws_nosql[0].table_arn : null) :
     var.provider_name == "azure" ? (length(module.azure_nosql) > 0 ? module.azure_nosql[0].endpoint : null) :
     var.provider_name == "gcp" ? (length(module.gcp_nosql) > 0 ? module.gcp_nosql[0].database_id : null) :
+    var.provider_name == "zero" ? (length(module.zero_nosql) > 0 ? module.zero_nosql[0].table_arn : null) :
     null
   )
 }

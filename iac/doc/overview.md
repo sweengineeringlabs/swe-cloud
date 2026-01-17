@@ -22,14 +22,14 @@ Welcome to the Multi-Cloud IAC Framework documentation. This project uses the **
 
 The following services are implemented as unified facades:
 
-- **[Compute](facade/compute/doc/overview.md)**: EC2, Azure VM, GCP Compute Engine.
-- **[Storage](facade/storage/doc/overview.md)**: S3, Blob Storage, GCS.
-- **[Database](facade/database/doc/overview.md)**: RDS, Azure SQL, Cloud SQL.
-- **[Networking](facade/networking/doc/overview.md)**: VPC, VNet, GCP Network.
-- **[IAM](facade/iam/doc/overview.md)**: Roles, Identities, Service Accounts.
+- **[Compute](facade/compute/doc/overview.md)**: EC2, Azure VM, GCP Compute Engine, ZeroCompute.
+- **[Storage](facade/storage/doc/overview.md)**: S3, Blob Storage, GCS, ZeroStore.
+- **[Database](facade/database/doc/overview.md)**: RDS, Azure SQL, Cloud SQL, ZeroDB.
+- **[Networking](facade/networking/doc/overview.md)**: VPC, VNet, GCP Network, ZeroNet.
+- **[IAM](facade/iam/doc/overview.md)**: Roles, Identities, Service Accounts, ZeroID.
 - **[Monitoring](facade/monitoring/doc/overview.md)**: CloudWatch, Azure Monitor, Cloud Monitoring.
-- **[Lambda/Serverless](facade/lambda/doc/overview.md)**: AWS Lambda.
-- **[Messaging](facade/messaging/doc/overview.md)**: SQS, SNS.
+- **[Lambda/Serverless](facade/lambda/doc/overview.md)**: AWS Lambda, ZeroFunc.
+- **[Messaging](facade/messaging/doc/overview.md)**: SQS, SNS, ZeroQueue.
 
 ## Local Development & Testing
 

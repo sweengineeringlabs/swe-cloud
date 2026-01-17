@@ -95,12 +95,23 @@ module "gcp_storage" {
   tags                = local.common_tags
 }
 
+# Route to ZeroCloud storage module  
+module "zero_storage" {
+  count  = var.provider_name == "zero" ? 1 : 0
+  source = "../../iac_core/zero/src/storage"
+  
+  bucket_name         = var.bucket_name
+  versioning_enabled  = var.versioning_enabled
+  tags                = local.common_tags
+}
+
 # Aggregated outputs (select based on provider)
 locals {
   bucket_id = (
     var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_id : null) :
     var.provider_name == "azure" ? (length(module.azure_storage) > 0 ? module.azure_storage[0].storage_account_id : null) :
     var.provider_name == "gcp" ? (length(module.gcp_storage) > 0 ? module.gcp_storage[0].bucket_id : null) :
+    var.provider_name == "zero" ? (length(module.zero_storage) > 0 ? module.zero_storage[0].bucket_id : null) :
     null
   )
   
@@ -108,6 +119,7 @@ locals {
     var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_arn : null) :
     var.provider_name == "azure" ? (length(module.azure_storage) > 0 ? module.azure_storage[0].storage_account_name : null) :
     var.provider_name == "gcp" ? (length(module.gcp_storage) > 0 ? module.gcp_storage[0].bucket_url : null) :
+    var.provider_name == "zero" ? (length(module.zero_storage) > 0 ? module.zero_storage[0].bucket_arn : null) :
     null
   )
   
@@ -115,6 +127,7 @@ locals {
     var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].bucket_domain_name : null) :
     var.provider_name == "azure" ? (length(module.azure_storage) > 0 ? module.azure_storage[0].primary_blob_endpoint : null) :
     var.provider_name == "gcp" ? (length(module.gcp_storage) > 0 ? module.gcp_storage[0].bucket_url : null) :
+    var.provider_name == "zero" ? (length(module.zero_storage) > 0 ? module.zero_storage[0].bucket_url : null) :
     null
   )
   
@@ -122,6 +135,7 @@ locals {
     var.provider_name == "aws" ? (length(module.aws_storage) > 0 ? module.aws_storage[0].region : null) :
     var.provider_name == "azure" ? "East US" :
     var.provider_name == "gcp" ? "US" :
+    var.provider_name == "zero" ? "local" :
     null
   )
 }
