@@ -62,8 +62,10 @@ impl Functions for ZeroFunc {
         function_name: &str,
         payload: &[u8],
     ) -> CloudResult<()> {
-        let mut opts = InvokeOptions::default();
-        opts.invocation_type = InvocationType::Event;
+        let opts = InvokeOptions {
+            invocation_type: InvocationType::Event,
+            ..Default::default()
+        };
         self.invoke_with_options(function_name, payload, opts).await?;
         Ok(())
     }
