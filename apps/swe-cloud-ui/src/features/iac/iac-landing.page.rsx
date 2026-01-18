@@ -2,8 +2,9 @@
 // Overview page for Infrastructure as Code feature
 
 use rsc::prelude::*;
-use @modules::layout::{StatCard, SectionHeader, ActionCard};
-use @modules::context::{use_environment, use_role};
+use crate::modules::layout::{StatCard, SectionHeader, ActionCard};
+use crate::modules::context::environment::use_environment;
+use crate::modules::context::use_role;
 
 /// IAC landing page
 #[page(route = "/iac", title = "Infrastructure")]

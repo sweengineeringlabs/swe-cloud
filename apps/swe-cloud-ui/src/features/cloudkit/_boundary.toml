@@ -17,4 +17,4 @@ exports = [
     "use_resources",
     "use_operations",
 ]
-export_files = ["cloudkit.type.rsc"]
+export_files = ["cloudkit.type.rsx"]

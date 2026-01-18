@@ -1,0 +1,10 @@
+{
+    "name": "swe-cloud-ui",
+    "version": "0.1.0",
+    "description": "SWE Cloud Platform - Cloud Emulation, Infrastructure Toolkit, and IAC Management",
+    "entry": "swe-cloud-ui.wasm",
+    "runtime": "rustscript-runtime.js",
+    "styles": "styles.css",
+    "generator": "rsc build",
+    "generatorVersion": "0.1.0"
+}

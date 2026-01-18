@@ -4,7 +4,7 @@
 use rsc::prelude::*;
 use @modules::context::use_provider;
 use @modules::layout::{StatCard, SectionHeader};
-use crate::component::{ProviderCard, RequestTable, HealthGrid};
+use crate::components::{ProviderCard, RequestTable, HealthGrid};
 
 /// CloudEmu landing page
 #[page(route = "/cloudemu", title = "CloudEmu")]

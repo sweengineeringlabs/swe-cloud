@@ -24,4 +24,4 @@ exports = [
     "use_provider_services",
     "use_request_logs",
 ]
-export_files = ["cloudemu.type.rsc"]
+export_files = ["cloudemu.type.rsx"]

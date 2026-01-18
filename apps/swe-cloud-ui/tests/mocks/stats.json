@@ -1,0 +1,22 @@
+{
+  "services": {
+    "value": 12,
+    "trend": "+2",
+    "previous": 10
+  },
+  "resources": {
+    "value": 47,
+    "trend": "+5",
+    "previous": 42
+  },
+  "requests": {
+    "value": 1234,
+    "trend": null,
+    "previous": 1100
+  },
+  "deployments": {
+    "value": 8,
+    "trend": "+1",
+    "previous": 7
+  }
+}

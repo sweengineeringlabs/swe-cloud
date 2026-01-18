@@ -28,4 +28,4 @@ exports = [
     "use_state",
     "use_terraform",
 ]
-export_files = ["iac.type.rsc"]
+export_files = ["iac.type.rsx"]

@@ -1,0 +1,76 @@
+# RustScript Test Configuration
+# Configuration for running tests in the SWE Cloud UI project
+
+[test]
+# Test directories
+dirs = ["tests"]
+
+# Test file patterns
+patterns = ["**/*.test.rsx"]
+
+# Timeout for individual tests (ms)
+timeout = 10000
+
+# Run tests in parallel
+parallel = true
+
+# Number of parallel workers
+workers = 4
+
+[test.coverage]
+# Enable code coverage
+enabled = true
+
+# Minimum coverage threshold (percentage)
+threshold = 80
+
+# Files to include in coverage
+include = ["src/**/*.rsx"]
+
+# Files to exclude from coverage
+exclude = ["src/**/*.test.rsx", "tests/**"]
+
+[test.e2e]
+# E2E test configuration
+enabled = true
+
+# Browser for E2E tests
+browser = "chromium"
+
+# Headless mode
+headless = true
+
+# Base URL for E2E tests
+base_url = "http://localhost:3000"
+
+# Viewport dimensions
+viewport = { width = 1280, height = 720 }
+
+# Screenshot on failure
+screenshot_on_failure = true
+
+# Screenshots directory
+screenshots_dir = "test-results/screenshots"
+
+[test.mocks]
+# Mock API responses for testing
+enabled = true
+
+# Mock data directory
+data_dir = "tests/mocks"
+
+[test.reporters]
+# Test result reporters
+console = true
+json = "test-results/results.json"
+html = "test-results/report.html"
+
+[test.watch]
+# Watch mode configuration
+enabled = true
+
+# Debounce time (ms)
+debounce = 300
+
+# Watch patterns
+patterns = ["src/**/*.rsx", "tests/**/*.rsx"]

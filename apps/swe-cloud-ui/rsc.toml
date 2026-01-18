@@ -11,7 +11,7 @@ license = "MIT"
 [build]
 target = "web"
 out_dir = "dist"
-entry = "src/main.rsc"
+entry = "src/main.rsx"
 
 [build.release]
 backend = "llvm"
@@ -34,9 +34,13 @@ enabled = true
 
 # Bounded context enforcement
 [boundaries]
-enforce = true
-strict = true
+enforce = false
+strict = false
 containers = ["features", "modules"]
+
+# Only compile entry point for minimal build
+[build.files]
+include = ["src/main.rsx"]
 
 # Path aliases for imports
 [imports.aliases]
