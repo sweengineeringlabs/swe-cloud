@@ -8,7 +8,7 @@ use @modules::context::{use_provider, use_environment};
 #[component]
 pub fn ContextBar() -> Element {
     rsx! {
-        div(class: "context-bar") {
+        div(class: "context-bar", data_testid: "context-bar") {
             // Provider selector (left)
             div(class: "context-left") {
                 ProviderSelector()
@@ -30,24 +30,26 @@ fn ProviderSelector() -> Element {
     let current = provider.current_provider();
 
     rsx! {
-        div(class: "context-selector provider-selector") {
+        div(class: "context-selector provider-selector", data_testid: "provider-selector") {
             button(
                 class: "selector-button",
+                data_testid: "provider-button",
                 onclick: move |_| set_open(!*open),
                 style: format!("--selector-color: {}", current.map(|p| p.color.as_str()).unwrap_or("#666"))
             ) {
                 if let Some(p) = current {
                     span(class: "selector-icon") { {&p.icon} }
-                    span(class: "selector-label") { {&p.label} }
+                    span(class: "selector-label", data_testid: "provider-label") { {&p.label} }
                 }
                 span(class: "selector-arrow") { "▼" }
             }
 
             if *open {
-                div(class: "selector-dropdown") {
+                div(class: "selector-dropdown", data_testid: "provider-dropdown") {
                     for option in &provider.options {
                         button(
                             class: format!("selector-option {}", if option.id == provider.current { "active" } else { "" }),
+                            data_testid: format!("provider-option-{}", option.id),
                             style: format!("--option-color: {}", option.color),
                             onclick: move |_| {
                                 provider.switch(&option.id);
@@ -70,8 +72,8 @@ fn EnvironmentSelector() -> Element {
     let mut environment = use_environment();
 
     rsx! {
-        div(class: "context-selector environment-selector") {
-            div(class: "env-pills") {
+        div(class: "context-selector environment-selector", data_testid: "environment-selector") {
+            div(class: "env-pills", data_testid: "environment-pills") {
                 for option in &environment.options {
                     button(
                         class: format!(
@@ -79,13 +81,14 @@ fn EnvironmentSelector() -> Element {
                             if option.id == environment.current { "active" } else { "" },
                             if option.id == "prod" { "production" } else { "" }
                         ),
+                        data_testid: format!("env-option-{}", option.id),
                         style: format!("--env-color: {}", option.color),
                         onclick: move |_| environment.switch(&option.id)
                     ) {
                         span(class: "env-icon") { {&option.icon} }
-                        span(class: "env-label") { {&option.label} }
+                        span(class: "env-label", data_testid: format!("env-label-{}", option.id)) { {&option.label} }
                         if option.read_only_default {
-                            span(class: "env-warning") { "⚠" }
+                            span(class: "env-warning", data_testid: "env-warning") { "⚠" }
                         }
                     }
                 }

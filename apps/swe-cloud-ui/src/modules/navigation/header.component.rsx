@@ -10,7 +10,7 @@ pub fn Header() -> Element {
         header(class: "app-header") {
             // Left section - Brand
             div(class: "header-left") {
-                a(href: "/", class: "brand") {
+                a(href: "/", class: "brand", data_testid: "brand-link") {
                     span(class: "brand-icon") { "☁" }
                     span(class: "brand-name") { "SWE Cloud" }
                 }

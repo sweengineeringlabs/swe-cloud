@@ -8,25 +8,11 @@ use rustscript::router::use_not_found_config;
 
 #[derive(Props, Default)]
 pub struct NotFoundProps {
-    /// Override heading text
-    #[prop(default)]
     pub heading: Option<String>,
-
-    /// Override message text
-    #[prop(default)]
     pub message: Option<String>,
-
-    /// Override home link visibility
-    #[prop(default)]
     pub show_home_link: Option<bool>,
-
-    /// Override back button visibility
-    #[prop(default)]
     pub show_back_button: Option<bool>,
-
-    /// Custom CSS class
-    #[prop(default)]
-    pub class: Option<String>,
+    pub css_class: Option<String>,
 }
 
 #[page]
@@ -39,7 +25,7 @@ pub fn NotFound(props: NotFoundProps) -> Element {
     let message = props.message.unwrap_or_else(|| config.message.clone());
     let show_home_link = props.show_home_link.unwrap_or(config.show_home_link);
     let show_back_button = props.show_back_button.unwrap_or(config.show_back_button);
-    let class = props.class.or_else(|| config.class.clone());
+    let css_class = props.css_class.or_else(|| config.class.clone());
 
     let go_back = move |_| {
         navigate.back();
@@ -50,7 +36,7 @@ pub fn NotFound(props: NotFoundProps) -> Element {
     };
 
     rsx! {
-        <div class={format!("not-found-page {}", class.unwrap_or_default())}>
+        <div class={format!("not-found-page {}", css_class.unwrap_or_default())} data-testid="not-found-page">
             {if let Some(image) = &config.image {
                 rsx! {
                     <div class="not-found-image">

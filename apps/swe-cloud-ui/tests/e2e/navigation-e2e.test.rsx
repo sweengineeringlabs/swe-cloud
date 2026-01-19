@@ -8,7 +8,7 @@ use rustscript::test::*;
 #[e2e]
 fn brand_click_returns_to_landing() {
     navigate("/settings");
-    click(".brand-link");
+    click("[data-testid='brand-link']");
     assert_url("/");
 }
 
@@ -32,5 +32,5 @@ fn browser_forward_button_works() {
 #[e2e]
 fn unknown_route_shows_404() {
     navigate("/nonexistent-page-12345");
-    assert_element_exists(".not-found");
+    assert_element_exists("[data-testid='not-found-page']");
 }
