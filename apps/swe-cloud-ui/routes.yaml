@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://rustscript.dev/schemas/routes.schema.json
 # Routes Configuration
 # Context-aware routing for SWE Cloud Platform
 

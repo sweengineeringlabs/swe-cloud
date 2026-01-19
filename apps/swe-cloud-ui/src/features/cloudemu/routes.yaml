@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://rustscript.dev/schemas/routes.schema.json
 # CloudEmu Feature Routes
 # Cloud emulation services with multi-provider support
 
