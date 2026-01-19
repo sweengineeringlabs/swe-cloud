@@ -1,0 +1,59 @@
+# IAC Feature Routes
+# Infrastructure as Code management
+
+feature:
+  name: "Infrastructure"
+  icon: "git-branch"
+  description: "Infrastructure as Code deployment and management"
+  role_required: ["devops", "admin"]
+
+routes:
+  # Overview/Landing
+  - path: "/iac"
+    page: "iac-overview"
+    title: "Infrastructure"
+    icon: "git-branch"
+    nav: "main"
+
+  # Modules
+  - path: "/iac-modules"
+    page: "iac-modules"
+    title: "Modules"
+    icon: "box"
+
+  - path: "/iac-modules/:module"
+    page: "iac-module-detail"
+    title: "{module}"
+
+  # Deploy
+  - path: "/iac-deploy"
+    page: "iac-deploy"
+    title: "Deploy"
+    icon: "upload-cloud"
+    workflow: "deploy-infrastructure"
+
+  # Deployments
+  - path: "/iac-deployments"
+    page: "iac-deployments"
+    title: "Deployments"
+    icon: "list"
+
+  - path: "/iac-deployments/:id"
+    page: "iac-deployment-detail"
+    title: "Deployment #{id}"
+
+  # State
+  - path: "/iac-state"
+    page: "iac-state"
+    title: "State"
+    icon: "file-text"
+
+  # Plans
+  - path: "/iac-plans"
+    page: "iac-plans"
+    title: "Plans"
+    icon: "clipboard"
+
+  - path: "/iac-plans/:id"
+    page: "iac-plan-detail"
+    title: "Plan #{id}"

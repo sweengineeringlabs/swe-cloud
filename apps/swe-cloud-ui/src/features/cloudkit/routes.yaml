@@ -1,0 +1,43 @@
+# CloudKit Feature Routes
+# Cloud resource management and API exploration
+
+feature:
+  name: "CloudKit"
+  icon: "package"
+  description: "Cloud resource management toolkit"
+  role_required: ["developer", "devops", "admin"]
+
+routes:
+  # Overview/Landing
+  - path: "/cloudkit"
+    page: "cloudkit-overview"
+    title: "CloudKit"
+    icon: "package"
+    nav: "main"
+
+  # Resources
+  - path: "/cloudkit-resources"
+    page: "cloudkit-resources"
+    title: "Resources"
+    icon: "database"
+
+  - path: "/cloudkit-resources/:type"
+    page: "cloudkit-resource-list"
+    title: "{type | titlecase}"
+
+  - path: "/cloudkit-resources/:type/:id"
+    page: "cloudkit-resource-detail"
+    title: "Resource Details"
+
+  # Operations
+  - path: "/cloudkit-operations"
+    page: "cloudkit-operations"
+    title: "Operations"
+    icon: "activity"
+
+  # API Explorer
+  - path: "/cloudkit-explorer"
+    page: "cloudkit-explorer"
+    title: "API Explorer"
+    icon: "compass"
+    context_aware: true

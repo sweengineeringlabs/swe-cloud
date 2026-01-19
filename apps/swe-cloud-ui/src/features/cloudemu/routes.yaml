@@ -1,0 +1,53 @@
+# CloudEmu Feature Routes
+# Cloud emulation services with multi-provider support
+
+feature:
+  name: "CloudEmu"
+  icon: "cloud"
+  description: "Cloud service emulation for local development"
+
+# Route parameter patterns
+params:
+  provider: "aws|azure|gcp|zero"
+  service: "s3|dynamodb|lambda|sqs|sns|ec2|blobs|keyvault|functions|storage|pubsub|compute|queue"
+
+routes:
+  # Overview/Landing
+  - path: "/cloudemu"
+    page: "cloudemu-overview"
+    title: "CloudEmu"
+    icon: "cloud"
+    nav: "main"
+
+  # Provider routes
+  - path: "/cloudemu/:provider"
+    page: "cloudemu-provider"
+    title: "{provider | uppercase}"
+    context:
+      set: { provider: ":provider" }
+
+  # Service list
+  - path: "/cloudemu/:provider/:service"
+    page: "cloudemu-service"
+    title: "{service | titlecase}"
+
+  # Create new resource
+  - path: "/cloudemu/:provider/:service/new"
+    page: "cloudemu-service-new"
+    title: "New {service | titlecase}"
+    workflow: "create-resource"
+    workflow_data:
+      resource_type: ":service"
+
+  # Resource detail
+  - path: "/cloudemu/:provider/:service/:id"
+    page: "cloudemu-service-detail"
+    title: "{service | titlecase} Details"
+
+  # Request logs
+  - path: "/cloudemu/logs"
+    page: "cloudemu-logs"
+    title: "Request Logs"
+    icon: "terminal"
+    context_filter:
+      provider: "current"
