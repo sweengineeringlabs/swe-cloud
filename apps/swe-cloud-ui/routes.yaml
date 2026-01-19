@@ -19,7 +19,7 @@ params:
 
 # 404 Not Found page configuration
 not_found:
-  page: "not-found"
+  page: "not_found"
   title: "Page Not Found"
   heading: "404"
   message: "The page you're looking for doesn't exist or has been moved."
@@ -44,34 +44,34 @@ routes:
 
   # Workflow Runner
   - path: "/workflow/:workflow_id"
-    page: "workflow-runner"
+    page: "workflow_runner"
     title: "Workflow"
     layout: "workflow"
     nav: false
 
   # Settings
   - path: "/settings"
-    page: "settings-index"
+    page: "settings_index"
     title: "Settings"
     icon: "settings"
     nav: "footer"
     role_required: ["admin"]
     children:
-      - path: "/settings-providers"
-        page: "settings-providers"
+      - path: "/settings_providers"
+        page: "settings_providers"
         title: "Cloud Providers"
-      - path: "/settings-endpoints"
-        page: "settings-endpoints"
+      - path: "/settings_endpoints"
+        page: "settings_endpoints"
         title: "Endpoints"
-      - path: "/settings-credentials"
-        page: "settings-credentials"
+      - path: "/settings_credentials"
+        page: "settings_credentials"
         title: "Credentials"
-      - path: "/settings-users"
-        page: "settings-users"
+      - path: "/settings_users"
+        page: "settings_users"
         title: "Users"
 
   # Not Found
   - path: "*"
-    page: "not-found"
+    page: "not_found"
     title: "Not Found"
     nav: false

@@ -10,34 +10,34 @@ feature:
 routes:
   # Overview/Landing
   - path: "/cloudkit"
-    page: "cloudkit-overview"
+    page: "cloudkit_overview"
     title: "CloudKit"
     icon: "package"
     nav: "main"
 
   # Resources
-  - path: "/cloudkit-resources"
-    page: "cloudkit-resources"
+  - path: "/cloudkit_resources"
+    page: "cloudkit_resources"
     title: "Resources"
     icon: "database"
 
-  - path: "/cloudkit-resources/:type"
-    page: "cloudkit-resource-list"
+  - path: "/cloudkit_resources/:type"
+    page: "cloudkit_resource_list"
     title: "{type | titlecase}"
 
-  - path: "/cloudkit-resources/:type/:id"
-    page: "cloudkit-resource-detail"
+  - path: "/cloudkit_resources/:type/:id"
+    page: "cloudkit_resource_detail"
     title: "Resource Details"
 
   # Operations
-  - path: "/cloudkit-operations"
-    page: "cloudkit-operations"
+  - path: "/cloudkit_operations"
+    page: "cloudkit_operations"
     title: "Operations"
     icon: "activity"
 
   # API Explorer
-  - path: "/cloudkit-explorer"
-    page: "cloudkit-explorer"
+  - path: "/cloudkit_explorer"
+    page: "cloudkit_explorer"
     title: "API Explorer"
     icon: "compass"
     context_aware: true

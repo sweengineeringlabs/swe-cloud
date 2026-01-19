@@ -27,7 +27,7 @@ pub fn IacModuleDetail(props: IacModuleDetailProps) -> Element {
     }, [module_id.clone()]);
 
     let deploy_module = move |_| {
-        navigate(&format!("/iac-deploy?module={}", module_id));
+        navigate(&format!("/iac_deploy?module={}", module_id));
     };
 
     rsx! {
@@ -35,7 +35,7 @@ pub fn IacModuleDetail(props: IacModuleDetailProps) -> Element {
             <header class="page-header">
                 <Breadcrumb items={vec![
                     ("IAC", "/iac"),
-                    ("Modules", "/iac-modules"),
+                    ("Modules", "/iac_modules"),
                     (module_id.as_str(), ""),
                 ]} />
                 <div class="header-actions">

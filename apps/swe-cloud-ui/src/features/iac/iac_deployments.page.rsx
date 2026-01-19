@@ -29,7 +29,7 @@ pub fn IacDeployments() -> Element {
                 ]} />
                 <div class="header-actions">
                     <h1>"Deployments"</h1>
-                    <Link to="/iac-deploy" class="btn btn-primary">
+                    <Link to="/iac_deploy" class="btn btn-primary">
                         "New Deployment"
                     </Link>
                 </div>
@@ -51,7 +51,7 @@ pub fn IacDeployments() -> Element {
                             title="No Deployments"
                             description="No deployments found."
                             action_label="Create Deployment"
-                            action_href="/iac-deploy"
+                            action_href="/iac_deploy"
                         />
                     }
                 } else {

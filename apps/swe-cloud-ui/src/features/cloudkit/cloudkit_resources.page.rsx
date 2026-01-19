@@ -34,7 +34,7 @@ pub fn CloudkitResources() -> Element {
                             id={id.to_string()}
                             name={name.to_string()}
                             icon={icon.to_string()}
-                            href={format!("/cloudkit-resources/{}", id)}
+                            href={format!("/cloudkit_resources/{}", id)}
                         />
                     })}
                 </div>

@@ -31,7 +31,7 @@ pub fn CloudkitResourceList(props: CloudkitResourceListProps) -> Element {
             <header class="page-header">
                 <Breadcrumb items={vec![
                     ("CloudKit", "/cloudkit"),
-                    ("Resources", "/cloudkit-resources"),
+                    ("Resources", "/cloudkit_resources"),
                     (resource_type.as_str(), ""),
                 ]} />
                 <h1>{format!("{}", capitalize(resource_type))}</h1>

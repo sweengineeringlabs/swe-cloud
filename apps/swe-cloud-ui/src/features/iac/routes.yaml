@@ -10,50 +10,50 @@ feature:
 routes:
   # Overview/Landing
   - path: "/iac"
-    page: "iac-overview"
+    page: "iac_overview"
     title: "Infrastructure"
     icon: "git-branch"
     nav: "main"
 
   # Modules
-  - path: "/iac-modules"
-    page: "iac-modules"
+  - path: "/iac_modules"
+    page: "iac_modules"
     title: "Modules"
     icon: "box"
 
-  - path: "/iac-modules/:module"
-    page: "iac-module-detail"
+  - path: "/iac_modules/:module"
+    page: "iac_module_detail"
     title: "{module}"
 
   # Deploy
-  - path: "/iac-deploy"
-    page: "iac-deploy"
+  - path: "/iac_deploy"
+    page: "iac_deploy"
     title: "Deploy"
     icon: "upload-cloud"
     workflow: "deploy-infrastructure"
 
   # Deployments
-  - path: "/iac-deployments"
-    page: "iac-deployments"
+  - path: "/iac_deployments"
+    page: "iac_deployments"
     title: "Deployments"
     icon: "list"
 
-  - path: "/iac-deployments/:id"
-    page: "iac-deployment-detail"
+  - path: "/iac_deployments/:id"
+    page: "iac_deployment_detail"
     title: "Deployment #{id}"
 
   # State
-  - path: "/iac-state"
-    page: "iac-state"
+  - path: "/iac_state"
+    page: "iac_state"
     title: "State"
     icon: "file-text"
 
   # Plans
-  - path: "/iac-plans"
-    page: "iac-plans"
+  - path: "/iac_plans"
+    page: "iac_plans"
     title: "Plans"
     icon: "clipboard"
 
-  - path: "/iac-plans/:id"
-    page: "iac-plan-detail"
+  - path: "/iac_plans/:id"
+    page: "iac_plan_detail"
     title: "Plan #{id}"

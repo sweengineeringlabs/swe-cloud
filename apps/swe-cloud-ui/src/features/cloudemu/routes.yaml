@@ -14,26 +14,26 @@ params:
 routes:
   # Overview/Landing
   - path: "/cloudemu"
-    page: "cloudemu-overview"
+    page: "cloudemu_overview"
     title: "CloudEmu"
     icon: "cloud"
     nav: "main"
 
   # Provider routes
   - path: "/cloudemu/:provider"
-    page: "cloudemu-provider"
+    page: "cloudemu_provider"
     title: "{provider | uppercase}"
     context:
       set: { provider: ":provider" }
 
   # Service list
   - path: "/cloudemu/:provider/:service"
-    page: "cloudemu-service"
+    page: "cloudemu_service"
     title: "{service | titlecase}"
 
   # Create new resource
   - path: "/cloudemu/:provider/:service/new"
-    page: "cloudemu-service-new"
+    page: "cloudemu_service_new"
     title: "New {service | titlecase}"
     workflow: "create-resource"
     workflow_data:
@@ -41,12 +41,12 @@ routes:
 
   # Resource detail
   - path: "/cloudemu/:provider/:service/:id"
-    page: "cloudemu-service-detail"
+    page: "cloudemu_service_detail"
     title: "{service | titlecase} Details"
 
   # Request logs
   - path: "/cloudemu/logs"
-    page: "cloudemu-logs"
+    page: "cloudemu_logs"
     title: "Request Logs"
     icon: "terminal"
     context_filter:

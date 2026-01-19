@@ -21,19 +21,19 @@ pub fn CloudkitOverview() -> Element {
                         title="Resources"
                         description="Browse and manage cloud resources"
                         icon="database"
-                        href="/cloudkit-resources"
+                        href="/cloudkit_resources"
                     />
                     <ActionCard
                         title="Operations"
                         description="View running operations"
                         icon="activity"
-                        href="/cloudkit-operations"
+                        href="/cloudkit_operations"
                     />
                     <ActionCard
                         title="API Explorer"
                         description="Explore cloud APIs"
                         icon="compass"
-                        href="/cloudkit-explorer"
+                        href="/cloudkit_explorer"
                     />
                 </div>
             </section>

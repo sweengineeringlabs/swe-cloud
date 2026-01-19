@@ -22,7 +22,7 @@ fn cloudemu_has_overview_route() {
     let route = router.find("/cloudemu");
 
     assert!(route.is_some(), "CloudEmu overview route should exist");
-    assert_eq!(route.unwrap().page, "cloudemu-overview");
+    assert_eq!(route.unwrap().page, "cloudemu_overview");
 }
 
 #[test]
@@ -70,7 +70,7 @@ fn cloudemu_new_resource_route_resolves() {
     let route = router.resolve("/cloudemu/aws/dynamodb/new");
 
     assert!(route.is_some(), "New resource route should resolve");
-    assert_eq!(route.unwrap().page, "cloudemu-service-new");
+    assert_eq!(route.unwrap().page, "cloudemu_service_new");
 }
 
 #[test]
@@ -79,7 +79,7 @@ fn cloudemu_logs_route_exists() {
     let route = router.find("/cloudemu/logs");
 
     assert!(route.is_some(), "Logs route should exist");
-    assert_eq!(route.unwrap().page, "cloudemu-logs");
+    assert_eq!(route.unwrap().page, "cloudemu_logs");
 }
 
 // ============================================================================

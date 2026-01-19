@@ -31,7 +31,7 @@ pub fn IacDeploymentDetail(props: IacDeploymentDetailProps) -> Element {
             <header class="page-header">
                 <Breadcrumb items={vec![
                     ("IAC", "/iac"),
-                    ("Deployments", "/iac-deployments"),
+                    ("Deployments", "/iac_deployments"),
                     (&format!("#{}", deployment_id), ""),
                 ]} />
                 <div class="header-actions">

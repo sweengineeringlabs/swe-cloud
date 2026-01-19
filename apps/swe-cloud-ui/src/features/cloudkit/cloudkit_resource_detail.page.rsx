@@ -33,8 +33,8 @@ pub fn CloudkitResourceDetail(props: CloudkitResourceDetailProps) -> Element {
             <header class="page-header">
                 <Breadcrumb items={vec![
                     ("CloudKit", "/cloudkit"),
-                    ("Resources", "/cloudkit-resources"),
-                    (resource_type.as_str(), &format!("/cloudkit-resources/{}", resource_type)),
+                    ("Resources", "/cloudkit_resources"),
+                    (resource_type.as_str(), &format!("/cloudkit_resources/{}", resource_type)),
                     (id.as_str(), ""),
                 ]} />
                 <h1>{id.clone()}</h1>

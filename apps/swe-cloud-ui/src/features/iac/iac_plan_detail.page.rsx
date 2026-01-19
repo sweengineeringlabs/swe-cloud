@@ -29,7 +29,7 @@ pub fn IacPlanDetail(props: IacPlanDetailProps) -> Element {
     let apply_plan = move |_| {
         spawn(async move {
             let deployment = apply_plan_execution(plan_id).await;
-            navigate(&format!("/iac-deployments/{}", deployment.id));
+            navigate(&format!("/iac_deployments/{}", deployment.id));
         });
     };
 
@@ -38,7 +38,7 @@ pub fn IacPlanDetail(props: IacPlanDetailProps) -> Element {
             <header class="page-header">
                 <Breadcrumb items={vec![
                     ("IAC", "/iac"),
-                    ("Plans", "/iac-plans"),
+                    ("Plans", "/iac_plans"),
                     (&format!("#{}", plan_id), ""),
                 ]} />
                 <div class="header-actions">

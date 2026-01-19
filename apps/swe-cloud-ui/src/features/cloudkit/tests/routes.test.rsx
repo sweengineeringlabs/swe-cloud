@@ -22,22 +22,22 @@ fn cloudkit_has_overview_route() {
     let route = router.find("/cloudkit");
 
     assert!(route.is_some(), "CloudKit overview route should exist");
-    assert_eq!(route.unwrap().page, "cloudkit-overview");
+    assert_eq!(route.unwrap().page, "cloudkit_overview");
 }
 
 #[test]
 fn cloudkit_resources_route_exists() {
     let router = Router::from_feature("cloudkit");
-    let route = router.find("/cloudkit-resources");
+    let route = router.find("/cloudkit_resources");
 
     assert!(route.is_some(), "Resources route should exist");
-    assert_eq!(route.unwrap().page, "cloudkit-resources");
+    assert_eq!(route.unwrap().page, "cloudkit_resources");
 }
 
 #[test]
 fn cloudkit_resource_type_route_captures_type() {
     let router = Router::from_feature("cloudkit");
-    let route = router.resolve("/cloudkit-resources/buckets");
+    let route = router.resolve("/cloudkit_resources/buckets");
 
     assert!(route.is_some(), "Resource type route should resolve");
     assert_eq!(route.unwrap().params.get("type"), Some(&"buckets".to_string()));
@@ -46,7 +46,7 @@ fn cloudkit_resource_type_route_captures_type() {
 #[test]
 fn cloudkit_resource_detail_route_captures_params() {
     let router = Router::from_feature("cloudkit");
-    let route = router.resolve("/cloudkit-resources/buckets/my-bucket");
+    let route = router.resolve("/cloudkit_resources/buckets/my-bucket");
 
     assert!(route.is_some(), "Resource detail route should resolve");
     let matched = route.unwrap();
@@ -57,19 +57,19 @@ fn cloudkit_resource_detail_route_captures_params() {
 #[test]
 fn cloudkit_operations_route_exists() {
     let router = Router::from_feature("cloudkit");
-    let route = router.find("/cloudkit-operations");
+    let route = router.find("/cloudkit_operations");
 
     assert!(route.is_some(), "Operations route should exist");
-    assert_eq!(route.unwrap().page, "cloudkit-operations");
+    assert_eq!(route.unwrap().page, "cloudkit_operations");
 }
 
 #[test]
 fn cloudkit_explorer_route_exists() {
     let router = Router::from_feature("cloudkit");
-    let route = router.find("/cloudkit-explorer");
+    let route = router.find("/cloudkit_explorer");
 
     assert!(route.is_some(), "Explorer route should exist");
-    assert_eq!(route.unwrap().page, "cloudkit-explorer");
+    assert_eq!(route.unwrap().page, "cloudkit_explorer");
 }
 
 // ============================================================================
@@ -96,7 +96,7 @@ fn cloudkit_requires_role() {
 #[test]
 fn cloudkit_explorer_is_context_aware() {
     let router = Router::from_feature("cloudkit");
-    let route = router.find("/cloudkit-explorer");
+    let route = router.find("/cloudkit_explorer");
 
     assert!(route.is_some());
     assert!(route.unwrap().context_aware, "Explorer should be context-aware");

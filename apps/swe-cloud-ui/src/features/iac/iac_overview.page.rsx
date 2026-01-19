@@ -21,25 +21,25 @@ pub fn IacOverview() -> Element {
                         title="Modules"
                         description="Browse infrastructure modules"
                         icon="box"
-                        href="/iac-modules"
+                        href="/iac_modules"
                     />
                     <ActionCard
                         title="Deploy"
                         description="Deploy infrastructure"
                         icon="upload-cloud"
-                        href="/iac-deploy"
+                        href="/iac_deploy"
                     />
                     <ActionCard
                         title="State"
                         description="View current state"
                         icon="file-text"
-                        href="/iac-state"
+                        href="/iac_state"
                     />
                     <ActionCard
                         title="Plans"
                         description="Execution plans"
                         icon="clipboard"
-                        href="/iac-plans"
+                        href="/iac_plans"
                     />
                 </div>
             </section>

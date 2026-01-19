@@ -22,7 +22,7 @@ fn iac_has_overview_route() {
     let route = router.find("/iac");
 
     assert!(route.is_some(), "IAC overview route should exist");
-    assert_eq!(route.unwrap().page, "iac-overview");
+    assert_eq!(route.unwrap().page, "iac_overview");
 }
 
 // ============================================================================
@@ -32,16 +32,16 @@ fn iac_has_overview_route() {
 #[test]
 fn iac_modules_route_exists() {
     let router = Router::from_feature("iac");
-    let route = router.find("/iac-modules");
+    let route = router.find("/iac_modules");
 
     assert!(route.is_some(), "Modules route should exist");
-    assert_eq!(route.unwrap().page, "iac-modules");
+    assert_eq!(route.unwrap().page, "iac_modules");
 }
 
 #[test]
 fn iac_module_detail_route_captures_module() {
     let router = Router::from_feature("iac");
-    let route = router.resolve("/iac-modules/vpc-network");
+    let route = router.resolve("/iac_modules/vpc-network");
 
     assert!(route.is_some(), "Module detail route should resolve");
     assert_eq!(route.unwrap().params.get("module"), Some(&"vpc-network".to_string()));
@@ -54,16 +54,16 @@ fn iac_module_detail_route_captures_module() {
 #[test]
 fn iac_deploy_route_exists() {
     let router = Router::from_feature("iac");
-    let route = router.find("/iac-deploy");
+    let route = router.find("/iac_deploy");
 
     assert!(route.is_some(), "Deploy route should exist");
-    assert_eq!(route.unwrap().page, "iac-deploy");
+    assert_eq!(route.unwrap().page, "iac_deploy");
 }
 
 #[test]
 fn iac_deploy_has_workflow() {
     let router = Router::from_feature("iac");
-    let route = router.find("/iac-deploy");
+    let route = router.find("/iac_deploy");
 
     assert!(route.is_some());
     assert_eq!(route.unwrap().workflow, Some("deploy-infrastructure".to_string()));
@@ -72,16 +72,16 @@ fn iac_deploy_has_workflow() {
 #[test]
 fn iac_deployments_route_exists() {
     let router = Router::from_feature("iac");
-    let route = router.find("/iac-deployments");
+    let route = router.find("/iac_deployments");
 
     assert!(route.is_some(), "Deployments route should exist");
-    assert_eq!(route.unwrap().page, "iac-deployments");
+    assert_eq!(route.unwrap().page, "iac_deployments");
 }
 
 #[test]
 fn iac_deployment_detail_route_captures_id() {
     let router = Router::from_feature("iac");
-    let route = router.resolve("/iac-deployments/deploy-456");
+    let route = router.resolve("/iac_deployments/deploy-456");
 
     assert!(route.is_some(), "Deployment detail route should resolve");
     assert_eq!(route.unwrap().params.get("id"), Some(&"deploy-456".to_string()));
@@ -94,25 +94,25 @@ fn iac_deployment_detail_route_captures_id() {
 #[test]
 fn iac_state_route_exists() {
     let router = Router::from_feature("iac");
-    let route = router.find("/iac-state");
+    let route = router.find("/iac_state");
 
     assert!(route.is_some(), "State route should exist");
-    assert_eq!(route.unwrap().page, "iac-state");
+    assert_eq!(route.unwrap().page, "iac_state");
 }
 
 #[test]
 fn iac_plans_route_exists() {
     let router = Router::from_feature("iac");
-    let route = router.find("/iac-plans");
+    let route = router.find("/iac_plans");
 
     assert!(route.is_some(), "Plans route should exist");
-    assert_eq!(route.unwrap().page, "iac-plans");
+    assert_eq!(route.unwrap().page, "iac_plans");
 }
 
 #[test]
 fn iac_plan_detail_route_captures_id() {
     let router = Router::from_feature("iac");
-    let route = router.resolve("/iac-plans/plan-789");
+    let route = router.resolve("/iac_plans/plan-789");
 
     assert!(route.is_some(), "Plan detail route should resolve");
     assert_eq!(route.unwrap().params.get("id"), Some(&"plan-789".to_string()));
@@ -137,7 +137,7 @@ fn iac_requires_role() {
 #[test]
 fn iac_deploy_inherits_role_requirement() {
     let router = Router::from_feature("iac");
-    let route = router.find("/iac-deploy");
+    let route = router.find("/iac_deploy");
 
     assert!(route.is_some());
     // Child routes should inherit role requirements
