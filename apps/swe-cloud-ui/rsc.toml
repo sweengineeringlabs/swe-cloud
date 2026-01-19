@@ -83,6 +83,40 @@ enforce = true
 timeout = 10000
 parallel = true
 
+# Performance budgets for CI enforcement
+[performance]
+enabled = true
+fail_on_exceed = true
+
+# Build output size budgets
+[performance.budgets]
+wasm = "5KB"           # WASM bundle limit
+css = "10KB"           # CSS bundle limit
+js = "100KB"           # Runtime JS limit
+total = "150KB"        # Total bundle limit
+
+[performance.budgets.compressed]
+wasm = "1KB"           # Brotli-compressed WASM
+css = "2KB"            # Brotli-compressed CSS
+js = "20KB"            # Brotli-compressed JS
+total = "25KB"         # Total compressed bundle
+
+# Runtime performance budgets
+[performance.runtime]
+wasm_init = "50ms"      # WASM instantiation time
+app_init = "100ms"      # App initialization time
+render = "16ms"         # Component render time (60fps)
+memory_heap = "50MB"    # Max heap size
+
+# Web Vitals budgets (Lighthouse metrics)
+[performance.vitals]
+fcp = "1.8s"            # First Contentful Paint
+lcp = "2.5s"            # Largest Contentful Paint
+tti = "3.8s"            # Time to Interactive
+tbt = "200ms"           # Total Blocking Time
+cls = "0.1"             # Cumulative Layout Shift
+speed_index = "3.4s"    # Speed Index
+
 [dependencies]
 rsc-std = "0.1.0"
 rsc-ui = "0.1.0"

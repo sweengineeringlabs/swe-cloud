@@ -5,6 +5,22 @@
     "entry": "swe-cloud-ui.wasm",
     "runtime": "rustscript-runtime.js",
     "styles": "styles.css",
+    "codeSplitting": true,
+    "chunksManifest": "chunks.json",
+    "chunks": [
+        {
+            "name": "main",
+            "file": "main.be3bb63e.wasm",
+            "size": 1273,
+            "hash": "be3bb63e178ac5be"
+        }
+    ],
+    "routes": [
+
+    ],
+    "preloadHints": [
+
+    ],
     "generator": "rsc build",
     "generatorVersion": "0.1.0"
 }

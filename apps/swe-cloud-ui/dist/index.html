@@ -7,21 +7,36 @@
     <title>swe-cloud-ui</title>
 
     <link rel="stylesheet" href="styles.css">
+
     <script src="rustscript-runtime.js"></script>
+    <script src="chunk-loader.js"></script>
 </head>
 <body>
     <div id="app"></div>
     <script>
-        RustScript.loadApp('swe-cloud-ui.wasm', 'app')
-            .then(app => {
-                console.log('RustScript app loaded');
+        // Initialize chunk loader and load app with code splitting
+        (async function() {
+            try {
+                // Initialize chunk loader
+                await RustScript.ChunkLoader.chunkLoader.init('chunks.json');
+
+                // Load main app with chunk support
+                const app = await RustScript.ChunkLoader.loadAppWithChunks('swe-cloud-ui.wasm', 'app');
+                console.log('RustScript app loaded with code splitting');
+                console.log('Chunk stats:', app.stats());
                 window.__rustscript_app = app;
-            })
-            .catch(err => {
+
+                // Set up route change handling
+                window.addEventListener('popstate', async () => {
+                    const path = window.location.pathname;
+                    await app.loadRoute(path);
+                });
+            } catch (err) {
                 console.error('Failed to load RustScript app:', err);
                 document.getElementById('app').innerHTML =
                     '<div style="color: red; padding: 20px;">Error loading app: ' + err.message + '</div>';
-            });
+            }
+        })();
     </script>
 </body>
 </html>

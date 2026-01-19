@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": 0,
+      "name": "main",
+      "kind": "Main",
+      "file_name": "main.wasm",
+      "dependencies": [],
+      "size": 0,
+      "hash": null
+    }
+  ],
+  "routes": {},
+  "dynamic_imports": {},
+  "main_chunk": 0,
+  "common_chunk": null
+}
