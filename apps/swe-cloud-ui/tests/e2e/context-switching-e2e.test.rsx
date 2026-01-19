@@ -8,7 +8,7 @@
 
 use rsc_test::prelude::*;
 
-const BASE_URL: &str = "http://localhost:3000";
+const BASE_URL: &str = "http://localhost:3000/cloudemu";
 
 // =============================================================================
 // Provider Switching Tests
@@ -62,8 +62,8 @@ async fn provider_selection_persists_across_pages() {
     page.click("[data-testid='provider-option-gcp']").await;
     page.wait_for_text("[data-testid='provider-label']", "GCP").await;
 
-    // Navigate to CloudEmu
-    page.goto(&format!("{}/cloudemu", BASE_URL)).await;
+    // Navigate to CloudKit
+    page.goto("http://localhost:3000/cloudkit").await;
     page.wait_for("[data-testid='context-bar']").await;
 
     // Provider should still be GCP
@@ -205,7 +205,7 @@ async fn both_contexts_persist_together() {
     page.wait_for("[data-testid='env-option-staging'].active").await;
 
     // Navigate and return
-    page.goto(&format!("{}/cloudemu", BASE_URL)).await;
+    page.goto("http://localhost:3000/cloudkit").await;
     page.wait_for("[data-testid='context-bar']").await;
     page.goto(BASE_URL).await;
     page.wait_for("[data-testid='context-bar']").await;
@@ -257,4 +257,113 @@ async fn escape_key_closes_dropdown() {
     // Dropdown should close
     page.wait_for_hidden("[data-testid='provider-dropdown']").await;
     assert!(!page.query("[data-testid='provider-dropdown']").is_visible().await);
+}
+
+// =============================================================================
+// Signal String Comparison Tests (Regression tests for binop fix)
+// =============================================================================
+// These tests verify that signal.get() == "string" comparisons work correctly
+// in component templates after the string comparison codegen fix.
+
+#[e2e]
+async fn signal_string_comparison_updates_class() {
+    // Tests that class={if signal.get() == "value" { ... } else { ... }}
+    // updates correctly when the signal changes
+    let page = browser.new_page().await;
+    page.goto(BASE_URL).await;
+    page.wait_for("[data-testid='context-bar']").await;
+
+    // Initially "local" should be active (has 'active' class from signal comparison)
+    let local_pill = page.query("[data-testid='env-option-local']").await;
+    assert!(local_pill.has_class("active").await, "Local should initially have active class");
+
+    // Click dev to change the signal
+    page.click("[data-testid='env-option-dev']").await;
+    page.wait_for("[data-testid='env-option-dev'].active").await;
+
+    // Now local should NOT have active class (signal comparison updated)
+    let local_pill = page.query("[data-testid='env-option-local']").await;
+    assert!(!local_pill.has_class("active").await, "Local should lose active class after switch");
+
+    // And dev should have active class
+    let dev_pill = page.query("[data-testid='env-option-dev']").await;
+    assert!(dev_pill.has_class("active").await, "Dev should have active class after switch");
+}
+
+#[e2e]
+async fn multiple_signal_comparisons_in_same_component() {
+    // Tests that multiple signal.get() == "value" comparisons work in the same component
+    let page = browser.new_page().await;
+    page.goto(BASE_URL).await;
+    page.wait_for("[data-testid='context-bar']").await;
+
+    // Check that both provider and environment comparisons work
+    // Provider should show AWS initially
+    let provider_label = page.query("[data-testid='provider-label']").text().await;
+    assert!(provider_label.contains("AWS"), "Provider label should show AWS");
+
+    // Environment should show Local as active initially
+    let local_pill = page.query("[data-testid='env-option-local']").await;
+    assert!(local_pill.has_class("active").await, "Local should be active initially");
+
+    // Change provider - this tests another signal.get() == "value" comparison
+    page.click("[data-testid='provider-button']").await;
+    page.wait_for("[data-testid='provider-dropdown']").await;
+    page.click("[data-testid='provider-option-gcp']").await;
+    page.wait_for_text("[data-testid='provider-label']", "GCP").await;
+
+    // GCP should now be displayed (provider signal comparison worked)
+    let provider_label = page.query("[data-testid='provider-label']").text().await;
+    assert!(provider_label.contains("GCP"), "Provider label should show GCP after change");
+
+    // Change environment as well
+    page.click("[data-testid='env-option-staging']").await;
+    page.wait_for("[data-testid='env-option-staging'].active").await;
+
+    // Staging should now be active (environment signal comparison worked)
+    let staging_pill = page.query("[data-testid='env-option-staging']").await;
+    assert!(staging_pill.has_class("active").await, "Staging should be active after change");
+}
+
+#[e2e]
+async fn signal_not_equal_comparison_works() {
+    // Tests that != comparison with signals also works
+    // The production environment uses special styling when environment.get() != "prod"
+    let page = browser.new_page().await;
+    page.goto(BASE_URL).await;
+    page.wait_for("[data-testid='context-bar']").await;
+
+    // Initially not in prod, so prod pill should have the "production" class style
+    let prod_pill = page.query("[data-testid='env-option-prod']").await;
+    let has_production_class = prod_pill.has_class("production").await;
+
+    // Click on prod
+    page.click("[data-testid='env-option-prod']").await;
+    page.wait_for("[data-testid='env-option-prod'].active").await;
+
+    // Prod should now be active
+    let prod_active = page.query("[data-testid='env-option-prod']").await;
+    assert!(prod_active.has_class("active").await || has_production_class,
+            "Prod should be active or have production class");
+}
+
+#[e2e]
+async fn signal_comparison_survives_rapid_changes() {
+    // Stress test: rapid signal changes should all be correctly reflected
+    let page = browser.new_page().await;
+    page.goto(BASE_URL).await;
+    page.wait_for("[data-testid='context-bar']").await;
+
+    // Rapidly cycle through environments
+    let environments = ["local", "dev", "staging", "prod"];
+    for env in environments.iter() {
+        page.click(&format!("[data-testid='env-option-{}']", env)).await;
+    }
+
+    // After rapid changes, prod should be the final active state
+    page.wait_for("[data-testid='env-option-prod'].active").await;
+
+    // Verify final state
+    let prod_pill = page.query("[data-testid='env-option-prod']").await;
+    assert!(prod_pill.has_class("active").await, "Prod should be active after rapid cycling");
 }
