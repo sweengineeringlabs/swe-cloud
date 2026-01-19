@@ -24,6 +24,9 @@ pub enum ZeroError {
 
     #[error("Driver error: {0}")]
     Driver(String),
+
+    #[error("Invalid request: {0}")]
+    InvalidRequest(String),
 }
 
 /// Generic HTTP-like request for ZeroCloud services
@@ -67,6 +70,16 @@ impl ZeroResponse {
             status: 200,
             headers,
             body: val.to_string().into_bytes(),
+        }
+    }
+
+    pub fn json_bytes(body: Vec<u8>) -> Self {
+        let mut headers = HashMap::new();
+        headers.insert("Content-Type".to_string(), "application/json".to_string());
+        Self {
+            status: 200,
+            headers,
+            body,
         }
     }
 }

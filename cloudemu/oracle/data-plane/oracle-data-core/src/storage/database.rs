@@ -1,5 +1,6 @@
 use super::StorageEngine;
 use crate::error::Result;
+use rusqlite::params;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

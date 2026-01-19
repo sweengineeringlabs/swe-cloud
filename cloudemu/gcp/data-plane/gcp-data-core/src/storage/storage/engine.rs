@@ -51,6 +51,8 @@ impl StorageEngine {
         engine.init_networking_tables()?;
         engine.init_run_tables()?;
         engine.init_kms_tables()?;
+        engine.init_compute_tables()?;
+        engine.init_sql_tables()?;
 
         Ok(engine)
     }

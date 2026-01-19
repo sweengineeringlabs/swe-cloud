@@ -69,3 +69,32 @@ impl From<serde_json::Error> for CloudError {
         CloudError::Serialization(err.to_string())
     }
 }
+
+/// Simple error type for service handlers.
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    /// Bad request
+    #[error("Bad request: {0}")]
+    BadRequest(String),
+
+    /// Internal error
+    #[error("Internal error: {0}")]
+    Internal(String),
+
+    /// Not found
+    #[error("Not found: {0}")]
+    NotFound(String),
+}
+
+impl From<Error> for CloudError {
+    fn from(err: Error) -> Self {
+        match err {
+            Error::BadRequest(msg) => CloudError::Validation(msg),
+            Error::Internal(msg) => CloudError::Internal(msg),
+            Error::NotFound(msg) => CloudError::NotFound {
+                resource_type: "Resource".to_string(),
+                resource_id: msg,
+            },
+        }
+    }
+}

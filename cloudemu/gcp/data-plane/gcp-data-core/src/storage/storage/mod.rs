@@ -7,6 +7,7 @@ mod gcs;
 mod firestore;
 mod pubsub;
 mod compute;
+mod sql;
 mod secrets;
 mod lambda;
 mod pricing;
@@ -38,6 +39,7 @@ pub use engine::{
 pub use iam::ServiceAccount;
 pub use dns::ManagedZone;
 pub use workflows::Workflow;
+pub use sql::GcpSqlInstance;
 
 pub use pricing::{Product, OfferTerm};
 

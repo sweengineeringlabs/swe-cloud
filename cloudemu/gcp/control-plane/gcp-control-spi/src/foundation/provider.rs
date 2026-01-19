@@ -78,6 +78,18 @@ impl Response {
         self.headers.insert(key.into(), value.into());
         self
     }
+
+    /// Create a JSON response (200 OK with JSON body).
+    pub fn json(value: serde_json::Value) -> Self {
+        let body = serde_json::to_vec(&value).unwrap_or_default();
+        Self {
+            status: 200,
+            headers: [("Content-Type".to_string(), "application/json".to_string())]
+                .into_iter()
+                .collect(),
+            body,
+        }
+    }
 }
 
 /// Provider-agnostic cloud service interface.

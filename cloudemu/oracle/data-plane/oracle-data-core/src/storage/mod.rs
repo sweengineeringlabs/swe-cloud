@@ -105,6 +105,6 @@ impl StorageEngine {
         Ok(engine)
     }
     pub fn get_connection(&self) -> Result<std::sync::MutexGuard<rusqlite::Connection>> {
-        Ok(self.db.lock().map_err(|_| crate::error::EmulatorError::Internal("Lock poison".into()))?)
+        self.db.lock().map_err(|_| crate::error::Error::NotFound("Lock poisoned".into()))
     }
 }

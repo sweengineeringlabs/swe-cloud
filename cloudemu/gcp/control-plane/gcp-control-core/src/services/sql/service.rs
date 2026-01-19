@@ -1,8 +1,7 @@
-use gcp_data_core::storage::StorageEngine;
-use gcp_control_spi::{Request, Response, CloudResult};
+use gcp_data_core::storage::{StorageEngine, GcpSqlInstance};
+use gcp_control_spi::{Request, Response, CloudResult, Error};
 use serde_json::{json, Value};
 use std::sync::Arc;
-use gcp_data_core::storage::GcpSqlInstance;
 
 pub struct SqlService {
     storage: Arc<StorageEngine>,
@@ -39,7 +38,7 @@ impl SqlService {
             state: "RUNNABLE".to_string(),
         };
 
-        self.storage.insert_sql_instance(db).map_err(|e| gcp_control_spi::Error::Internal(e.to_string()))?;
+        self.storage.insert_sql_instance(db).map_err(|e| Error::Internal(e.to_string()))?;
 
         Ok(Response::json(json!({
             "kind": "sql#operation",

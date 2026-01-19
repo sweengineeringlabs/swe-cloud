@@ -57,13 +57,14 @@ impl GcpProvider {
             workflows: crate::services::workflows::WorkflowsService::new(engine.clone()),
             networking: crate::services::networking::NetworkingService::new(engine.clone()),
             run: crate::services::run::CloudRunService::new(engine.clone()),
+            kms: crate::services::kms::KmsService::new(engine.clone()),
         }
     }
 
     /// Create a new in-memory GCP provider for testing
     pub fn in_memory() -> Self {
          let engine = Arc::new(StorageEngine::in_memory().expect("Failed to create in-memory engine"));
-         
+
          Self {
             engine: engine.clone(),
             storage: CloudStorageService::new(engine.clone()),
@@ -80,6 +81,7 @@ impl GcpProvider {
             workflows: crate::services::workflows::WorkflowsService::new(engine.clone()),
             networking: crate::services::networking::NetworkingService::new(engine.clone()),
             run: crate::services::run::CloudRunService::new(engine.clone()),
+            kms: crate::services::kms::KmsService::new(engine.clone()),
         }
     }
 }
