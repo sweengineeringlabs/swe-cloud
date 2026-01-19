@@ -71,10 +71,10 @@ async fn provider_color_updates_in_welcome_message() {
 
     // Check that the provider highlight has Azure color
     let highlight = page.find(".provider-highlight");
-    let style = highlight.style("color");
+    let css_color = highlight.get_css("color");
 
     // Azure blue is #0078D4 or rgb(0, 120, 212)
-    assert!(style.contains("0078D4") || style.contains("rgb(0, 120, 212)"));
+    assert!(css_color.contains("0078D4") || css_color.contains("rgb(0, 120, 212)"));
 }
 
 #[e2e_test]

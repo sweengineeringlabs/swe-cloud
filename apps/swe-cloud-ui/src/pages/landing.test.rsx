@@ -403,8 +403,8 @@ fn landing_page_shows_provider_color() {
     let highlight = rendered.query_selector(".provider-highlight");
     assert!(highlight.is_some());
     // AWS color is #FF9900
-    assert!(highlight.unwrap().style("color").contains("FF9900") ||
-            highlight.unwrap().style("color").contains("rgb(255, 153, 0)"));
+    assert!(highlight.unwrap().get_css("color").contains("FF9900") ||
+            highlight.unwrap().get_css("color").contains("rgb(255, 153, 0)"));
 }
 
 // ============================================================================
