@@ -250,6 +250,6 @@ fn service_page_has_resource_detail_links() {
 
 #[component]
 fn TestContextProvider(children: Children) -> Element {
-    use @modules::context::AppContextProvider;
+    use crate::modules::context::AppContextProvider;
     rsx! { AppContextProvider { {children} } }
 }

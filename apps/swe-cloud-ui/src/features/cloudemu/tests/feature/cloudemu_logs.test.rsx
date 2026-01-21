@@ -204,6 +204,6 @@ fn logs_filter_by_current_provider() {
 
 #[component]
 fn TestContextProvider(children: Children) -> Element {
-    use @modules::context::AppContextProvider;
+    use crate::modules::context::AppContextProvider;
     rsx! { AppContextProvider { {children} } }
 }

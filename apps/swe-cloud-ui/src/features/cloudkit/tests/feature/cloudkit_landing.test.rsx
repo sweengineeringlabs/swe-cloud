@@ -135,6 +135,6 @@ fn cloudkit_landing_has_explorer_link() {
 
 #[component]
 fn TestContextProvider(children: Children) -> Element {
-    use @modules::context::AppContextProvider;
+    use crate::modules::context::AppContextProvider;
     rsx! { AppContextProvider { {children} } }
 }

@@ -183,6 +183,6 @@ fn service_detail_has_back_to_list() {
 
 #[component]
 fn TestContextProvider(children: Children) -> Element {
-    use @modules::context::AppContextProvider;
+    use crate::modules::context::AppContextProvider;
     rsx! { AppContextProvider { {children} } }
 }

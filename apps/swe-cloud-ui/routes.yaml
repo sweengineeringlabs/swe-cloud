@@ -1,78 +1,52 @@
-# yaml-language-server: $schema=https://rustscript.dev/schemas/routes.schema.json
-# Routes Configuration
-# Context-aware routing for SWE Cloud Platform
+# SWE Cloud UI Root Routes Configuration
+# Features own their own routes - this file imports and composes them
 
-app:
-  name: "SWE Cloud Platform"
-  base_url: "/"
-  default_layout: "main"
+base_path: /
+auth_redirect: /login
+hash_routing: false
+default_page: landing
 
-# Import feature routes (colocated with features)
+defaults:
+  path: /
+  providerId: aws
+  environmentId: local
+
+# Import feature routes
 imports:
-  - "src/features/cloudemu/routes.yaml"
-  - "src/features/cloudkit/routes.yaml"
-  - "src/features/iac/routes.yaml"
+  - ./src/features/cloudemu/cloudemu_routes.yaml
+  - ./src/features/cloudkit/cloudkit_routes.yaml
+  - ./src/features/iac/iac_routes.yaml
 
-# Route parameter patterns (global)
-params:
-  provider: "aws|azure|gcp|zero"
-  service: "s3|dynamodb|lambda|sqs|sns|ec2|blobs|keyvault|functions|storage|pubsub|compute|queue"
-
-# 404 Not Found page configuration
-not_found:
-  page: "not_found"
-  title: "Page Not Found"
-  heading: "404"
-  message: "The page you're looking for doesn't exist or has been moved."
-  show_home_link: true
-  home_link_text: "Go to Dashboard"
-  home_link_path: "/"
-  show_back_button: true
-  back_button_text: "Go Back"
-  show_suggestions: false
-  # image: "/assets/images/404.svg"  # Optional custom illustration
-  # class: "custom-404"              # Optional custom CSS class
-
-# App-level routes (not feature-specific)
+# Standalone routes (not owned by features)
 routes:
-  # Dashboard
-  - path: "/"
-    page: "dashboard"
-    title: "Dashboard"
-    icon: "home"
-    nav: "main"
-    context_aware: true
+  - path: /
+    page: landing
+    title: SWE Cloud
 
-  # Workflow Runner
-  - path: "/workflow/:workflow_id"
-    page: "workflow_runner"
-    title: "Workflow"
-    layout: "workflow"
-    nav: false
+  - path: /cloudemu
+    page: cloudemu_landing
+    title: CloudEmu
 
-  # Settings
-  - path: "/settings"
-    page: "settings_index"
-    title: "Settings"
-    icon: "settings"
-    nav: "footer"
-    role_required: ["admin"]
-    children:
-      - path: "/settings_providers"
-        page: "settings_providers"
-        title: "Cloud Providers"
-      - path: "/settings_endpoints"
-        page: "settings_endpoints"
-        title: "Endpoints"
-      - path: "/settings_credentials"
-        page: "settings_credentials"
-        title: "Credentials"
-      - path: "/settings_users"
-        page: "settings_users"
-        title: "Users"
+  - path: /cloudkit
+    page: cloudkit_landing
+    title: CloudKit
 
-  # Not Found
+  - path: /iac
+    page: iac_landing
+    title: IAC
+
+  - path: /workflow/:workflowId
+    page: workflow_runner
+    title: Workflow
+    layout: workflow
+    params:
+      - name: workflowId
+        required: true
+
+  - path: /settings
+    page: settings_index
+    title: Settings
+
   - path: "*"
-    page: "not_found"
-    title: "Not Found"
-    nav: false
+    page: not_found
+    title: Not Found

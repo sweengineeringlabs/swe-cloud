@@ -161,6 +161,6 @@ fn service_new_has_cancel_link() {
 
 #[component]
 fn TestContextProvider(children: Children) -> Element {
-    use @modules::context::AppContextProvider;
+    use crate::modules::context::AppContextProvider;
     rsx! { AppContextProvider { {children} } }
 }
