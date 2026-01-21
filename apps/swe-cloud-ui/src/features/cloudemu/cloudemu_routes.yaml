@@ -6,19 +6,19 @@ base_path: /cloudemu
 
 routes:
   - path: /
-    page: cloudemu-landing
+    page: cloudemu_landing
     title: CloudEmu
     layout: cloudemu
 
   - path: /logs
-    page: cloudemu-logs
+    page: cloudemu_logs
     title: Request Logs
     layout: cloudemu
     context_filter:
       provider: current
 
   - path: /:provider
-    page: cloudemu-provider
+    page: cloudemu_provider
     title: "{provider | uppercase}"
     layout: cloudemu
     context:
@@ -29,7 +29,7 @@ routes:
         pattern: "aws|azure|gcp|zero"
 
   - path: /:provider/:service
-    page: cloudemu-service
+    page: cloudemu_service
     title: "{service | titlecase}"
     layout: cloudemu
     params:
@@ -39,7 +39,7 @@ routes:
         required: true
 
   - path: /:provider/:service/new
-    page: cloudemu-service-new
+    page: cloudemu_service_new
     title: "New {service | titlecase}"
     layout: cloudemu
     workflow: create-resource
@@ -47,11 +47,11 @@ routes:
       resource_type: ":service"
 
   - path: /:provider/:service/:id
-    page: cloudemu-service-detail
+    page: cloudemu_service_detail
     title: "{service | titlecase} Details"
     layout: cloudemu
 
   - path: /:provider/:service/:id/edit
-    page: cloudemu-service-edit
+    page: cloudemu_service_edit
     title: "Edit {service | titlecase}"
     layout: cloudemu

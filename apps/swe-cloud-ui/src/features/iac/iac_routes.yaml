@@ -6,7 +6,7 @@ base_path: /iac
 
 routes:
   - path: /
-    page: iac-landing
+    page: iac_landing
     title: Infrastructure
     layout: iac
     role_required:
@@ -14,42 +14,42 @@ routes:
       - admin
 
   - path: /modules
-    page: iac-modules
+    page: iac_modules
     title: Modules
     layout: iac
 
   - path: /modules/:module
-    page: iac-module-detail
+    page: iac_module_detail
     title: "{module}"
     layout: iac
 
   - path: /deploy
-    page: iac-deploy
+    page: iac_deploy
     title: Deploy
     layout: iac
     workflow: deploy-infrastructure
 
   - path: /deployments
-    page: iac-deployments
+    page: iac_deployments
     title: Deployments
     layout: iac
 
   - path: /deployments/:id
-    page: iac-deployment-detail
+    page: iac_deployment_detail
     title: "Deployment #{id}"
     layout: iac
 
   - path: /state
-    page: iac-state
+    page: iac_state
     title: State
     layout: iac
 
   - path: /plans
-    page: iac-plans
+    page: iac_plans
     title: Plans
     layout: iac
 
   - path: /plans/:id
-    page: iac-plan-detail
+    page: iac_plan_detail
     title: "Plan #{id}"
     layout: iac

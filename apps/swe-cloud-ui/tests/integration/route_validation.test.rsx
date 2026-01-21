@@ -18,7 +18,7 @@ fn normalize_page_name(name: &str) -> String {
 
 #[integration]
 fn root_routes_yaml_is_valid() {
-    let config = load_yaml("swe-cloud-ui_routes.yaml");
+    let config = load_yaml("routes.yaml");
     assert!(config.is_ok(), "Root routes YAML should be valid");
 
     let config = config.unwrap();
@@ -279,8 +279,8 @@ fn feature_routes_specify_layout() {
 fn collect_all_yaml_pages() -> HashSet<String> {
     let mut pages = HashSet::new();
 
-    // Root routes
-    if let Ok(config) = load_yaml("swe-cloud-ui_routes.yaml") {
+    // Root routes (from rsc.toml routing.config)
+    if let Ok(config) = load_yaml("routes.yaml") {
         collect_pages_from_config(&config, &mut pages);
     }
 

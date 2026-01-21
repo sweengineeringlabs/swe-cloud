@@ -1,6 +1,10 @@
 // Pages Module
 // Re-exports all page components
-// RustScript: foo.page.rsc exports are accessed via @pages::Component
+// RustScript: foo.page.rsc exports are accessed via crate::pages::Component
+
+// Landing
+pub mod landing;
+pub use landing::Landing;
 
 // Dashboard
 pub mod dashboard;
@@ -15,36 +19,45 @@ pub mod workflow_runner;
 pub use workflow_runner::WorkflowRunner;
 
 // CloudEmu pages
+pub mod cloudemu_landing;
 pub mod cloudemu_overview;
 pub mod cloudemu_provider;
 pub mod cloudemu_service;
 pub mod cloudemu_service_new;
 pub mod cloudemu_service_detail;
+pub mod cloudemu_service_edit;
 pub mod cloudemu_logs;
 
+pub use cloudemu_landing::CloudemuLanding;
 pub use cloudemu_overview::CloudemuOverview;
 pub use cloudemu_provider::CloudemuProvider;
 pub use cloudemu_service::CloudemuService;
 pub use cloudemu_service_new::CloudemuServiceNew;
 pub use cloudemu_service_detail::CloudemuServiceDetail;
+pub use cloudemu_service_edit::CloudemuServiceEdit;
 pub use cloudemu_logs::CloudemuLogs;
 
 // CloudKit pages
+pub mod cloudkit_landing;
 pub mod cloudkit_overview;
 pub mod cloudkit_resources;
 pub mod cloudkit_resource_list;
 pub mod cloudkit_resource_detail;
 pub mod cloudkit_operations;
+pub mod cloudkit_operation_detail;
 pub mod cloudkit_explorer;
 
+pub use cloudkit_landing::CloudkitLanding;
 pub use cloudkit_overview::CloudkitOverview;
 pub use cloudkit_resources::CloudkitResources;
 pub use cloudkit_resource_list::CloudkitResourceList;
 pub use cloudkit_resource_detail::CloudkitResourceDetail;
 pub use cloudkit_operations::CloudkitOperations;
+pub use cloudkit_operation_detail::CloudkitOperationDetail;
 pub use cloudkit_explorer::CloudkitExplorer;
 
 // IAC pages
+pub mod iac_landing;
 pub mod iac_overview;
 pub mod iac_modules;
 pub mod iac_module_detail;
@@ -55,6 +68,7 @@ pub mod iac_state;
 pub mod iac_plans;
 pub mod iac_plan_detail;
 
+pub use iac_landing::IacLanding;
 pub use iac_overview::IacOverview;
 pub use iac_modules::IacModules;
 pub use iac_module_detail::IacModuleDetail;

@@ -6,7 +6,7 @@ base_path: /cloudkit
 
 routes:
   - path: /
-    page: cloudkit-landing
+    page: cloudkit_landing
     title: CloudKit
     layout: cloudkit
     role_required:
@@ -15,32 +15,32 @@ routes:
       - admin
 
   - path: /resources
-    page: cloudkit-resources
+    page: cloudkit_resources
     title: Resources
     layout: cloudkit
 
   - path: /resources/:type
-    page: cloudkit-resource-list
+    page: cloudkit_resource_list
     title: "{type | titlecase}"
     layout: cloudkit
 
   - path: /resources/:type/:id
-    page: cloudkit-resource-detail
+    page: cloudkit_resource_detail
     title: Resource Details
     layout: cloudkit
 
   - path: /operations
-    page: cloudkit-operations
+    page: cloudkit_operations
     title: Operations
     layout: cloudkit
 
   - path: /operations/:operationId
-    page: cloudkit-operation-detail
+    page: cloudkit_operation_detail
     title: Operation Details
     layout: cloudkit
 
   - path: /explorer
-    page: cloudkit-explorer
+    page: cloudkit_explorer
     title: API Explorer
     layout: cloudkit
     context_aware: true
