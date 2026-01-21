@@ -3,6 +3,10 @@
 
 pub mod provider;
 pub mod environment;
+pub mod theme;
+
+#[cfg(test)]
+mod tests;
 
 // Explicitly re-export all public items from submodules
 pub use provider::{
@@ -12,6 +16,9 @@ pub use provider::{
 pub use environment::{
     EnvironmentOption, EnvironmentContext, EnvironmentProvider, use_environment
 };
+pub use theme::{
+    ThemeMode, ThemeContext, ThemeProvider, ThemeToggle, ThemeSelector, use_theme
+};
 
 use rsc::prelude::*;
 
@@ -19,10 +26,12 @@ use rsc::prelude::*;
 #[component]
 pub fn AppContextProvider(children: Children) -> Element {
     rsx! {
-        ProviderProvider {
-            EnvironmentProvider {
-                RoleProvider {
-                    {children}
+        ThemeProvider {
+            ProviderProvider {
+                EnvironmentProvider {
+                    RoleProvider {
+                        {children}
+                    }
                 }
             }
         }

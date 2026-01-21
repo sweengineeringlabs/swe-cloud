@@ -30,7 +30,7 @@ hmr = true
 
 # Routing configuration (unified routes with workflows/contexts/presets)
 [routing]
-config = "swe-cloud-ui_routes.yaml"
+config = "routes.yaml"
 enabled = true
 
 # Bounded context enforcement
@@ -39,9 +39,9 @@ enforce = false
 strict = false
 containers = ["features", "modules"]
 
-# Only compile entry point for minimal build
+# Compile all source files for full routing
 [build.files]
-include = ["src/main.rsx"]
+include = ["src/**/*.rsx"]
 
 # Path aliases for imports
 [imports.aliases]
@@ -60,6 +60,13 @@ workflows = "configs/workflows.yaml"
 context_actions = "configs/context-actions.yaml"
 presets = "configs/presets.yaml"
 landings = "configs/landings.yaml"
+theme = "configs/theme.yaml"
+
+# Theme configuration
+[theme]
+config = "configs/theme.yaml"
+default = "dark"
+persist = true  # Save user preference to localStorage
 
 # Context configuration
 [context]
