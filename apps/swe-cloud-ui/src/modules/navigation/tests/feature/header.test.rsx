@@ -2,7 +2,7 @@
 // Tests for the main application header
 
 use rsc::test::*;
-use @modules::navigation::Header;
+use crate::modules::navigation::Header;
 
 // ============================================================================
 // HEADER RENDER TESTS

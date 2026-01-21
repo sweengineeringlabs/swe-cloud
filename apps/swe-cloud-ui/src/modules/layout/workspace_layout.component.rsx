@@ -2,8 +2,9 @@
 // Main application workspace with context bar, header, sidebar, content, and bottom panel
 
 use rsc::prelude::*;
-use @modules::context::{use_provider, use_environment};
-use @modules::navigation::{ContextBar, Header};
+use crate::modules::context::{use_provider, use_environment};
+use crate::modules::navigation::{ContextBar, Header};
+use crate::generated::theme::environments;
 
 /// Main workspace layout component
 #[component]
@@ -17,7 +18,7 @@ pub fn WorkspaceLayout(
     let environment = use_environment();
 
     let p_color = provider_color.unwrap_or_else(|| provider.color().unwrap_or("#666").to_string());
-    let e_color = env_color.unwrap_or_else(|| environment.color().unwrap_or("#10B981").to_string());
+    let e_color = env_color.unwrap_or_else(|| environment.color().unwrap_or(environments::LOCAL_COLOR).to_string());
 
     rsx! {
         div(
@@ -64,9 +65,9 @@ fn StatusBar(feature: String) -> Element {
                 }
                 span(
                     class: "status-item environment",
-                    style: format!("color: {}", environment.color().unwrap_or("#10B981"))
+                    style: format!("color: {}", environment.color().unwrap_or(environments::LOCAL_COLOR))
                 ) {
-                    {environment.current_environment().map(|e| e.label.as_str()).unwrap_or("Local")}
+                    {environment.current_environment().map(|e| e.label.as_str()).unwrap_or(environments::LOCAL_LABEL)}
                 }
             }
         }

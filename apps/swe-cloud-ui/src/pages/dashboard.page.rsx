@@ -7,10 +7,9 @@ use rustscript::prelude::*;
 
 #[component]
 pub fn Dashboard() -> Element {
-    render! {
+    rsx! {
         <div class="dashboard-page">
             <h1>"Dashboard"</h1>
-            // TODO: Implement page content
         </div>
     }
 }

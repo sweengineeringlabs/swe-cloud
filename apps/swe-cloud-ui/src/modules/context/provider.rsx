@@ -2,6 +2,7 @@
 // Cloud provider selection (AWS, Azure, GCP, Zero)
 
 use rsc::prelude::*;
+use crate::generated::theme::providers;
 
 /// Provider option from config
 #[derive(Clone, Debug)]
@@ -75,13 +76,13 @@ impl ProviderContext {
 
 fn load_providers_from_config() -> Vec<ProviderOption> {
     // Load from configs/providers.yaml at runtime
-    // For now, return defaults
+    // For now, return defaults using generated theme constants
     vec![
         ProviderOption {
             id: "aws".to_string(),
-            label: "AWS".to_string(),
-            icon: "aws".to_string(),
-            color: "#FF9900".to_string(),
+            label: providers::AWS_LABEL.to_string(),
+            icon: providers::AWS_ICON.to_string(),
+            color: providers::AWS_COLOR.to_string(),
             endpoints: ProviderEndpoints {
                 api: "http://localhost:4566".to_string(),
                 console: "/cloudemu/aws".to_string(),
@@ -94,9 +95,9 @@ fn load_providers_from_config() -> Vec<ProviderOption> {
         },
         ProviderOption {
             id: "azure".to_string(),
-            label: "Azure".to_string(),
-            icon: "azure".to_string(),
-            color: "#0078D4".to_string(),
+            label: providers::AZURE_LABEL.to_string(),
+            icon: providers::AZURE_ICON.to_string(),
+            color: providers::AZURE_COLOR.to_string(),
             endpoints: ProviderEndpoints {
                 api: "http://localhost:4567".to_string(),
                 console: "/cloudemu/azure".to_string(),
@@ -108,9 +109,9 @@ fn load_providers_from_config() -> Vec<ProviderOption> {
         },
         ProviderOption {
             id: "gcp".to_string(),
-            label: "GCP".to_string(),
-            icon: "gcp".to_string(),
-            color: "#4285F4".to_string(),
+            label: providers::GCP_LABEL.to_string(),
+            icon: providers::GCP_ICON.to_string(),
+            color: providers::GCP_COLOR.to_string(),
             endpoints: ProviderEndpoints {
                 api: "http://localhost:4568".to_string(),
                 console: "/cloudemu/gcp".to_string(),
@@ -121,10 +122,10 @@ fn load_providers_from_config() -> Vec<ProviderOption> {
             ],
         },
         ProviderOption {
-            id: "zero".to_string(),
-            label: "ZeroCloud".to_string(),
-            icon: "server".to_string(),
-            color: "#6B7280".to_string(),
+            id: "zerocloud".to_string(),
+            label: providers::ZEROCLOUD_LABEL.to_string(),
+            icon: providers::ZEROCLOUD_ICON.to_string(),
+            color: providers::ZEROCLOUD_COLOR.to_string(),
             endpoints: ProviderEndpoints {
                 api: "http://localhost:4569".to_string(),
                 console: "/cloudemu/zero".to_string(),

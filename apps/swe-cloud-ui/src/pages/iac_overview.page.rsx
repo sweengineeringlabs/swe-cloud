@@ -7,10 +7,9 @@ use rustscript::prelude::*;
 
 #[component]
 pub fn IacOverview() -> Element {
-    render! {
+    rsx! {
         <div class="iac-overview-page">
             <h1>"Infrastructure"</h1>
-            // TODO: Implement page content
         </div>
     }
 }

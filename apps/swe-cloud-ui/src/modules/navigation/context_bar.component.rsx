@@ -2,7 +2,7 @@
 // Provider and environment switcher bar
 
 use rsc::prelude::*;
-use @modules::context::{use_provider, use_environment};
+use crate::modules::context::{use_provider, use_environment};
 
 /// Context bar at the top of the application
 #[component]

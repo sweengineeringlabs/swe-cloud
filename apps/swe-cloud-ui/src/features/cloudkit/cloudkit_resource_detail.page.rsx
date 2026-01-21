@@ -7,7 +7,6 @@ use crate::components::*;
 
 #[derive(Props)]
 pub struct CloudkitResourceDetailProps {
-    #[prop(name = "type")]
     pub resource_type: String,
     pub id: String,
 }

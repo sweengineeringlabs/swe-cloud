@@ -7,10 +7,9 @@ use rustscript::prelude::*;
 
 #[component]
 pub fn WorkflowRunner() -> Element {
-    render! {
+    rsx! {
         <div class="workflow-runner-page">
             <h1>"Workflow"</h1>
-            // TODO: Implement page content
         </div>
     }
 }

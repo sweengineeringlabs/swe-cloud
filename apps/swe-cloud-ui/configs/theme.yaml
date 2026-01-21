@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../../../../rustscript/schema/theme.schema.json
 # SWE Cloud UI Theme Configuration
 # Defines color palettes, spacing, and visual styling
 

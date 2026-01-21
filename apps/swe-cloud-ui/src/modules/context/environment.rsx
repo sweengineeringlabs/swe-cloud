@@ -2,6 +2,7 @@
 // Target environment selection (Local, Dev, Staging, Prod)
 
 use rsc::prelude::*;
+use crate::generated::theme::environments;
 
 /// Environment option from config
 #[derive(Clone, Debug)]
@@ -72,41 +73,42 @@ impl EnvironmentContext {
 }
 
 fn load_environments_from_config() -> Vec<EnvironmentOption> {
+    // Use generated theme constants for colors
     vec![
         EnvironmentOption {
             id: "local".to_string(),
-            label: "Local".to_string(),
-            icon: "laptop".to_string(),
-            color: "#10B981".to_string(),
+            label: environments::LOCAL_LABEL.to_string(),
+            icon: environments::LOCAL_ICON.to_string(),
+            color: environments::LOCAL_COLOR.to_string(),
             api_base: "http://localhost:8080".to_string(),
             confirm_actions: false,
             read_only_default: false,
         },
         EnvironmentOption {
             id: "dev".to_string(),
-            label: "Development".to_string(),
-            icon: "code".to_string(),
-            color: "#3B82F6".to_string(),
+            label: environments::DEV_LABEL.to_string(),
+            icon: environments::DEV_ICON.to_string(),
+            color: environments::DEV_COLOR.to_string(),
             api_base: "https://dev-api.swe-cloud.io".to_string(),
             confirm_actions: false,
             read_only_default: false,
         },
         EnvironmentOption {
             id: "staging".to_string(),
-            label: "Staging".to_string(),
-            icon: "flask".to_string(),
-            color: "#F59E0B".to_string(),
+            label: environments::STAGING_LABEL.to_string(),
+            icon: environments::STAGING_ICON.to_string(),
+            color: environments::STAGING_COLOR.to_string(),
             api_base: "https://staging-api.swe-cloud.io".to_string(),
             confirm_actions: true,
             read_only_default: false,
         },
         EnvironmentOption {
             id: "prod".to_string(),
-            label: "Production".to_string(),
-            icon: "shield".to_string(),
-            color: "#EF4444".to_string(),
+            label: environments::PROD_LABEL.to_string(),
+            icon: environments::PROD_ICON.to_string(),
+            color: environments::PROD_COLOR.to_string(),
             api_base: "https://api.swe-cloud.io".to_string(),
-            confirm_actions: true,
+            confirm_actions: environments::PROD_WARNING,
             read_only_default: true,
         },
     ]

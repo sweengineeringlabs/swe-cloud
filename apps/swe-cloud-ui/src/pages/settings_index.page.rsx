@@ -7,10 +7,9 @@ use rustscript::prelude::*;
 
 #[component]
 pub fn SettingsIndex() -> Element {
-    render! {
+    rsx! {
         <div class="settings-index-page">
             <h1>"Settings"</h1>
-            // TODO: Implement page content
         </div>
     }
 }

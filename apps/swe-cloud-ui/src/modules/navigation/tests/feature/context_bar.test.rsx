@@ -2,8 +2,8 @@
 // Tests for the provider and environment selector bar
 
 use rsc::test::*;
-use @modules::navigation::ContextBar;
-use @modules::context::{ProviderContext, EnvironmentContext};
+use crate::modules::navigation::ContextBar;
+use crate::modules::context::{ProviderContext, EnvironmentContext};
 
 // ============================================================================
 // CONTEXT BAR RENDER TESTS
@@ -334,7 +334,7 @@ fn provider_selector_closes_on_escape() {
 
 #[component]
 fn TestContextProvider(children: Children) -> Element {
-    use @modules::context::AppContextProvider;
+    use crate::modules::context::AppContextProvider;
 
     rsx! {
         AppContextProvider {

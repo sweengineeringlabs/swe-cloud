@@ -2,17 +2,31 @@
 // Overview page for cloud emulation feature
 
 use rsc::prelude::*;
-use @modules::context::use_provider;
-use @modules::layout::{StatCard, SectionHeader};
+use crate::modules::context::{ProviderProvider, EnvironmentProvider, use_provider};
+use crate::modules::navigation::ContextBar;
+use crate::modules::layout::{StatCard, SectionHeader};
 use crate::components::{ProviderCard, RequestTable, HealthGrid};
 
 /// CloudEmu landing page
-#[page(route = "/cloudemu", title = "CloudEmu")]
+#[page(route = "/cloudemu", name = "cloudemu-landing", title = "CloudEmu")]
 pub fn CloudemuLanding() -> Element {
+    rsx! {
+        ProviderProvider {
+            EnvironmentProvider {
+                CloudemuLandingContent()
+            }
+        }
+    }
+}
+
+#[component]
+fn CloudemuLandingContent() -> Element {
     let provider = use_provider();
 
     rsx! {
-        div(class: "landing-page cloudemu-landing") {
+        div(class: "cloudemu-page") {
+            ContextBar()
+            div(class: "landing-page cloudemu-landing") {
             // Header
             section(class: "page-header") {
                 h1 { "CloudEmu" }
@@ -76,6 +90,7 @@ pub fn CloudemuLanding() -> Element {
             section(class: "health-section") {
                 SectionHeader(title: "Service Health".to_string())
                 HealthGrid()
+            }
             }
         }
     }
