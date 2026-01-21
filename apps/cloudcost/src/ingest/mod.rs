@@ -93,7 +93,6 @@ impl Ingestor {
                                  currency: "USD".to_string(),
                                  usage_quantity: 1.0,
                                  usage_unit: unit,
-                                 effective_cost: price_per_unit, 
                              });
                          }
                      }
@@ -126,7 +125,6 @@ impl Ingestor {
                     currency: v["currencyCode"].as_str().unwrap_or("USD").to_string(),
                     usage_quantity: 1.0,
                     usage_unit: unit,
-                    effective_cost: price,
                 });
             }
         }
@@ -160,7 +158,6 @@ impl Ingestor {
                      currency: "USD".to_string(), 
                      usage_quantity: 1.0,
                      usage_unit: "Unit".to_string(),
-                     effective_cost: price,
                 });
             }
         }
@@ -189,7 +186,6 @@ impl Ingestor {
                      currency: item["price"]["currency"].as_str().unwrap_or("USD").to_string(),
                      usage_quantity: 1.0,
                      usage_unit: unit,
-                     effective_cost: price,
                 });
              }
          }

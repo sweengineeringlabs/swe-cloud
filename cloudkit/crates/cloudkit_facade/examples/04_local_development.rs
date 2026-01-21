@@ -46,8 +46,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
 
     println!("   ✓ Connected successfully!");
-    println!("     - Provider: {}", cloud.context().provider());
-    println!("     - Region:   {}", cloud.context().region());
+    println!("     - Provider: {}", cloud.provider());
+    println!("     - Region:   {}", cloud.region().code());
     println!("     - Endpoint: http://localhost:4566 (Auto-configured)\n");
 
     // =========================================================================

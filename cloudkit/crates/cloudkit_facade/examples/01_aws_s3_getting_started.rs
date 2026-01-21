@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()
         .await?;
 
-    println!("✓ Created AWS client for region: {}", aws.context().region());
+    println!("✓ Created AWS client for region: {}", aws.region().code());
 
     // Example: List buckets (would require real credentials)
     println!("\nAttempting to list buckets...");

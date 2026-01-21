@@ -4,6 +4,7 @@
 //!
 //! Run with: `cargo run --example multi_cloud --features full`
 
+use bytes::Bytes;
 use cloudkit::prelude::*;
 
 /// Upload data to any cloud storage provider.
@@ -59,28 +60,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .region(Region::aws_us_east_1())
         .build()
         .await?;
-    println!("✓ AWS client ready (region: {})", aws.context().region());
+    println!("✓ AWS client ready (region: {})", aws.region().code());
 
     // Azure
     let azure = CloudKit::azure()
         .region(Region::azure_east_us())
         .build()
         .await?;
-    println!("✓ Azure client ready (region: {})", azure.context().region());
+    println!("✓ Azure client ready (region: {})", azure.region().code());
 
     // GCP
     let gcp = CloudKit::gcp()
         .region(Region::gcp_us_central1())
         .build()
         .await?;
-    println!("✓ GCP client ready (region: {})", gcp.context().region());
+    println!("✓ GCP client ready (region: {})", gcp.region().code());
 
     // Oracle
     let oracle = CloudKit::oracle()
         .region(Region::oracle_af_johannesburg_1())
         .build()
         .await?;
-    println!("✓ Oracle client ready (region: {})", oracle.context().region());
+    println!("✓ Oracle client ready (region: {})", oracle.region().code());
 
     println!("\n✓ All providers initialized successfully!");
     println!("\nIn a real application, you could use any of these providers");

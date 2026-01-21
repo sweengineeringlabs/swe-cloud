@@ -17,6 +17,7 @@ azure-data-core = { path = "../azure/data-plane/azure-data-core" }
 gcp-data-core = { path = "../gcp/data-plane/gcp-data-core" }
 oracle-data-core = { path = "../oracle/data-plane/oracle-data-core" }
 oracle-control-core = { path = "../oracle/control-plane/oracle-control-core" }
+oracle-control-spi = { path = "../oracle/control-plane/oracle-control-spi" }
 
 # Common
 tokio = { workspace = true }

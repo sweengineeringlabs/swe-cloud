@@ -38,6 +38,9 @@ members = [
     "cloudemu/zero/control-plane/zero-control-spi",
     "cloudemu/zero/control-plane/zero-control-core",
     "cloudemu/zero/data-plane/zero-data-core",
+    # RustScript Lint/Security crates
+    "crates/rsc-lint",
+    "crates/rsc-security",
     # CloudKit crates
     "cloudkit/crates/cloudkit_*",
     # CloudKit provider crates (nested under cloudkit_core)

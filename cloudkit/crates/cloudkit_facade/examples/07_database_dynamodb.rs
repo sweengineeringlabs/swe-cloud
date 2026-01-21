@@ -20,14 +20,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()
         .await?;
         
-    println!("✓ Connected to {}", client.context().provider());
+    println!("✓ Connected to {}", client.provider());
 
     // 2. Access the Key-Value Store interface
-    // Note: The specific return type here depends on the provider (DynamoDbStore)
-    // but typically implements a common KeyValue trait if available.
-    let _kv = client.aws().kv_store();
-    
-    println!("✓ Key-Value Client obtained");
+    // Note: The specific return type here depends on the provider
+    // In production, you would use provider-specific crates for full functionality.
+    println!("✓ Context obtained for provider: {}", client.provider());
     println!("\nIn a real application, you can now perform operations:");
     println!("  - Put Item");
     println!("  - Get Item");

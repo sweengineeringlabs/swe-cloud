@@ -49,6 +49,11 @@ impl AzureProvider {
     /// Create a new Azure provider.
     pub fn new() -> Self {
         let config = Config::from_env();
+        Self::with_config(config)
+    }
+
+    /// Create a new Azure provider with a custom configuration.
+    pub fn with_config(config: Config) -> Self {
         let engine = Arc::new(StorageEngine::new(&config).expect("Failed to initialize storage engine"));
         
         Self {
@@ -232,9 +237,16 @@ impl CloudProviderTrait for AzureProvider {
 mod tests {
     use super::*;
 
+    fn create_test_provider() -> (AzureProvider, tempfile::TempDir) {
+        let temp_dir = tempfile::tempdir().expect("Failed to create temp dir");
+        let config = Config::default().data_dir(temp_dir.path());
+        let provider = AzureProvider::with_config(config);
+        (provider, temp_dir)
+    }
+
     #[tokio::test]
     async fn test_azure_provider_creation() {
-        let provider = AzureProvider::new();
+        let (provider, _temp_dir) = create_test_provider();
         assert_eq!(provider.provider_name(), "azure");
         assert_eq!(provider.default_port(), 4567);
         assert!(provider.supported_services().len() >= 5);
@@ -242,7 +254,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_blob_routing() {
-        let provider = AzureProvider::new();
+        let (provider, _temp_dir) = create_test_provider();
         let req = Request {
             method: "GET".to_string(),
             path: "/devstoreaccount1/?comp=list".to_string(),
@@ -257,7 +269,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_cosmos_routing() {
-        let provider = AzureProvider::new();
+        let (provider, _temp_dir) = create_test_provider();
         let req = Request {
             method: "GET".to_string(),
             path: "/dbs".to_string(),

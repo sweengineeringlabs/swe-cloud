@@ -149,7 +149,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let retry = CircuitBreakerRetry::new(3);
     
     let network_error = CloudError::Network(
-        cloudkit::common::NetworkError::Connection("timeout".to_string())
+        NetworkError::Connection("timeout".to_string())
     );
     
     match retry.should_retry(&network_error, 0) {

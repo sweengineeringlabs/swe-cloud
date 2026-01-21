@@ -20,12 +20,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()
         .await?;
 
-    println!("✓ Connected to {}", client.context().provider());
+    println!("✓ Connected to {}", client.provider());
 
-    // 2. Access the Queue interface
-    let _queue = client.aws().queue();
-
-    println!("✓ Queue Client obtained");
+    // 2. Queue interface would be accessed via provider-specific crate
+    // For now, just demonstrate that we have a valid context
+    println!("✓ Context obtained for provider: {}", client.provider());
     println!("\nOperations available:");
     println!("  - Send Message");
     println!("  - Receive Messages");

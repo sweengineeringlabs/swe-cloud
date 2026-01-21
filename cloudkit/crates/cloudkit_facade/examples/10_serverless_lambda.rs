@@ -20,12 +20,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()
         .await?;
 
-    println!("✓ Connected to {}", client.context().provider());
+    println!("✓ Connected to {}", client.provider());
 
     // 2. Access the Functions interface
-    let _functions = client.aws().functions();
-
-    println!("✓ Functions Client obtained");
+    // Note: In production, you would use provider-specific crates for full functionality.
+    println!("✓ Context obtained for provider: {}", client.provider());
     println!("\nOperations available:");
     println!("  - Invoke Function");
     println!("  - List Functions");

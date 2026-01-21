@@ -13,3 +13,6 @@ async-trait = "0.1"
 tracing = "0.1"
 chrono = { version = "0.4", features = ["serde"] }
 # Self-contained - no external cloudemu dependencies
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt", "sync", "macros"] }

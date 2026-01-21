@@ -425,6 +425,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_put_metric_data() {
         let (context, sdk_config) = create_test_context().await;
         let metrics = CloudWatchMetrics::new(context, sdk_config);
@@ -439,6 +440,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_get_metric_data() {
         let (context, sdk_config) = create_test_context().await;
         let metrics = CloudWatchMetrics::new(context, sdk_config);
@@ -459,6 +461,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_list_metrics() {
         let (context, sdk_config) = create_test_context().await;
         let metrics = CloudWatchMetrics::new(context, sdk_config);
@@ -468,6 +471,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_put_alarm() {
         let (context, sdk_config) = create_test_context().await;
         let metrics = CloudWatchMetrics::new(context, sdk_config);
@@ -489,6 +493,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_delete_alarm() {
         let (context, sdk_config) = create_test_context().await;
         let metrics = CloudWatchMetrics::new(context, sdk_config);
@@ -498,6 +503,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_get_alarm_state() {
         let (context, sdk_config) = create_test_context().await;
         let metrics = CloudWatchMetrics::new(context, sdk_config);
@@ -516,6 +522,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_create_log_group() {
         let (context, sdk_config) = create_test_context().await;
         let logs = CloudWatchLogs::new(context, sdk_config);
@@ -525,6 +532,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_delete_log_group() {
         let (context, sdk_config) = create_test_context().await;
         let logs = CloudWatchLogs::new(context, sdk_config);
@@ -534,6 +542,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_create_log_stream() {
         let (context, sdk_config) = create_test_context().await;
         let logs = CloudWatchLogs::new(context, sdk_config);
@@ -545,6 +554,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_put_log_events() {
         let (context, sdk_config) = create_test_context().await;
         let logs = CloudWatchLogs::new(context, sdk_config);
@@ -561,6 +571,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_query_logs() {
         let (context, sdk_config) = create_test_context().await;
         let logs = CloudWatchLogs::new(context, sdk_config);
@@ -577,6 +588,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_list_log_groups() {
         let (context, sdk_config) = create_test_context().await;
         let logs = CloudWatchLogs::new(context, sdk_config);
@@ -586,6 +598,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "requires AWS endpoint or emulator"]
     async fn test_list_log_streams() {
         let (context, sdk_config) = create_test_context().await;
         let logs = CloudWatchLogs::new(context, sdk_config);

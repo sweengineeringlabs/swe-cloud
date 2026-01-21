@@ -11,6 +11,9 @@ pub struct StorageEngine {
 pub mod pricing;
 pub mod compute;
 pub mod database;
+
+pub use compute::OracleInstance;
+pub use database::OracleAutonomousDb;
 pub mod identity;
 pub mod dns;
 pub mod object_storage;
