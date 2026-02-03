@@ -6,13 +6,11 @@ use rsc::prelude::*;
 /// Sidebar component
 #[component]
 pub fn Sidebar(
-    width: Option<u32>,
-    visible: Option<bool>,
+    width: u32 = 280,
+    visible: bool = true,
     children: Children,
 ) -> Element {
     let (collapsed, set_collapsed) = use_state(false);
-    let width = width.unwrap_or(280);
-    let visible = visible.unwrap_or(true);
 
     if !visible {
         return rsx! { div {} };
@@ -41,10 +39,9 @@ pub fn Sidebar(
 #[component]
 pub fn SidebarPanel(
     title: String,
-    collapsible: Option<bool>,
+    collapsible: bool = true,
     children: Children,
 ) -> Element {
-    let collapsible = collapsible.unwrap_or(true);
     let (collapsed, set_collapsed) = use_state(false);
 
     rsx! {

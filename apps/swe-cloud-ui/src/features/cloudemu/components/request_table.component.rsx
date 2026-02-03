@@ -7,11 +7,10 @@ use crate::cloudemu_type::{RequestLog, LogFilter};
 /// Request log table
 #[component]
 pub fn RequestTable(
-    limit: Option<usize>,
+    limit: usize = 10,
     filter: Option<LogFilter>,
 ) -> Element {
     let (logs, _) = use_state::<Vec<RequestLog>>(get_mock_logs());
-    let limit = limit.unwrap_or(10);
 
     rsx! {
         div(class: "request-table-wrapper") {

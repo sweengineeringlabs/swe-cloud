@@ -6,11 +6,10 @@ use rsc::prelude::*;
 /// Bottom panel with tabs
 #[component]
 pub fn BottomPanel(
-    height: Option<u32>,
+    height: u32 = 200,
     tabs: Vec<String>,
     children: Option<Children>,
 ) -> Element {
-    let height = height.unwrap_or(200);
     let (active_tab, set_active_tab) = use_state(tabs.first().cloned().unwrap_or_default());
     let (is_expanded, set_expanded) = use_state(true);
 

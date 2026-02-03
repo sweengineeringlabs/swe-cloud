@@ -61,10 +61,8 @@ pub fn ActionCard(
     description: String,
     icon: String,
     href: String,
-    primary: Option<bool>,
+    primary: bool = false,
 ) -> Element {
-    let primary = primary.unwrap_or(false);
-
     rsx! {
         a(
             href: &href,
