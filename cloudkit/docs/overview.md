@@ -53,10 +53,10 @@ CloudKit provides a single, type-safe API for interacting with AWS, Azure, GCP, 
 
 CloudKit is composed of several crates that mirror the SEA layers:
 
-- **[cloudkit_facade](../crates/cloudkit_facade/doc/overview.md)**: Public API surface and entry points.
-- **[cloudkit_core](../crates/cloudkit_core/doc/overview.md)**: Orchestration logic and provider implementations.
-- **[cloudkit_api](../crates/cloudkit_api/doc/overview.md)**: Service contracts and traits.
-- **[cloudkit_spi](../crates/cloudkit_spi/doc/overview.md)**: Foundation and extension points.
+- **[cloudkit_facade](../crates/cloudkit_facade/docs/overview.md)**: Public API surface and entry points.
+- **[cloudkit_core](../crates/cloudkit_core/docs/overview.md)**: Orchestration logic and provider implementations.
+- **[cloudkit_api](../crates/cloudkit_api/docs/overview.md)**: Service contracts and traits.
+- **[cloudkit_spi](../crates/cloudkit_spi/docs/overview.md)**: Foundation and extension points.
 
 ---
 

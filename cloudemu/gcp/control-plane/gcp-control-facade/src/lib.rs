@@ -1,6 +1,9 @@
 //! GCP Control-Plane Facade
 #![warn(missing_docs)]
 
+/// SAF — Service Access Facade re-exports.
+pub mod saf;
+
 use std::sync::Arc;
 use axum::{
     Router,

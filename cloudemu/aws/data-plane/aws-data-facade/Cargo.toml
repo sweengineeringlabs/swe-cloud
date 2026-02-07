@@ -7,5 +7,6 @@ description = "aws data facade"
 
 [dependencies]
 aws-data-spi = { path = "../aws-data-spi" }
+aws-data-api = { path = "../aws-data-api" }
 aws-data-core = { path = "../aws-data-core" }
 

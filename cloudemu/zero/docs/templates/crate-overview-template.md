@@ -1,6 +1,6 @@
 # [Module/Crate Name] Overview
 
-> **Scope**: High-level overview only. Implementation details belong in [Developer Guide](../../../doc/4-development/developer-guide.md).
+> **Scope**: High-level overview only. Implementation details belong in [Developer Guide](../../../docs/4-development/developer-guide.md).
 
 ## Audience
 
@@ -36,7 +36,7 @@ let result = MainType::new().do_something(&data)?;
 
 | Document | Description |
 |----------|-------------|
-| [Developer Guide](../../../doc/4-development/developer-guide.md) | Build, test, API reference |
+| [Developer Guide](../../../docs/4-development/developer-guide.md) | Build, test, API reference |
 | [Backlog](../backlog.md) | Planned features |
 
 ---

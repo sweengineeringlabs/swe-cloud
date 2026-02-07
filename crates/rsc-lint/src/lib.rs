@@ -1,0 +1,1 @@
+//! RustScript Lint crate placeholder.

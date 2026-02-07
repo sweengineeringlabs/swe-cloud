@@ -1,9 +1,13 @@
-//! aws control SPI
+//! AWS Control-Plane SPI
 //!
-//! Self-contained foundation types for aws control emulation.
+//! Self-contained foundation types for AWS control emulation.
 
 #![warn(missing_docs)]
 
-// Re-export foundation types (now self-contained)
-mod foundation;
-pub use foundation::*;
+mod error;
+mod types;
+mod traits;
+
+pub use error::*;
+pub use types::*;
+pub use traits::*;

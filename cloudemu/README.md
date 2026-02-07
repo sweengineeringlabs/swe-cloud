@@ -66,7 +66,7 @@ CloudEmu uses a **Facade Pattern** where each cloud provider's API is translated
 - **Control Plane**: Parses AWS/Azure/GCP specific HTTP requests.
 - **Data Plane**: A shared storage engine (SQLite + FS) that persists all resources.
 
-See [Documentation](./doc/3-design/storage-engine-architecture.md) for details.
+See [Documentation](./docs/3-design/storage-engine-architecture.md) for details.
 
 ## 🧪 Testing
 

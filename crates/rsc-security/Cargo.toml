@@ -1,0 +1,4 @@
+[package]
+name = "rsc-security"
+version.workspace = true
+edition.workspace = true

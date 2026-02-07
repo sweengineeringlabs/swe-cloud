@@ -58,14 +58,14 @@ pub use cloudkit_api;
 pub use cloudkit_core;
 
 // =============================================================================
-// FACADE - Public API surface
+// SAF (Stratified API Facade) - Public API surface
 // =============================================================================
-pub mod facade;
+pub mod saf;
 
 // =============================================================================
 // PRELUDE - Convenient re-exports
 // =============================================================================
 pub mod prelude;
 
-// Re-export facade as the primary API
-pub use facade::*;
+// Re-export SAF as the primary API
+pub use saf::*;

@@ -4,7 +4,7 @@
 
 ## Usage
 
-Copy this template to `<crate>/doc/5-testing/code-review.md` and fill in the sections.
+Copy this template to `<crate>/docs/5-testing/code-review.md` and fill in the sections.
 
 ---
 
@@ -420,7 +420,7 @@ Does the crate define traits for external interactions?
 | Doc comments on all public items | ⬜ | `///` on pub fns, structs, enums |
 | Module-level documentation | ⬜ | `//!` at top of each module |
 | README.md with examples | ⬜ | |
-| ADRs for key architectural decisions | ⬜ | `doc/3-design/adr/` |
+| ADRs for key architectural decisions | ⬜ | `docs/3-design/adr/` |
 | CHANGELOG maintained | ⬜ | |
 
 ### Documentation Pattern

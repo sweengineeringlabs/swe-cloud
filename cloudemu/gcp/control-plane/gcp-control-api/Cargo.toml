@@ -8,4 +8,5 @@ description = "gcp control api"
 [dependencies]
 gcp-control-spi = { path = "../gcp-control-spi" }
 async-trait = "0.1"
+serde_json = "1.0"
 

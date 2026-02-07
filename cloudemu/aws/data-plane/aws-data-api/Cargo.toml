@@ -8,4 +8,5 @@ description = "aws data api"
 [dependencies]
 aws-data-spi = { path = "../aws-data-spi" }
 async-trait = "0.1"
+serde_json = "1.0"
 

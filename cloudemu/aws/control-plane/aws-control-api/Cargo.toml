@@ -9,5 +9,6 @@ description = "AWS Control-Plane API - Service traits for AWS emulation"
 aws-control-spi = { path = "../aws-control-spi" }
 async-trait = "0.1"
 serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 bytes = "1.0"
 

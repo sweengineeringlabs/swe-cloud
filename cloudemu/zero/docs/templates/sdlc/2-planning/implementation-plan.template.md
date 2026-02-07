@@ -54,8 +54,8 @@
 **Goal:** Document the feature.
 
 **Files to create:**
-- `doc/3-design/FR-{###}/architecture.md`
-- `doc/6-operation/FR-{###}/configuration.md`
+- `docs/3-design/FR-{###}/architecture.md`
+- `docs/6-operation/FR-{###}/configuration.md`
 
 ## Dependencies
 

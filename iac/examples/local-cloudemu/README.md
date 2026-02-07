@@ -214,6 +214,6 @@ terraform apply -auto-approve
 
 ## Related Documentation
 
-- [CloudEmu Documentation](../../../../cloudemu/doc/overview.md)
-- [IAC Architecture](../../doc/3-design/architecture.md)
-- [Integration Plan](../../doc/2-planning/iac-cloudemu-integration-plan.md)
+- [CloudEmu Documentation](../../../../cloudemu/docs/overview.md)
+- [IAC Architecture](../../docs/3-design/architecture.md)
+- [Integration Plan](../../docs/2-planning/iac-cloudemu-integration-plan.md)

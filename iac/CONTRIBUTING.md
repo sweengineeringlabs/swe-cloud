@@ -20,7 +20,7 @@ To add a new service (e.g., "Cache" or "BigData"):
 1. **API Layer**: Define the provider-agnostic input and output contracts in `api/`.
 2. **Core Layer**: Implement the orchestration logic in `[provider]/core/`.
 3. **Facade Layer**: Create the user-facing interface in `facade/` that routes to the Core layer.
-4. **Documentation**: Add `doc/overview.md` and `doc/3-design/toolchain.md` in the facade directory.
+4. **Documentation**: Add `docs/overview.md` and `docs/3-design/toolchain.md` in the facade directory.
 5. **Testing**: Add a Terratest suite (e.g., `cache_test.go`) in the facade directory.
 
 ### 3. Improving Provider Support

@@ -4,9 +4,9 @@ If you need help with CloudEmu, please use the following resources:
 
 ## 1. Documentation
 Before asking for help, please review the documentation:
-- **[Getting Started](./doc/overview.md)**
-- **[Architecture](./doc/3-design/architecture.md)**
-- **[Configuration](./doc/overview.md#configuration)**
+- **[Getting Started](./docs/overview.md)**
+- **[Architecture](./docs/3-design/architecture.md)**
+- **[Configuration](./docs/overview.md#configuration)**
 
 ## 2. Community Support
 - **GitHub Discussions**: For general questions, patterns, and architectural advice.

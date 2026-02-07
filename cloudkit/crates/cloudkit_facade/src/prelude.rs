@@ -20,5 +20,5 @@ pub use cloudkit_api::LogLevel;
 // Re-export everything from cloudkit_core
 pub use cloudkit_core::*;
 
-// Re-export facade
-pub use crate::facade::*;
+// Re-export SAF
+pub use crate::saf::*;

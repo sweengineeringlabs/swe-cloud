@@ -1,9 +1,13 @@
-//! aws data SPI
+//! AWS Data-Plane SPI
 //!
-//! Self-contained foundation types for aws data emulation.
+//! Self-contained foundation types for AWS data emulation.
 
 #![warn(missing_docs)]
 
-// Re-export foundation types (now self-contained)
-mod foundation;
-pub use foundation::*;
+mod error;
+mod types;
+mod traits;
+
+pub use error::*;
+pub use types::*;
+pub use traits::*;

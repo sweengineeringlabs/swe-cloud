@@ -22,7 +22,7 @@ CloudEmu follows a modular architecture. To add a new service:
 ### 3. Pull Requests
 - Follow Rust coding standards (`cargo fmt`, `cargo clippy`).
 - Ensure all tests pass (`cargo test`).
-- Update relevant documentation in the `doc/` directory.
+- Update relevant documentation in the `docs/` directory.
 
 ## Development Setup
 

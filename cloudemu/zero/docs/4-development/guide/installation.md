@@ -69,4 +69,4 @@ zero node list
 
 ---
 
-*For detailed usage and troubleshooting, see the [User Manual](./doc/user-manual.md).*
+*For detailed usage and troubleshooting, see the [User Manual](./docs/user-manual.md).*

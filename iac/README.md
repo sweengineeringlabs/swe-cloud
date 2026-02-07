@@ -24,11 +24,11 @@ module "storage" {
 
 ## Documentation
 
-Full documentation is available in the **[Documentation Hub](./doc/overview.md)**.
+Full documentation is available in the **[Documentation Hub](./docs/overview.md)**.
 
-- **[Installation Guide](./doc/6-deployment/installation-guide.md)**
-- **[Architecture Specification](./doc/3-design/architecture.md)**
-- **[Testing Strategy](./doc/5-testing/testing-strategy.md)**
+- **[Installation Guide](./docs/6-deployment/installation-guide.md)**
+- **[Architecture Specification](./docs/3-design/architecture.md)**
+- **[Testing Strategy](./docs/5-testing/testing-strategy.md)**
 
 ## Testing
 

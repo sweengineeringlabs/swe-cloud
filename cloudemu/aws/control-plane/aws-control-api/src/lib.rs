@@ -21,11 +21,11 @@ pub mod sns;
 /// Lambda service traits
 pub mod lambda;
 
-/// Prelude
+/// Prelude — re-exports all service traits.
 pub mod prelude {
     pub use super::s3::*;
-    // pub use super::dynamodb::*;
-    // pub use super::sqs::*;
-    // pub use super::sns::*;
-    // pub use super::lambda::*;
+    pub use super::dynamodb::*;
+    pub use super::sqs::*;
+    pub use super::sns::*;
+    pub use super::lambda::*;
 }
