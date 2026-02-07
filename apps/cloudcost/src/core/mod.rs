@@ -11,4 +11,5 @@ pub struct FocusItem {
     pub currency: String,
     pub usage_quantity: f64,
     pub usage_unit: String,
+    pub effective_cost: f64,
 }
